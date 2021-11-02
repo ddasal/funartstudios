@@ -1,14 +1,13 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponse
-from django.template.loader import render_to_string
+from django.shortcuts import render
 from events.models import Event
 
-@login_required
+@permission_required('events.view_event')
 def home_view(request, *args, **kwargs):
     queryset = Event.objects.all().order_by('-date')
     context = {
         "object_list": queryset,
     }
-    HTML_STRING = render_to_string('home-view.html', context=context)
-    return HttpResponse(HTML_STRING)
+    return render(request, 'home-view.html', context)
 

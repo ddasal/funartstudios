@@ -9,19 +9,6 @@ from django.db.models.signals import pre_save, post_save
 User = settings.AUTH_USER_MODEL
 
 
-# Create your models here.
-"""
-Event
- - title
- - date
- - time
- - timestamp
- - updated
- - worker
- - customer
-
-
-"""
 class EventLength(models.TextChoices):
     HALFHOUR = 0.5, '1/2 Hour'
     ONEHOUR = 1.0, '1 Hour'

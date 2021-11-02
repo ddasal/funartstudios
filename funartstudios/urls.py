@@ -18,6 +18,7 @@ from django.urls import include, path
 from accounts.views import (
     login_view,
     logout_view,
+    profile_view,
     register_view
 )
 from search.views import search_view
@@ -29,7 +30,8 @@ urlpatterns = [
     path('events/', include('events.urls')),
     path('search/', search_view, name='search'),
     path('admin/', admin.site.urls),
-    path('login/', login_view),
-    path('logout/', logout_view),
-    path('register/', register_view),
+    path('login/', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
+    path('register/', register_view, name="register"),
+    path('profile/', profile_view, name="profile"),
 ]
