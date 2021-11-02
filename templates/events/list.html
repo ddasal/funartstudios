@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %} 
+    {{ object.title }}
+{% endblock title %} 
+
+{% block content %}
+<p>
+  <a href="">Create event</a>  
+</p>
+
+ <ul>
+     {% for x in object_list %}
+        {% if x.title %}
+            <li>{{ x.date }} at {{ x.time }}: <a href="">{{ x.title }}</a></li>
+        {% endif %}
+    {% endfor %}
+</ul>
+{% endblock %} 

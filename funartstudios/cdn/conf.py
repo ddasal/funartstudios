@@ -9,5 +9,5 @@ AWS_S3_OBJECT_PARAMETERS = {
 }
 AWS_LOCATION = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 
-DEFAULT_FILE_STORAGE = "trydjango.cdn.backends.MediaRootS3Boto3Storage"
-STATICFILES_STORAGE = "trydjango.cdn.backends.StaticRootS3Boto3Storage"
+DEFAULT_FILE_STORAGE = "funartstudios.cdn.backends.MediaRootS3Boto3Storage"
+STATICFILES_STORAGE = "funartstudios.cdn.backends.StaticRootS3Boto3Storage"
