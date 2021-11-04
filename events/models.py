@@ -2,10 +2,12 @@ from decimal import Decimal
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
-from django.db.models.deletion import SET_NULL
+from django.db.models.deletion import CASCADE, SET_NULL
 from django.db.models.fields import DecimalField
 from django.urls import reverse
 from django.utils import timezone
+
+from products.models import Product
 from .utils import slugify_instance_title
 from django.db.models.signals import pre_save, post_save
 
@@ -108,8 +110,12 @@ class EventStaffRole(models.TextChoices):
 class EventStaff(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=SET_NULL)
-    role = models.CharField(max_length=1, choices=EventStaffRole.choices, default=EventStaffRole.TEAM)
-    hours = models.DecimalField(decimal_places=2, max_digits=4, null=False, blank=False)
+    role = models.CharField(max_length=1, choices=EventStaffRole.choices, default=EventStaffRole.STAGE)
+    hours = models.DecimalField(decimal_places=2, max_digits=4, null=False, blank=False, default=3.5)
+    prepaint_product = models.ForeignKey(Product, on_delete=CASCADE, null=True, blank=True, related_name='prepaint_product', default=5)
+    prepaint_qty = models.IntegerField(default=0, null=True, blank=True)
+    event_product = models.ForeignKey(Product, on_delete=CASCADE, null=True, blank=True, related_name='event_product', default=5)
+    event_qty = models.IntegerField(default=0, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -130,18 +136,29 @@ class EventStaff(models.Model):
         }
         return reverse("events:hx-eventstaff-update", kwargs=kwargs)
 
+    class Meta:
+        ordering = [('-event_qty'), ]
 
+    # def __str__(self):
+    #    return self.user
+       
 class EventCustomerType(models.TextChoices):
-    RESERVATION = 'r', 'Event Reservation(s)'
     HOMEKIT = 'h', 'Twist at Home Kit(s)'
     POPINPAINT = 'p', 'Pop In and Paint(s)'
+    RESERVATION = 'r', 'Event Reservation(s)'
 
 class EventCustomer(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     type = models.CharField(max_length=1, choices=EventCustomerType.choices, default=EventCustomerType.RESERVATION)
     quantity = models.IntegerField(null=False, blank=False)
+    price = models.DecimalField(decimal_places=2, max_digits=5, default=0.0, null=False, blank=False)
+    product = models.ForeignKey(Product, on_delete=CASCADE, null=False, blank=False, related_name='customer_product', default=5)
+    per_customer_qty = models.IntegerField(default=1, null=False, blank=False)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = [('-type'),('-quantity'), ]
 
     def get_absolute_url(self):
         return self.event.get_absolute_url()

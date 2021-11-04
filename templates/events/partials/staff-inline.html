@@ -1,9 +1,32 @@
 <div id="staff-{{object.id}}">
-    {{ object.user.first_name }} as {{ object.get_role_display }}.
-    {% if perms.events.change_eventstaff %} 
-    <button class="btn btn-outline-primary" hx-trigger='click' hx-get='{{ object.get_htmx_edit_url }}' hx-target='#staff-{{object.id}}'>Edit</button>
-    {% endif %}
-    {% if perms.events.delete_eventstaff %}
-    <a class="btn btn-outline-danger" hx-confirm='Remove {{object.user.first_name }} {{object.user.last_name}} from event?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#staff-{{object.id}}' hx-swap='outerHTML'>Remove</a>
-    {% endif %} 
+    <table class="table table-sm table-striped">
+        <thead>
+            <tr>
+                <td><b>{{ object.user.first_name }} as {{ object.get_role_display }}</b></td>
+                <td style="text-align: right;">{% if perms.events.change_eventstaff %} 
+                    <button class="btn btn-outline-primary" hx-trigger='click' hx-get='{{ object.get_htmx_edit_url }}' hx-target='#staff-{{object.id}}'>Edit</button>
+                    {% endif %}
+                    {% if perms.events.delete_eventstaff %}
+                    <a class="btn btn-outline-danger" hx-confirm='Remove {{object.user.first_name }} {{object.user.last_name}} from event?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#staff-{{object.id}}' hx-swap='outerHTML'>Remove</a>
+                    {% endif %} 
+                </td>
+            </tr>
+        </thead>
+        <tbody class="table-striped">
+            {% if object.prepaint_qty > 0 %} 
+            <tr>
+                <td colspan="2">
+                    - Pre-painted on {{ object.prepaint_qty }} x {{object.prepaint_product }}<br />
+                </td>
+            </tr>
+            {% endif %} 
+            {% if object.event_qty > 0 %}
+            <tr>
+                <td colspan="2">
+                    - Event painted on {{ object.event_qty }} x {{ object.event_product }} <br />
+                </td>
+            </tr>
+            {% endif %} 
+        </tbody>
+    </table>
 </div>

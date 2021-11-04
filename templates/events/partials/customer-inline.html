@@ -1,9 +1,28 @@
 <div id="customer-{{object.id}}">
-    {{ object.quantity }} x {{ object.get_type_display }}.
-    {% if perms.events.change_eventcustomer %} 
-    <button class="btn btn-outline-primary" hx-trigger='click' hx-get='{{ object.get_htmx_edit_url }}' hx-target='#customer-{{object.id}}'>Edit</button>
-    {% endif %}
-    {% if perms.events.delete_eventcustomer %}
-    <a class="btn btn-outline-danger" hx-confirm='Remove {{object.quantity }} x {{object.get_type_display }} from event?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#customer-{{object.id}}' hx-swap='outerHTML'>Remove</a>
-    {% endif %} 
+    <table class="table table-sm table-striped">
+        <thead>
+            <tr>
+                <td><b>{{ object.quantity }} x {{ object.get_type_display }} at ${{ object.price }} each</b></td>
+                <td style="text-align: right;">
+                    {% if perms.events.change_eventcustomer %} 
+                    <button class="btn btn-outline-primary" hx-trigger='click' hx-get='{{ object.get_htmx_edit_url }}' hx-target='#customer-{{object.id}}'>Edit</button>
+                    {% endif %}
+                    {% if perms.events.delete_eventcustomer %}
+                    <a class="btn btn-outline-danger" hx-confirm='Remove {{object.quantity }} x {{object.get_type_display }} from event?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#customer-{{object.id}}' hx-swap='outerHTML'>Remove</a>
+                    {% endif %}
+                </td>
+            </tr>
+        </thead>
+        <tbody class="table-striped">
+            {% if object.quantity > 0 %} 
+            <tr>
+                <td colspan="2">
+                    - Each using {{ object.per_customer_qty }} x {{object.product }}<br />
+                </td>
+            </tr>
+            {% endif %} 
+        </tbody>
+    </table>
 </div>
+
+

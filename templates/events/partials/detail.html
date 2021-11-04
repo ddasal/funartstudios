@@ -13,7 +13,7 @@
             Last updated on : {{ object.updated }}<br /></p>
         
         <p>Customer Credit Card Tips: ${{ object.credit_tips }}<br />
-        To Be Paid/Shared Credit Card Tips: ${{ object.credit_tips_reduced }}</p>
+        To Be Paid/Shared Tips (minus fees): ${{ object.credit_tips_reduced }}</p>
     </div>
 
 
@@ -31,7 +31,7 @@
                 <button class="btn btn-outline-success" hx-get="{{ new_customer_url }}" hx-trigger="click" hx-target="#customer-list" hx-swap="beforeend">Add Customer(s)</button>
             {% endif %} 
     </div>
-    <div class='{% if object.id %}col-6 col-md-4 {% else %} d-none {% endif %}'>
+    <div class='col-6 col-md-4'>
         <h3>Event Staff</h3>
             <div id="staff-list">
                 {% for staff in object.get_eventstaff_children %}
