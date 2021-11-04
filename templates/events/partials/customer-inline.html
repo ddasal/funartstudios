@@ -1,0 +1,9 @@
+<div id="customer-{{object.id}}">
+    {{ object.quantity }} x {{ object.get_type_display }}.
+    {% if perms.events.change_eventcustomer %} 
+    <button class="btn btn-outline-primary" hx-trigger='click' hx-get='{{ object.get_htmx_edit_url }}' hx-target='#customer-{{object.id}}'>Edit</button>
+    {% endif %}
+    {% if perms.events.delete_eventcustomer %}
+    <a class="btn btn-outline-danger" hx-confirm='Remove {{object.quantity }} x {{object.get_type_display }} from event?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#customer-{{object.id}}' hx-swap='outerHTML'>Remove</a>
+    {% endif %} 
+</div>

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %} 
+{% if object.title %}
+    {{ object.title }}
+{% else %}
+    Create Event
+{% endif %} 
+{% endblock title %} 
+
+{% block content %}
+
+<style>
+    .staff-form {
+        border-bottom: 1px solid black;
+    }
+    .hidden {
+        display: none;
+    }
+</style>
+
+
+
+<div class="row">
+    <div class='{% if object.id %}col-6 col-md-6 {% else %} col-md-6 mx-auto {% endif %}'>
+        {% if not object.slug %}
+            <h2>Create Event</h2>
+        {% else %}
+            <h2>Event Details
+                <small>
+                    {% if perms.events.change_event %}
+                    <a class="btn btn-outline-secondary" href="{{ object.get_absolute_url }}">Return</a>
+                    {% endif %} 
+                </small>    
+            </h2>
+        {% endif %}
+
+    {% include 'events/partials/forms.html' %}
+    </div>
+    <div class='{% if object.id %}col-6 col-md-4 {% else %} d-none {% endif %}'>
+        <h3>Event Staff</h3>
+            <div id="staff-list">
+                {% for staff in object.get_eventstaff_children %}
+                    {% include 'events/partials/staff-inline.html' with object=staff %}
+                {% endfor %} 
+            </div>
+
+            {% if new_staff_url %}
+                <button class="btn btn-outline-success" hx-get="{{ new_staff_url }}" hx-trigger="click" hx-target="#staff-list" hx-swap="beforeend">Add Staff</button>
+            {% endif %} 
+    </div>
+</div>
+
+<script>
+    
+    // const addMoreBtn = document.getElementById('add-more')
+    document.addEventListener('click', (event)=> {
+        // console.log(event.target, event.target.id)
+        if (event.target.id == 'add-more') {
+            add_new_form(event)
+        }
+    })
+    // addMoreBtn.addEventListener('click', add_new_form)
+
+    function add_new_form(args) {
+        // console.log(args) // print equivalent
+        if (event) {
+            event.preventDefault() // this stops "submit" from happening if mistakenly using submit button type
+        }
+        const totalNewForms = document.getElementById('id_form-TOTAL_FORMS')
+        const currentStaffForms = document.getElementsByClassName('staff-form')
+        const currentFormCount = currentStaffForms.length // + 1
+        console.log(currentFormCount)
+        const formCopyTarget = document.getElementById('staff-form-list')
+        const copyEmptyFormEl = document.getElementById('empty-form').cloneNode(true)
+        copyEmptyFormEl.setAttribute('class', 'staff-form')
+        copyEmptyFormEl.setAttribute('id', `form-${currentFormCount}`)
+        const regex = new RegExp('__prefix__', 'g')
+        copyEmptyFormEl.innerHTML = copyEmptyFormEl.innerHTML.replace(regex,currentFormCount)
+        totalNewForms.setAttribute('value', currentFormCount + 1)
+        // now add a new empty form element to the html form
+        formCopyTarget.append(copyEmptyFormEl)
+    }
+
+</script>
+
+{% endblock %} 

@@ -1,19 +1,74 @@
 {% extends "base.html" %}
 
 {% block title %} 
-    {{ object.title }}
+    Events List
 {% endblock title %} 
 
 {% block content %}
-<p>
-  <a href="">Create event</a>  
-</p>
+<div class="row">
+    <div class='col-12'>
+        {% if perms.events.add_event %} 
+        <p>
+        <a class="btn btn-outline-success" href="{% url 'events:create' %}">Create event</a>  
+        </p>
+        {% endif %} 
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Event Title</th>
+                    <th>Customers</th>
+                    <th>Staff</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for x in events %}
+            <tr>
+                {% if x.title %}
+                    <td>{{ x.date }}</td>
+                    <td>{{ x.time }}</td>
+                    <td><a href="{% url 'events:detail' slug=x.slug %}">{{ x.title }}</a></td>
+                    <td>
+                        {% for customer in x.get_eventcustomer_children %}
+                            {{ customer.quantity }} x {{ customer.get_type_display }}<br />
+                        {% endfor %} 
+                    </td>
+                    <td>
+                        {% for staff in x.get_eventstaff_children %}
+                            {{ staff.user.first_name }} as {{ staff.get_role_display }}<br />
+                        {% endfor %} 
+                    </td>
+                    {% endif %}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
 
- <ul>
-     {% for x in object_list %}
-        {% if x.title %}
-            <li>{{ x.date }} at {{ x.time }}: <a href="">{{ x.title }}</a></li>
+        <div style="margin-top: 15px;">
+        {% if events.has_other_pages %}
+        <ul class="pagination pagination ">
+            {% if events.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ events.previous_page_number }}">Previous</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link">Previous</a></li>
+            {% endif %}
+            {% for i in events.paginator.page_range %}
+            {% if events.number == i %}
+                <li class="page-item active"><a class="page-link">{{ i }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if events.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ events.next_page_number }}">Next</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link">Next</a></li>
+            {% endif %}
+        </ul>
         {% endif %}
-    {% endfor %}
-</ul>
-{% endblock %} 
+        Total Event Count: {{ event_count }}
+        </div>
+    </div>
+</div>
+{% endblock content %} 

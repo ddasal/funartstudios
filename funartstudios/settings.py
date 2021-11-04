@@ -61,7 +61,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'funartstudios.urls'
-LOGIN_URL = '/login/'
+LOGIN_URL = '/account/login/'
 
 TEMPLATES = [
     {
@@ -155,12 +155,14 @@ USE_TZ = True
 
 TIME_INPUT_FORMATS = [
   #  '%I:%M:%S %p',  # 6:22:44 PM
-    '%I:%M %p',  # 6:22 PM
+    # '%I:%M %p',  # 6:22 PM
   #  '%I %p',  # 6 PM
   #  '%H:%M:%S',     # '14:30:59'
   #  '%H:%M:%S.%f',  # '14:30:59.000200'
-  #  '%H:%M',        # '14:30'
+   '%H:%M',        # '14:30'
 ]
+
+TIME_FORMAT = 'I:M p'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

@@ -1,10 +1,29 @@
-Searched for {{ request.GET.q }} under {{ request.GET.type|title }}s
-{% for object in queryset %} 
-    <li><a href="{{object.get_absolute_url}}">{{object.name}}</a></li>
-    {% empty %}
-    <li>No results found</li>
-{% endfor %} 
+{% if request.GET.q is None %} 
+    <p class="lead">Please enter a valid search</p>
+{% else %} 
+    {% if request.GET.type == "event" %}
+        <p class="lead">Searched for "{{ request.GET.q }}" under {{ request.GET.type|title }}s</p>
+        <ul>
+            {% for object in queryset %} 
+                <li>{{ object.date}} : <a href="{{object.get_absolute_url}}">{{object.name}}</a></li>
+                {% empty %}
+                <li>No results found</li>
+            {% endfor %} 
+        </ul>
 
-{% if request.htmx %} 
-    <a href="/search/?q={{ request.GET.q}}&type={{request.GET.type }}">View all</a>
+    {% elif request.GET.type == "article" %}
+        <p class="lead">Searched for "{{ request.GET.q }}" under {{ request.GET.type|title }}s</p>
+        <ul>
+            {% for object in queryset %} 
+                <li>{{ object.date}} : <a href="{{object.get_absolute_url}}">{{object.name}}</a></li>
+                {% empty %}
+                <li>No results found</li>
+            {% endfor %} 
+        </ul>
+
+
+    {% endif %}  
+    {% if request.htmx %} 
+        <a href="/search/?q={{ request.GET.q}}&type={{request.GET.type }}">View all</a>
+    {% endif %} 
 {% endif %} 

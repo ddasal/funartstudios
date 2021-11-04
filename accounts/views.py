@@ -25,14 +25,14 @@ def login_view(request):
 def logout_view(request):
     if request.method == "POST":
         logout(request)
-        return redirect('/login/')
+        return redirect('/account/login/')
     return render(request, "accounts/logout.html", {})
 
 def register_view(request):
     form = UserCreationForm(request.POST or None)
     if form.is_valid():
         user_obj = form.save()
-        return redirect('/login')
+        return redirect('/account/login/')
     context = {
         "form": form
     }

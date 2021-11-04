@@ -1,6 +1,9 @@
+from decimal import Decimal
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
+from django.db.models.deletion import SET_NULL
+from django.db.models.fields import DecimalField
 from django.urls import reverse
 from django.utils import timezone
 from .utils import slugify_instance_title
@@ -23,7 +26,7 @@ class EventLength(models.TextChoices):
 class EventType(models.TextChoices):
     INTERNAL = 'i', 'Internal Event'
     PWAP = 'c', 'Painting with a Purpose Event'
-    STANDARD = 's', 'Stanrd Event'
+    STANDARD = 's', 'Standard Event'
     PAINTPOUR = 'p', 'Paint Pour Event'
     TAXFREE = 't', 'Other Tax Free Event'
 
@@ -44,14 +47,21 @@ class EventManager(models.Manager):
 class Event(models.Model):
     title = models.CharField(max_length=50, null=False, blank=False)
     date = models.DateField(null=False, blank=False, default=timezone.now, auto_now=False, auto_now_add=False)
-    time = models.TimeField(null=False, blank=False, default=timezone.now)
+    time = models.TimeField(auto_now=False, auto_now_add=False, null=False, blank=False)
     length = models.CharField(max_length=4, choices=EventLength.choices, default=EventLength.TWOHOUR)
     type = models.CharField(max_length=1, choices=EventType.choices, default=EventType.STANDARD)
     slug = models.SlugField(null=True, blank=True, unique=True)
+    credit_tips =models.DecimalField(decimal_places=2, max_digits=5, null=False, blank=False, default=0.00)
+    credit_tips_reduced =models.DecimalField(decimal_places=2, max_digits=5, null=False, blank=False, default=0.00)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
 
     objects = EventManager()
+
+    @property
+    def name(self):
+        return self.title
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -59,7 +69,24 @@ class Event(models.Model):
     def get_absolute_url(self):
         return reverse("events:detail", kwargs={"slug" : self.slug})
 
+    def get_hx_url(self):
+        return reverse("events:hx-detail", kwargs={"slug": self.slug})
 
+    def get_edit_url(self):
+        return reverse("events:update", kwargs={"slug": self.slug})
+
+    def get_delete_url(self):
+        return reverse("events:delete", kwargs={"slug": self.slug})
+
+    def get_eventstaff_children(self):
+        return self.eventstaff_set.all()
+
+    def get_eventcustomer_children(self):
+        return self.eventcustomer_set.all()
+
+    def save(self, *args, **kwargs):
+        self.credit_tips_reduced = self.credit_tips * Decimal(.97)
+        super().save(*args, **kwargs)
 
 def event_pre_save(sender, instance, *args, **kwargs):
     if instance.slug is None:
@@ -72,3 +99,63 @@ def event_post_save(sender, instance, created, *args, **kwargs):
         slugify_instance_title(instance, save=True)
 
 post_save.connect(event_post_save, sender=Event)
+
+class EventStaffRole(models.TextChoices):
+    FLOOR = 'f', 'Floor Artist'
+    STAGE = 's', 'Stage Artist'
+    TEAM = 't', 'Team Member'
+
+class EventStaff(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=SET_NULL)
+    role = models.CharField(max_length=1, choices=EventStaffRole.choices, default=EventStaffRole.TEAM)
+    hours = models.DecimalField(decimal_places=2, max_digits=4, null=False, blank=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        return self.event.get_absolute_url()
+
+    def get_delete_url(self):
+        kwargs = {
+            "parent_slug": self.event.slug,
+            "id": self.id
+        }
+        return reverse("events:eventstaff-delete", kwargs=kwargs)
+
+    def get_htmx_edit_url(self):
+        kwargs = {
+            "parent_slug": self.event.slug,
+            "id": self.id
+        }
+        return reverse("events:hx-eventstaff-update", kwargs=kwargs)
+
+
+class EventCustomerType(models.TextChoices):
+    RESERVATION = 'r', 'Event Reservation(s)'
+    HOMEKIT = 'h', 'Twist at Home Kit(s)'
+    POPINPAINT = 'p', 'Pop In and Paint(s)'
+
+class EventCustomer(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    type = models.CharField(max_length=1, choices=EventCustomerType.choices, default=EventCustomerType.RESERVATION)
+    quantity = models.IntegerField(null=False, blank=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        return self.event.get_absolute_url()
+
+    def get_delete_url(self):
+        kwargs = {
+            "parent_slug": self.event.slug,
+            "id": self.id
+        }
+        return reverse("events:eventcustomer-delete", kwargs=kwargs)
+
+    def get_htmx_edit_url(self):
+        kwargs = {
+            "parent_slug": self.event.slug,
+            "id": self.id
+        }
+        return reverse("events:hx-eventcustomer-update", kwargs=kwargs)

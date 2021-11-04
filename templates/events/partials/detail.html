@@ -1,0 +1,55 @@
+<div class="row">
+    <div class="col-12 col-md-6">
+        <h2>{{object.title}}
+            {% if object.get_edit_url %}
+            <small>
+                {% if perms.events.change_event %}
+                <a class="btn btn-outline-primary" href="{{ object.get_edit_url }}">Edit</a>
+                {% endif %} 
+            </small>
+            {% endif %}
+        </h2> 
+        <p><span class="lead">{{ object.get_length_display }} {{ object.get_type_display }} on <b>{{ object.date }}</b> at {{ object.time }} </span><br />
+            Last updated on : {{ object.updated }}<br /></p>
+        
+        <p>Customer Credit Card Tips: ${{ object.credit_tips }}<br />
+        To Be Paid/Shared Credit Card Tips: ${{ object.credit_tips_reduced }}</p>
+    </div>
+
+
+</div>
+
+<div class="row">
+    <div class="col-12 col-md-6">
+        <h3>Event Customer(s)</h3>
+            <div id="customer-list">
+                {% for customer in object.get_eventcustomer_children %}
+                    {% include 'events/partials/customer-inline.html' with object=customer %}
+                {% endfor %} 
+            </div>
+            {% if new_customer_url %}
+                <button class="btn btn-outline-success" hx-get="{{ new_customer_url }}" hx-trigger="click" hx-target="#customer-list" hx-swap="beforeend">Add Customer(s)</button>
+            {% endif %} 
+    </div>
+    <div class='{% if object.id %}col-6 col-md-4 {% else %} d-none {% endif %}'>
+        <h3>Event Staff</h3>
+            <div id="staff-list">
+                {% for staff in object.get_eventstaff_children %}
+                    {% include 'events/partials/staff-inline.html' with object=staff %}
+                {% endfor %} 
+            </div>
+            {% if new_staff_url %}
+                <button class="btn btn-outline-success" hx-get="{{ new_staff_url }}" hx-trigger="click" hx-target="#staff-list" hx-swap="beforeend">Add Staff</button>
+            {% endif %} 
+
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-12 col-md-4" style="margin-top: 20px;">
+        {% if perms.events.delete_event %}
+           <p><a class="btn btn-outline-danger" href="{{ object.get_delete_url }}" hx-post="{{ object.get_delete_url }}" hx-confirm='THIS CANNOT BE UNDONE: Are you sure you want to delete {{ object.name }}?' hx-trigger="click">Delete Event</a></p> 
+        {% endif %}
+    </div>
+</div>

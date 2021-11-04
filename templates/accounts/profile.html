@@ -6,11 +6,11 @@
 
 {% block content %}
 {% if request.user.is_authenticated %} 
-<div style="margin-top: 30px">
+<div >
     <form method="POST" action="">{% csrf_token %}
         {{ form.as_p }}
         <div>
-            <button type="submit">Change</button>
+            <button type="submit">Change and logout</button>
         </div>
     </form>
 </div>

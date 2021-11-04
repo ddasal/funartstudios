@@ -1,12 +1,17 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import permission_required
 from events.models import Event
+from articles.models import Article
 
 SEACH_TYPE_MAPPING = {
+    'event': Event,
     'events': Event,
-    'events': Event
+    'article': Article,
+    'articles': Article
 }
 
 # Create your views here.
+@permission_required('events.view_event')
 def search_view(request):
     query = request.GET.get('q')
     search_type = request.GET.get('type')

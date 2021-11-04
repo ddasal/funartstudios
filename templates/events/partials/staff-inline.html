@@ -1,0 +1,9 @@
+<div id="staff-{{object.id}}">
+    {{ object.user.first_name }} as {{ object.get_role_display }}.
+    {% if perms.events.change_eventstaff %} 
+    <button class="btn btn-outline-primary" hx-trigger='click' hx-get='{{ object.get_htmx_edit_url }}' hx-target='#staff-{{object.id}}'>Edit</button>
+    {% endif %}
+    {% if perms.events.delete_eventstaff %}
+    <a class="btn btn-outline-danger" hx-confirm='Remove {{object.user.first_name }} {{object.user.last_name}} from event?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#staff-{{object.id}}' hx-swap='outerHTML'>Remove</a>
+    {% endif %} 
+</div>

@@ -3,7 +3,11 @@
 {% endblock title %} 
 
 {% block content %} 
-    <ul>
-    {% include 'search/partials/results.html' %}
-    </ul>
+    {% if message %} 
+        {{ message }}
+    {% else %} 
+        <ul>
+        {% include 'search/partials/results.html' %}
+        </ul>
+    {% endif %} 
 {% endblock content %} 
