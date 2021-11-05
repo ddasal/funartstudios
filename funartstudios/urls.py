@@ -23,6 +23,7 @@ urlpatterns = [
     path('', home_view), # index / root / home
     path('account/', include('accounts.urls')),
     path('events/', include('events.urls')),
+    path('products/', include('products.urls')),
     path('search/', search_view, name='search'),
     path('admin/', admin.site.urls),
 ]

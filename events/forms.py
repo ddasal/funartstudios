@@ -2,6 +2,8 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils.encoding import smart_text
 from django import forms
+
+from products.models import Product
 from .models import Event, EventCustomer, EventStaff
 
 class DateInput(forms.DateInput):
@@ -27,7 +29,8 @@ class EventForm(forms.ModelForm):
             self.fields[str(field)].widget.attrs.update(
                 new_data
             )
-        
+        self.fields['active'].widget.attrs.update({'class': 'form-check'})
+
 
 class UserFullnameChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
@@ -52,6 +55,10 @@ class EventStaffForm(forms.ModelForm):
             self.fields[str(field)].widget.attrs.update(
                 new_data
             )
+        self.fields['prepaint_product'].queryset = self.fields['prepaint_product'].queryset.exclude(active=False)
+        self.fields['event_product'].queryset = self.fields['event_product'].queryset.exclude(active=False)
+        # self.fields['to_user'].queryset = self.fields['to_user'].queryset.exclude(id=current_user.id)
+
 
 class EventCustomerForm(forms.ModelForm):
     error_css_class = 'error-field'
