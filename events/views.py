@@ -12,7 +12,7 @@ from.models import Event, EventCustomer, EventStaff
 
 @permission_required('events.view_event')
 def event_list_view(request):
-    qs = Event.objects.all().order_by('-date', '-time')
+    qs = Event.objects.filter(active=True).order_by('-date', '-time')
     page = request.GET.get('page', 1)
 
     paginator = Paginator(qs, 10)

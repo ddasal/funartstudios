@@ -17,7 +17,7 @@ class EventForm(forms.ModelForm):
     required_css_class = 'required-field'
     class Meta:
         model = Event
-        fields = ['title', 'date', 'time', 'length', 'type', 'credit_tips']
+        fields = ['title', 'date', 'time', 'length', 'type', 'credit_tips', 'active']
         widgets = {'date': DateInput(), 'time': TimeInput()}
 
     def __init__(self, *args, **kwargs):
@@ -77,3 +77,4 @@ class EventCustomerForm(forms.ModelForm):
             self.fields[str(field)].widget.attrs.update(
                 new_data
             )
+        self.fields['product'].queryset = self.fields['product'].queryset.exclude(active=False)
