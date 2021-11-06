@@ -119,10 +119,15 @@ class PurchaseItem(models.Model):
     purchase_order = models.ForeignKey(PurchaseOrder, on_delete=CASCADE)
     product = models.ForeignKey(Product, on_delete=CASCADE)
     price_each = models.DecimalField(decimal_places=2, max_digits=5, null=False, blank=False, default=0.00)
+    date = models.DateField(null=False, blank=False, default=timezone.now, auto_now=False, auto_now_add=False)
     purchased_quantity = models.IntegerField(null=False, blank=False, default=0)
     received_quantity = models.IntegerField(null=False, blank=False, default=0)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        self.date = self.purchase_order.date
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return self.purchase_order.get_absolute_url()

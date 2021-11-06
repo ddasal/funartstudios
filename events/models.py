@@ -7,7 +7,7 @@ from django.db.models.fields import DecimalField
 from django.urls import reverse
 from django.utils import timezone
 
-from products.models import Product
+from products.models import Product, PurchaseItem
 from .utils import slugify_instance_title
 from django.db.models.signals import pre_save, post_save
 from accounts.models import UserProfile, UserPay
@@ -213,6 +213,7 @@ class EventCustomer(models.Model):
     product = models.ForeignKey(Product, on_delete=CASCADE, null=False, blank=False, related_name='customer_product', default=5)
     per_customer_qty = models.IntegerField(default=1, null=False, blank=False)
     subtotal_price = models.DecimalField(decimal_places=2, max_digits=6, default=0.0, null=False, blank=False)
+    cost_factor = models.DecimalField(decimal_places=2, max_digits=5, default=0.0, null=True, blank=True)
     taxes = models.DecimalField(decimal_places=2, max_digits=5, default=0.0, null=False, blank=False)
     total_price = models.DecimalField(decimal_places=2, max_digits=6, default=0.0, null=False, blank=False)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -239,6 +240,7 @@ class EventCustomer(models.Model):
         return reverse("events:hx-eventcustomer-update", kwargs=kwargs)
 
     def save(self, *args, **kwargs):
+
         self.subtotal_price = self.quantity * self.price
         if self.type == 'h':
             self.taxes = self.subtotal_price * self.event.tax_rate
@@ -247,7 +249,9 @@ class EventCustomer(models.Model):
             self.taxes = self.subtotal_price * self.event.tax_rate
             self.total_price = self.subtotal_price + self.taxes
         elif self.type == 'r':
-            self.taxes = self.subtotal_price * self.event.tax_rate
+            cost_factor = list(PurchaseItem.objects.values_list('price_each').filter(product=self.product, date__lte=self.event.date).order_by('-date').first())
+            self.cost_factor = cost_factor[0] * self.quantity
+            self.taxes = self.cost_factor * self.event.tax_rate
             self.total_price = self.subtotal_price
 
         super().save(*args, **kwargs)
