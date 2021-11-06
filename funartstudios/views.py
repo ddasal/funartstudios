@@ -1,10 +1,10 @@
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator, EmptyPage,PageNotAnInteger
 from django.http import HttpResponse
 from django.shortcuts import render
 from events.models import Event
 
-@permission_required('events.view_event')
+@login_required
 def home_view(request, *args, **kwargs):
     queryset = Event.objects.all().order_by('-date')
     context = {

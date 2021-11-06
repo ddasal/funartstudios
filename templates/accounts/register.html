@@ -6,16 +6,28 @@
 
 {% block content %}
 {% if not request.user.is_authenticated %} 
-<div style="margin-top: 30px">
-    <form method="POST" action="">{% csrf_token %}
-        {{ form.as_p }}
-        <div>
-            <button type="submit">Register</button>
-        </div>
-    </form>
-    <p>Already have an account? Please <a href="{% url 'account:login' %}">login</a>.</p>
+<div class="row">
+    <div class='col-12 col-md-8'>
+            <h3>New Account Registration</h3>
+            <form method="POST" action="">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {{ user_form.as_p }}
+                <button type="submit">Register</button>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-8" style="margin-top: 10px">   
+        <p>Already have an account? Please <a href="{% url 'account:login' %}">login</a>.</p>
+    </div>
 </div>
 {% else %} 
-<p>You're already logged in and cannot register. Would you like to <a href="{% url 'account:logout' %}">logout</a>?</p>
+<div class="row">
+    <div class="col-12 col-md-8">
+        <h3>Registration Page</h3>
+        <p class="lead">You're already logged in and cannot register. Would you like to <a href="{% url 'account:logout' %}">logout</a>?</p>
+    </div>
+</div>
 {% endif %} 
 {% endblock %} 

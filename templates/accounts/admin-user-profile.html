@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %} 
+    Edit Staff
+{% endblock title %} 
+
+{% block content %}
+        <div class="row">
+            <div class='col-12 col-md-6'>
+                <h3>{{ object.user.first_name }} {{ object.user.last_name }}'s Profile
+                    {% if perms.accounts.change_userprofile %}
+                    <a class="btn btn-outline-secondary" href="{% url 'account:staff' %}">Return</a>
+                    {% endif %} 
+                </h3>
+                {% include 'accounts/partials/forms.html' %}
+            </div>
+        </div>
+{% endblock %} 

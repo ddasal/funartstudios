@@ -57,8 +57,6 @@ class EventStaffForm(forms.ModelForm):
             )
         self.fields['prepaint_product'].queryset = self.fields['prepaint_product'].queryset.exclude(active=False)
         self.fields['event_product'].queryset = self.fields['event_product'].queryset.exclude(active=False)
-        # self.fields['to_user'].queryset = self.fields['to_user'].queryset.exclude(id=current_user.id)
-
 
 class EventCustomerForm(forms.ModelForm):
     error_css_class = 'error-field'

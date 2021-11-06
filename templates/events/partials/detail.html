@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-12 col-md-6">
+    <div class="col-12 col-md-10">
         <h2>{{object.title}}
             {% if object.get_edit_url %}
             <small>
@@ -13,7 +13,8 @@
             Last updated on : {{ object.updated }}<br /></p>
         
         <p>Customer Credit Card Tips: ${{ object.credit_tips }}<br />
-        To Be Paid/Shared Tips (minus fees): ${{ object.credit_tips_reduced }}</p>
+        To Be Paid/Shared Tips (minus fees): ${{ object.credit_tips_reduced }}<br />
+        Effective Tax Rate: {{ object.tax_rate_percentage }}%</p>
     </div>
 
 
@@ -27,8 +28,10 @@
                     {% include 'events/partials/customer-inline.html' with object=customer %}
                 {% endfor %} 
             </div>
-            {% if new_customer_url %}
-                <button class="btn btn-outline-success" hx-get="{{ new_customer_url }}" hx-trigger="click" hx-target="#customer-list" hx-swap="beforeend">Add Customer(s)</button>
+            {% if perms.events.add_eventcustomer %}
+                {% if new_customer_url %}
+                    <button class="btn btn-outline-success" hx-get="{{ new_customer_url }}" hx-trigger="click" hx-target="#customer-list" hx-swap="beforeend">Add Customer(s)</button>
+                {% endif %} 
             {% endif %} 
     </div>
     <div class='col-6 col-md-4'>
@@ -38,10 +41,11 @@
                     {% include 'events/partials/staff-inline.html' with object=staff %}
                 {% endfor %} 
             </div>
-            {% if new_staff_url %}
-                <button class="btn btn-outline-success" hx-get="{{ new_staff_url }}" hx-trigger="click" hx-target="#staff-list" hx-swap="beforeend">Add Staff</button>
+            {% if perms.events.add_eventstaff %}
+                {% if new_staff_url %}
+                    <button class="btn btn-outline-success" hx-get="{{ new_staff_url }}" hx-trigger="click" hx-target="#staff-list" hx-swap="beforeend">Add Staff</button>
+                {% endif %} 
             {% endif %} 
-
     </div>
 
 </div>

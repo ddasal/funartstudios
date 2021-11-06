@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %} 
+    Staff List
+{% endblock title %} 
+
+{% block content %}
+<div class="row">
+    <div class='col-12'>
+        <h3>Staff Directory</h3>
+        {% if perms.accounts.view_userprofile %} 
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Mobile Phone</th>
+                    <th>Home Phone</th>
+                    <th>Email</th>
+                    <th>Emergency Contact(s)</th>
+                    <th>Emergency Phone(s)</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for x in accounts %}
+            <tr>
+                    <td>
+                        {% if perms.accounts.change_userprofile %} 
+                            <a href="{% url 'account:profile-admin-edit' id=x.id %}">{{ x.user.first_name }} {{ x.user.last_name }}</a>
+                        {% else %} 
+                            {{ x.user.first_name }} {{ x.user.last_name }}
+                        {% endif %}
+                    </td>
+                    <td>{{ x.phone_mobile }}</td>
+                    <td>{{ x.phone_home }}</td>             
+                    <td>{{ x.user.email }}</td>
+                    <td>
+                        {{ x.emergency_contact_name_1 }}<br />
+                        {{ x.emergency_contact_name_2 }}
+                    </td>
+                    <td>
+                        {{ x.emergency_contact_number_1 }}<br />
+                        {{ x.emergency_contact_number_2 }}
+                    </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="margin-top: 15px;">
+        {% if accounts.has_other_pages %}
+        <ul class="pagination pagination ">
+            {% if accounts.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ accounts.previous_page_number }}">Previous</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link">Previous</a></li>
+            {% endif %}
+            {% for i in accounts.paginator.page_range %}
+            {% if accounts.number == i %}
+                <li class="page-item active"><a class="page-link">{{ i }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if events.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ accounts.next_page_number }}">Next</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link">Next</a></li>
+            {% endif %}
+        </ul>
+        {% endif %}
+        Total Staff Count: {{ account_count }}
+        </div>
+    </div>
+    {% endif %} 
+</div>
+{% endblock content %} 

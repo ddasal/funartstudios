@@ -1,0 +1,30 @@
+<div id="event-container">
+    <form method="POST" action="." hx-post='.' hx-swap='outerHTML' hx-trigger="{% if form.instance.id %}change delay:500ms,{% endif %} submit">
+
+    {% csrf_token %}
+    <div class='{% if field.field.required %}{{form.required_css_class}}{% endif %}'>
+        {% for field in user_form %} 
+            {{ field.errors }}
+            {{ field.label_tag }} {{field}}
+            {% if field.help_text %} 
+                <p class="help">{{ field.help_text|safe }}</p>
+            {% endif %}
+        {% endfor %} 
+
+        {% for field in profile_form %} 
+            {{ field.errors }}
+            {{ field.label_tag }} {{field}}
+            {% if field.help_text %} 
+                <p class="help">{{ field.help_text|safe }}</p>
+            {% endif %}
+        {% endfor %} 
+    </div>
+
+        <div class="htmx-indicator">Loading...</div>
+        <button class="btn btn-outline-primary" class="htmx-inverted-indicator" type="submit">Save</button>
+        {% if message %} 
+            <p>{{ message }}</p>
+        {% endif %}
+
+    </form>
+</div>

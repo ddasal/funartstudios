@@ -1,8 +1,13 @@
 from django.db import models
+from django.db.models.deletion import CASCADE, SET_NULL
 from django.urls import reverse
 from django.db.models import Q
+from django.utils import timezone
 from events.utils import slugify_instance_title
 from django.db.models.signals import pre_save, post_save
+from django.conf import settings
+User = settings.AUTH_USER_MODEL
+
 
 # Create your models here.
 
@@ -36,6 +41,8 @@ class Product(models.Model):
     low_alert_level = models.IntegerField(default=40, null=False, blank=False)
     slug = models.SlugField(null=True, blank=True, unique=True)
     active = models.BooleanField(default=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     objects = ProductManager()
 
@@ -75,3 +82,61 @@ def product_post_save(sender, instance, created, *args, **kwargs):
         slugify_instance_title(instance, save=True)
 
 post_save.connect(product_post_save, sender=Product)
+
+class Suppliers(models.TextChoices):
+    ARTDISTRIBUTORS = 'a', 'Art Supply Distributors'
+    DIVERSEWOOD = 'd', 'Diverse Woodworking'
+    HOBBYLOBBY = 'h', 'Hobby Lobby'
+    PGDUNN = 'p', 'P. Graham Dunn'
+    TDART = 't', 'TD Art Supply'
+    OTHER = 'o', 'Other'
+
+class PurchaseOrder(models.Model):
+    date = models.DateField(null=False, blank=False, default=timezone.now, auto_now=False, auto_now_add=False)
+    supplier = models.CharField(max_length=1, choices=Suppliers.choices, default=Suppliers.TDART)
+    user = models.ForeignKey(User, null=True, on_delete=SET_NULL)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        return reverse("products:po-detail", kwargs={"id" : self.id})
+
+    def get_hx_url(self):
+        return reverse("products:hx-po-detail", kwargs={"id": self.id})
+
+    def get_edit_url(self):
+        return reverse("products:po-update", kwargs={"id": self.id})
+
+    def get_delete_url(self):
+        return reverse("products:po-delete", kwargs={"id": self.id})
+
+    def get_purchaseitem_children(self):
+        return self.purchaseitem_set.all()
+
+
+
+class PurchaseItem(models.Model):
+    purchase_order = models.ForeignKey(PurchaseOrder, on_delete=CASCADE)
+    product = models.ForeignKey(Product, on_delete=CASCADE)
+    price_each = models.DecimalField(decimal_places=2, max_digits=5, null=False, blank=False, default=0.00)
+    purchased_quantity = models.IntegerField(null=False, blank=False, default=0)
+    received_quantity = models.IntegerField(null=False, blank=False, default=0)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        return self.purchase_order.get_absolute_url()
+
+    def get_delete_url(self):
+        kwargs = {
+            "parent_id": self.purchase_order.id,
+            "id": self.id
+        }
+        return reverse("products:po-item-delete", kwargs=kwargs)
+
+    def get_htmx_edit_url(self):
+        kwargs = {
+            "parent_id": self.purchase_order.id,
+            "id": self.id
+        }
+        return reverse("products:hx-po-item-update", kwargs=kwargs)

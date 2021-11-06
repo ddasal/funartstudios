@@ -1,0 +1,23 @@
+<div id="item-{{object.id}}">
+    <table class="table table-sm table-striped">
+        <thead>
+            <tr>
+                <td><b>Purchased {{ object.purchased_quantity }} of {{ object.product.name }}(s)</b></td>
+                <td style="text-align: right;">{% if perms.products.change_purchaseitem %} 
+                    <button class="btn btn-outline-primary" hx-trigger='click' hx-get='{{ object.get_htmx_edit_url }}' hx-target='#item-{{object.id}}'>Edit</button>
+                    {% endif %}
+                    {% if perms.products.delete_purchaseitem %}
+                    <a class="btn btn-outline-danger" hx-confirm='Remove {{object.product.name }} from purchase order?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#item-{{object.id}}' hx-swap='outerHTML'>Remove</a>
+                    {% endif %} 
+                </td>
+            </tr>
+        </thead>
+        <tbody class="table-striped">
+            <tr>
+                <td colspan="2">
+                    - Received {{ object.received_quantity}} of {{ object.purchased_quantity }} <br />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

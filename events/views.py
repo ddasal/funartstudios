@@ -49,7 +49,7 @@ def event_delete_view(request, slug=None):
         obj = None
     if obj is None:
         if request.htmx:
-            return HttpResponse('Not f=Found')
+            return HttpResponse('Not found')
         raise Http404
     if request.method == "POST":
         obj.delete()
@@ -67,7 +67,6 @@ def event_delete_view(request, slug=None):
 
 @permission_required('events.delete_eventstaff')
 def event_staff_delete_view(request, parent_slug=None, id=None):
-    print(id)
     try:
         obj = EventStaff.objects.get(event__slug=parent_slug, id=id)
     except:
@@ -91,7 +90,6 @@ def event_staff_delete_view(request, parent_slug=None, id=None):
 
 @permission_required('events.delete_eventcustomer')
 def event_customer_delete_view(request, parent_slug=None, id=None):
-    print(id)
     try:
         obj = EventCustomer.objects.get(event__slug=parent_slug, id=id)
     except:

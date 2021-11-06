@@ -1,0 +1,41 @@
+<div class="row">
+    <div class="col-12 col-md-8">
+        <h2>PO {{object.id}} from {{ object.get_supplier_display }}
+            {% if object.get_edit_url %}
+            <small>
+                {% if perms.products.change_purchaseorder %}
+                <a class="btn btn-outline-primary" href="{{ object.get_edit_url }}">Edit</a>
+                {% endif %} 
+            </small>
+            {% endif %}
+        </h2> 
+        <p><span class="lead">Purchased on {{ object.date }} by {{ object.user.first_name }}</span><br />
+            Last updated on : {{ object.updated }}<br /></p>
+        
+    </div>
+
+
+</div>
+
+<div class="row">
+    <div class="col-12 col-md-8">
+        <h3>Purchase Order Item(s)</h3>
+            <div id="item-list">
+                {% for item in object.get_purchaseitem_children %}
+                    {% include 'products/partials/item-inline.html' with object=item %}
+                {% endfor %} 
+            </div>
+            {% if new_item_url %}
+                <button class="btn btn-outline-success" hx-get="{{ new_item_url }}" hx-trigger="click" hx-target="#item-list" hx-swap="beforeend">Add Item(s)</button>
+            {% endif %} 
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-12 col-md-4" style="margin-top: 20px;">
+        {% if perms.products.delete_purchaseorder %}
+           <p><a class="btn btn-outline-danger" href="{{ object.get_delete_url }}" hx-post="{{ object.get_delete_url }}" hx-confirm='THIS CANNOT BE UNDONE: Are you sure you want to delete {{ object.name }}?' hx-trigger="click">Delete Purchase Order</a></p> 
+        {% endif %}
+    </div>
+</div>

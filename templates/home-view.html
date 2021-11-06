@@ -5,12 +5,20 @@
 {% endblock title %} 
 
 {% block content %}
+{% if perms.articles.add_article %} 
 <p>
   <a class="btn btn-outline-success" href="">Create article</a>  
 </p>
+{% endif %} 
 
-     {% for x in object_list %}
-      Hello
-    {% endfor %}
-
+{% if perms.articles.view_article %} 
+  {% for x in object_list %}
+  <li>
+    Hello
+  </li>
+  {% endfor %}
+{% else %} 
+<h3>Welcome {{ request.user.first_name }}</h3>
+<p class="lead">You have limited access to this site. Please get with management to complete your account registration. You can change your password and update your profile above.</p>
+{% endif %} 
 {% endblock %} 

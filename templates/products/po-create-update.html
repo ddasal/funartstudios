@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %} 
+{% if object.title %}
+    {{ object.title }}
+{% else %}
+    Create PurchaseOrder
+{% endif %} 
+{% endblock title %} 
+
+{% block content %}
+
+<style>
+    .item-form {
+        border-bottom: 1px solid black;
+    }
+    .hidden {
+        display: none;
+    }
+</style>
+
+
+
+<div class="row">
+    <div class='{% if object.id %}col-6 col-md-6 {% else %} col-md-6 mx-auto {% endif %}'>
+        {% if not object.id %}
+            <h3>Create Purchase Order</h3>
+        {% else %}
+            <h3>Purchase Order Details
+                <small>
+                    {% if perms.products.change_purchaseorder %}
+                    <a class="btn btn-outline-secondary" href="{{ object.get_absolute_url }}">Return</a>
+                    {% endif %} 
+                </small>    
+            </h3>
+        {% endif %}
+
+    {% include 'products/partials/po-forms.html' %}
+    </div>
+</div>
+
+<script>
+    
+    // const addMoreBtn = document.getElementById('add-more')
+    document.addPurchaseOrderListener('click', (event)=> {
+        // console.log(event.target, event.target.id)
+        if (event.target.id == 'add-more') {
+            add_new_form(event)
+        }
+    })
+    // addMoreBtn.addPurchaseOrderListener('click', add_new_form)
+
+    function add_new_form(args) {
+        // console.log(args) // print equivalent
+        if (event) {
+            event.preventDefault() // this stops "submit" from happening if mistakenly using submit button type
+        }
+        const totalNewForms = document.getElementById('id_form-TOTAL_FORMS')
+        const currentItemForms = document.getElementsByClassName('staff-form')
+        const currentFormCount = currentItemForms.length // + 1
+        console.log(currentFormCount)
+        const formCopyTarget = document.getElementById('staff-form-list')
+        const copyEmptyFormEl = document.getElementById('empty-form').cloneNode(true)
+        copyEmptyFormEl.setAttribute('class', 'staff-form')
+        copyEmptyFormEl.setAttribute('id', `form-${currentFormCount}`)
+        const regex = new RegExp('__prefix__', 'g')
+        copyEmptyFormEl.innerHTML = copyEmptyFormEl.innerHTML.replace(regex,currentFormCount)
+        totalNewForms.setAttribute('value', currentFormCount + 1)
+        // now add a new empty form element to the html form
+        formCopyTarget.append(copyEmptyFormEl)
+    }
+
+</script>
+
+{% endblock %} 

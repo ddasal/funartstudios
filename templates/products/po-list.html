@@ -1,68 +1,67 @@
 {% extends "base.html" %}
 
 {% block title %} 
-    Products List
+    Purchase Order List
 {% endblock title %} 
 
 {% block content %}
 <div class="row">
     <div class='col-12 col-md-6'>
-        <h3>Products List</h3>
+        <h3>Purchase Order List</h3>
     </div>
     <div class="col-12 col-md-6" style="text-align: right;">
-        {% if perms.products.add_product %} 
-        <a class="btn btn-outline-success" href="{% url 'products:create' %}">Create product</a>  
+        {% if perms.products.add_purchaseorder %} 
+        <a class="btn btn-outline-success" href="{% url 'products:po-create' %}">Create purchase order</a>  
         {% endif %} 
     </div>
 </div>
 <div class="row">
     <div class='col-12'>
+
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>Product Name</th>
-                    <th>Product Type</th>
-                    <th>Low Alert Level</th>
-                    <th>Active</th>
+                    <th>PO Number</th>
+                    <th>Date</th>
+                    <th>Supplier</th>
+                    <th>Purchaser</th>
                 </tr>
             </thead>
             <tbody>
-            {% for x in products %}
+            {% for x in pos %}
             <tr>
-                {% if x.name %}
-                    <td><a href="{% url 'products:detail' slug=x.slug %}">{{ x.name }}</a></td>
-                    <td>{{ x.get_type_display }}</a></td>
-                    <td>{{ x.low_alert_level }}</td>
-                    <td>{{ x.active }}</td>
-                    {% endif %}
+                    <td><a href="{% url 'products:po-detail' id=x.id %}">{{ x.id }}</a></td>
+                    <td>{{ x.date }}</td>
+                    <td>{{ x.get_supplier_display }}</td>
+                    <td>{{ x.user.first_name }}</td>
             </tr>
             {% endfor %}
             </tbody>
         </table>
 
         <div style="margin-top: 15px;">
-        {% if products.has_other_pages %}
+        {% if pos.has_other_pages %}
         <ul class="pagination pagination ">
-            {% if products.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page={{ products.previous_page_number }}">Previous</a></li>
+            {% if pos.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ pos.previous_page_number }}">Previous</a></li>
             {% else %}
             <li class="page-item disabled"><a class="page-link">Previous</a></li>
             {% endif %}
-            {% for i in products.paginator.page_range %}
-            {% if products.number == i %}
+            {% for i in pos.paginator.page_range %}
+            {% if pos.number == i %}
                 <li class="page-item active"><a class="page-link">{{ i }}</a></li>
             {% else %}
                 <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
             {% endif %}
             {% endfor %}
-            {% if products.has_next %}
-            <li class="page-item"><a class="page-link" href="?page={{ products.next_page_number }}">Next</a></li>
+            {% if pos.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ pos.next_page_number }}">Next</a></li>
             {% else %}
             <li class="page-item disabled"><a class="page-link">Next</a></li>
             {% endif %}
         </ul>
         {% endif %}
-        Total Product Count: {{ product_count }}
+        Total Purchases Count: {{ po_count }}
         </div>
     </div>
 </div>

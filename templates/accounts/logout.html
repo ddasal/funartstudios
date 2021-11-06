@@ -5,14 +5,19 @@
 {% endblock title %} 
 
 {% block content %}
-{% if request.user.is_authenticated %} 
-<div style="margin-top: 30px">
-    <form method="POST" action="">{% csrf_token %}
-        <p>Are you sure you want to logout?</p>
-        <button type="submit">Yes</button>
-    </form>
+<div class="row">
+    <div class='col-12 col-md-10'>
+        {% if request.user.is_authenticated %} 
+        <h3>Logout</h3>
+            <form method="POST" action="">{% csrf_token %}
+                <p>Are you sure you want to logout?</p>
+                <button type="submit">Yes</button>
+            </form>
+        </div>
+        {% else %}
+        <h3>Logout...Really?</h3>
+        <p>You're not logged in. Would you like to <a href="{% url 'account:login' %}">login</a>?</p>
+        {% endif %} 
+    </div>
 </div>
-{% else %} 
-<p>You're not logged in. Would you like to <a href="{% url 'account:login' %}">login</a>?</p>
-{% endif %} 
 {% endblock %} 

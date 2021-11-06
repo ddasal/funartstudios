@@ -10,6 +10,7 @@ from django.utils import timezone
 from products.models import Product
 from .utils import slugify_instance_title
 from django.db.models.signals import pre_save, post_save
+from accounts.models import UserProfile, UserPay
 
 User = settings.AUTH_USER_MODEL
 
@@ -27,17 +28,26 @@ class EventLength(models.TextChoices):
 
 class EventType(models.TextChoices):
     INTERNAL = 'i', 'Internal Event'
-    PWAP = 'c', 'Painting with a Purpose Event'
-    STANDARD = 's', 'Standard Event'
     PAINTPOUR = 'p', 'Paint Pour Event'
+    PWAP = 'w', 'Painting with a Purpose Event'
+    RETAILONLY = 'r', 'Retail Only'
+    STANDARD = 's', 'Standard Event'
     TAXFREE = 't', 'Other Tax Free Event'
+
+class EventTax(models.Model):
+    name = models.CharField(max_length=50, null=False, blank=False)
+    tax_rate = models.DecimalField(decimal_places=3, max_digits=4, null=False, blank=False, default=0.000)
+    start_date = models.DateField(null=False, blank=False, default=timezone.now)
+    end_date = models.DateField(null=False, blank=False, default=timezone.now)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
 class EventQuerySet(models.QuerySet):
     def search(self, query=None):
         if query is None or query == "":
             return self.none()
         lookups = Q(title__icontains=query) | Q(eventstaff__user__first_name__icontains=query)  | Q(eventstaff__user__last_name__icontains=query)
-        return self.filter(lookups)
+        return self.filter(lookups).distinct()
 
 class EventManager(models.Manager):
     def get_queryset(self):
@@ -53,6 +63,7 @@ class Event(models.Model):
     length = models.CharField(max_length=4, choices=EventLength.choices, default=EventLength.TWOHOUR)
     type = models.CharField(max_length=1, choices=EventType.choices, default=EventType.STANDARD)
     slug = models.SlugField(null=True, blank=True, unique=True)
+    tax_rate = models.DecimalField(decimal_places=3, max_digits=4, null=False, blank=False, default=0.000)
     credit_tips =models.DecimalField(decimal_places=2, max_digits=5, null=False, blank=False, default=0.00)
     credit_tips_reduced =models.DecimalField(decimal_places=2, max_digits=5, null=False, blank=False, default=0.00)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -64,6 +75,10 @@ class Event(models.Model):
     @property
     def name(self):
         return self.title
+
+    @property
+    def tax_rate_percentage(self):
+        return self.tax_rate * 100
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -88,7 +103,29 @@ class Event(models.Model):
 
     def save(self, *args, **kwargs):
         self.credit_tips_reduced = self.credit_tips * Decimal(.97)
+        effective_tax_rate = list(EventTax.objects.values_list('tax_rate').filter(start_date__lte=self.date, end_date__gte=self.date))
+        if self.type == 'i':
+            self.tax_rate = 0.00
+        elif self.type == 'p':
+            self.tax_rate = effective_tax_rate[0][0]  
+        elif self.type == 'w':
+            self.tax_rate = 0.00 
+        elif self.type == 'r':
+            self.tax_rate = effective_tax_rate[0][0]  
+        elif self.type == 's':
+            self.tax_rate = effective_tax_rate[0][0]  
+        elif self.type == 't':
+            self.tax_rate = 0.00 
         super().save(*args, **kwargs)
+
+
+    INTERNAL = 'i', 'Internal Event'
+    PAINTPOUR = 'p', 'Paint Pour Event'
+    PWAP = 'w', 'Painting with a Purpose Event'
+    RETAILONLY = 'r', 'Retail Only'
+    STANDARD = 's', 'Standard Event'
+    TAXFREE = 't', 'Other Tax Free Event'
+
 
 def event_pre_save(sender, instance, *args, **kwargs):
     if instance.slug is None:
@@ -112,6 +149,10 @@ class EventStaff(models.Model):
     user = models.ForeignKey(User, blank=True, null=True, on_delete=SET_NULL)
     role = models.CharField(max_length=1, choices=EventStaffRole.choices, default=EventStaffRole.STAGE)
     hours = models.DecimalField(decimal_places=2, max_digits=4, null=False, blank=False, default=3.5)
+    rate = models.DecimalField(decimal_places=2, max_digits=4, default=0.00, null=False, blank=False)
+    prepaint_pay = models.DecimalField(decimal_places=2, max_digits=5, default=0.00, null=False, blank=False)
+    hourly_pay = models.DecimalField(decimal_places=2, max_digits=5, default=0.00, null=False, blank=False)
+    total_pay = models.DecimalField(decimal_places=2, max_digits=5, default=0.00, null=False, blank=False)
     prepaint_product = models.ForeignKey(Product, on_delete=CASCADE, null=True, blank=True, related_name='prepaint_product', default=5)
     prepaint_qty = models.IntegerField(default=0, null=True, blank=True)
     event_product = models.ForeignKey(Product, on_delete=CASCADE, null=True, blank=True, related_name='event_product', default=5)
@@ -141,6 +182,23 @@ class EventStaff(models.Model):
 
     # def __str__(self):
     #    return self.user
+
+    def save(self, *args, **kwargs):
+        pay_rate = list(UserPay.objects.values_list('stage', 'floor', 'team', 'prepaint_single', 'prepaint_double').filter(user__user_id=self.user.id, start_date__lte=self.event.date, end_date__gte=self.event.date))
+        if self.role == 's':
+            self.rate = pay_rate[0][0]
+            if self.prepaint_qty == 1:
+                self.prepaint_pay = pay_rate[0][3]
+            elif self.prepaint_qty >= 2:
+                self.prepaint_pay = pay_rate[0][4]
+        elif self.role == 'f':
+            self.rate = pay_rate[0][1]
+        elif self.role == 't':
+            self.rate = pay_rate[0][2]
+        self.hourly_pay = self.rate * self.hours
+        self.total_pay = self.hourly_pay + self.prepaint_pay
+        super().save(*args, **kwargs)
+
        
 class EventCustomerType(models.TextChoices):
     HOMEKIT = 'h', 'Twist at Home Kit(s)'
@@ -154,6 +212,9 @@ class EventCustomer(models.Model):
     price = models.DecimalField(decimal_places=2, max_digits=5, default=0.0, null=False, blank=False)
     product = models.ForeignKey(Product, on_delete=CASCADE, null=False, blank=False, related_name='customer_product', default=5)
     per_customer_qty = models.IntegerField(default=1, null=False, blank=False)
+    subtotal_price = models.DecimalField(decimal_places=2, max_digits=6, default=0.0, null=False, blank=False)
+    taxes = models.DecimalField(decimal_places=2, max_digits=5, default=0.0, null=False, blank=False)
+    total_price = models.DecimalField(decimal_places=2, max_digits=6, default=0.0, null=False, blank=False)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -176,3 +237,17 @@ class EventCustomer(models.Model):
             "id": self.id
         }
         return reverse("events:hx-eventcustomer-update", kwargs=kwargs)
+
+    def save(self, *args, **kwargs):
+        self.subtotal_price = self.quantity * self.price
+        if self.type == 'h':
+            self.taxes = self.subtotal_price * self.event.tax_rate
+            self.total_price = self.subtotal_price + self.taxes
+        elif self.type == 'p':
+            self.taxes = self.subtotal_price * self.event.tax_rate
+            self.total_price = self.subtotal_price + self.taxes
+        elif self.type == 'r':
+            self.taxes = self.subtotal_price * self.event.tax_rate
+            self.total_price = self.subtotal_price
+
+        super().save(*args, **kwargs)

@@ -5,20 +5,26 @@
 {% endblock title %} 
 
 {% block content %}
-{% if not request.user.is_authenticated %} 
-<div style="margin-top: 30px">
-    <form method="POST" action="">{% csrf_token %}
-        {{ form.as_p }}
-            <button type="submit">Login</button>
-    </form>
+<div class="row">
+    <div class='col-12 col-md-10'>
+        {% if not request.user.is_authenticated %} 
+        <h3>Login</h3>
+            <form method="POST" action="">{% csrf_token %}
+                {{ form.as_p }}
+                    <button type="submit">Login</button>
+            </form>
+ 
+        {% else %} 
+            {% if perms.events.view_event %}
+            <h3>Access restricted</h3>
+                <p>You are logged in, but do not have permissions to access this page. Would you like to <a href="{% url 'account:logout' %}">logout</a>?</p>
+            {% else %} 
+            <h3>Account Setup Not Complete</h3>
+                <p>You are logged in, but you do not have permissiones to view this page.</p>
+                <p>If you believe this is an error, please contact management.</p>
+                <p>Would you like to <a href="{% url 'account:logout' %}">logout</a>?</p>
+            {% endif %} 
+        {% endif %} 
+    </div>
 </div>
-{% else %} 
-    {% if perms.events.view_event %}
-    <p>You're already logged in. Would you like to <a href="{% url 'account:logout' %}">logout</a>?</p>
-    {% else %} 
-    <p>You are logged in, but you do not have permissiones to view this page.</p>
-    <p>If you believe this is an error, please contact Dustin.</p>
-    <p>Would you like to <a href="{% url 'account:logout' %}">logout</a>?</p>
-    {% endif %} 
-{% endif %} 
 {% endblock %} 
