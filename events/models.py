@@ -184,19 +184,33 @@ class EventStaff(models.Model):
     #    return self.user
 
     def save(self, *args, **kwargs):
-        pay_rate = list(UserPay.objects.values_list('stage', 'floor', 'team', 'prepaint_single', 'prepaint_double').filter(user__user_id=self.user.id, start_date__lte=self.event.date, end_date__gte=self.event.date))
-        if self.role == 's':
-            self.rate = pay_rate[0][0]
-            if self.prepaint_qty == 1:
-                self.prepaint_pay = pay_rate[0][3]
-            elif self.prepaint_qty >= 2:
-                self.prepaint_pay = pay_rate[0][4]
-        elif self.role == 'f':
-            self.rate = pay_rate[0][1]
-        elif self.role == 't':
-            self.rate = pay_rate[0][2]
-        self.hourly_pay = self.rate * self.hours
-        self.total_pay = self.hourly_pay + self.prepaint_pay
+        try:
+            pay_rate = list(UserPay.objects.values_list('stage', 'floor', 'team', 'prepaint_single', 'prepaint_double').filter(user__user_id=self.user.id, start_date__lte=self.event.date, end_date__gte=self.event.date))
+            if self.role == 's':
+                self.rate = pay_rate[0][0]
+                if self.prepaint_qty == 1:
+                    self.prepaint_pay = pay_rate[0][3]
+                elif self.prepaint_qty >= 2:
+                    self.prepaint_pay = pay_rate[0][4]
+            elif self.role == 'f':
+                self.rate = pay_rate[0][1]
+            elif self.role == 't':
+                self.rate = pay_rate[0][2]
+        except:
+            pay_rate = Decimal(0.00)
+            if self.role == 's':
+                self.rate = pay_rate[0][0]
+                if self.prepaint_qty == 1:
+                    self.prepaint_pay = pay_rate[0][3]
+                elif self.prepaint_qty >= 2:
+                    self.prepaint_pay = pay_rate[0][4]
+            elif self.role == 'f':
+                self.rate = pay_rate[0][1]
+            elif self.role == 't':
+                self.rate = pay_rate[0][2]
+
+        self.hourly_pay = Decimal(self.rate) * Decimal(self.hours)
+        self.total_pay = Decimal(self.hourly_pay) + Decimal(self.prepaint_pay)
         super().save(*args, **kwargs)
 
        
@@ -240,7 +254,6 @@ class EventCustomer(models.Model):
         return reverse("events:hx-eventcustomer-update", kwargs=kwargs)
 
     def save(self, *args, **kwargs):
-
         self.subtotal_price = self.quantity * self.price
         if self.type == 'h':
             self.taxes = self.subtotal_price * self.event.tax_rate
@@ -249,9 +262,14 @@ class EventCustomer(models.Model):
             self.taxes = self.subtotal_price * self.event.tax_rate
             self.total_price = self.subtotal_price + self.taxes
         elif self.type == 'r':
-            cost_factor = list(PurchaseItem.objects.values_list('price_each').filter(product=self.product, date__lte=self.event.date).order_by('-date').first())
-            self.cost_factor = cost_factor[0] * self.quantity
-            self.taxes = self.cost_factor * self.event.tax_rate
-            self.total_price = self.subtotal_price
+            try:
+                cost_factor = list(PurchaseItem.objects.values_list('price_each').filter(product=self.product, date__lte=self.event.date).order_by('-date').first())
+                self.cost_factor = cost_factor[0] * self.quantity
+                self.taxes = self.cost_factor * self.event.tax_rate
+            except:
+                cost_factor = Decimal(1.99)
+                self.cost_factor = cost_factor * self.quantity
+                self.taxes = self.cost_factor * self.event.tax_rate
 
+            self.total_price = self.subtotal_price
         super().save(*args, **kwargs)
