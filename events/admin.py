@@ -8,12 +8,12 @@ from events.models import Event, EventCustomer, EventStaff, EventTax
 class EventCustomerInline(admin.TabularInline):
     model = EventCustomer
     extra = 0
-    readonly_fields = ['subtotal_price', 'taxes', 'total_price', 'timestamp', 'updated']
+    readonly_fields = ['cost_factor', 'subtotal_price', 'taxes', 'total_price', 'timestamp', 'updated']
 
 class EventStaffInline(admin.TabularInline):
     model = EventStaff
     extra = 0
-    readonly_fields = ['prepaint_pay', 'hourly_pay', 'total_pay', 'timestamp', 'updated']
+    readonly_fields = ['rate', 'prepaint_pay', 'hourly_pay', 'total_pay', 'timestamp', 'updated']
 
 class EventAdmin(admin.ModelAdmin):
     inlines = [EventCustomerInline, EventStaffInline]
