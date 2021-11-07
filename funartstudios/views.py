@@ -10,10 +10,21 @@ from events.models import Event
 
 @login_required
 def home_view(request, *args, **kwargs):
-    queryset = Article.objects.filter(publish_date__lte=timezone.now(), publish_time__lte=datetime.datetime.now()).order_by('-publish_date', '-publish_time')
-    print(queryset.query)
+    qs = Article.objects.filter(publish__lte=timezone.now()).order_by('-publish')
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(qs, 8)
+    article_count = paginator.count
+    try:
+        articles = paginator.page(page)
+    except PageNotAnInteger:
+        articles = paginator.page(1)
+    except EmptyPage:
+        articles = paginator.page(paginator.num_pages)
+
     context = {
-        "object_list": queryset,
+        "articles": articles,
+        "article_count": article_count
     }
     return render(request, 'home-view.html', context)
 

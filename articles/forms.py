@@ -1,17 +1,16 @@
 from django import forms
 from .models import Article
 
-class DateInput(forms.DateInput):
-    input_type = 'date'
+class DateTimeInput(forms.DateTimeInput):
+    input_type = 'datetime'
+    format = 'DATETIME_FORMAT'
 
-class TimeInput(forms.TimeInput):
-    input_type = 'time'
 
 class ArticleForm(forms.ModelForm):
     class Meta:
         model = Article
-        fields = ['title', 'content', 'publish_date', 'publish_time']
-        widgets = {'publish_date': DateInput(), 'publish_time': TimeInput()}
+        fields = ['title', 'content', 'publish']
+        widgets = {'publish': DateTimeInput()}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

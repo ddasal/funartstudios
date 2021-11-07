@@ -155,15 +155,34 @@ USE_L10N = True
 USE_TZ = True
 
 TIME_INPUT_FORMATS = [
-  #  '%I:%M:%S %p',  # 6:22:44 PM
-    # '%I:%M %p',  # 6:22 PM
-  #  '%I %p',  # 6 PM
-  #  '%H:%M:%S',     # '14:30:59'
-  #  '%H:%M:%S.%f',  # '14:30:59.000200'
-   '%H:%M',        # '14:30'
+    '%I:%M:%S %p',  # 6:22:44 PM
+    '%I:%M %p',  # 6:22 PM
+    '%I %p',  # 6 PM
+    '%H:%M:%S',     # '14:30:59'
+    '%H:%M:%S.%f',  # '14:30:59.000200'
+    '%H:%M',        # '14:30'
+]
+
+DATETIME_INPUT_FORMATS = [
+    '%Y-%m-%d %H:%M:%S',     # '2006-10-25 14:30:59'
+    '%Y-%m-%d %H:%M:%S.%f',  # '2006-10-25 14:30:59.000200'
+    '%Y-%m-%d %H:%M',        # '2006-10-25 14:30'
+    '%Y-%m-%d',              # '2006-10-25'
+    '%m/%d/%Y %H:%M:%S',     # '10/25/2006 14:30:59'
+    '%m/%d/%Y %H:%M:%S.%f',  # '10/25/2006 14:30:59.000200'
+    '%m/%d/%Y %H:%M',        # '10/25/2006 14:30'
+    '%m/%d/%Y',              # '10/25/2006'
+    '%m/%d/%y %H:%M:%S',     # '10/25/06 14:30:59'
+    '%m/%d/%y %H:%M:%S.%f',  # '10/25/06 14:30:59.000200'
+    '%m/%d/%y %H:%M',        # '10/25/06 14:30'
+    '%m/%d/%y',              # '10/25/06'
 ]
 
 TIME_FORMAT = 'I:M p'
+
+DATETIME_FORMAT = 'm/d/y I:M p'
+
+SHORT_DATETIME_FORMAT = 'm/d/Y P'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
