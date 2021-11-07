@@ -69,6 +69,14 @@
         </ul>
         {% endif %}
         Total Staff Count: {{ account_count }}
+        {% if perms.accounts.change_userprofile %} 
+        <p>
+            <small>
+                Here is a link for new users to register:<br /><a target="_blank" href="{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url 'account:register' %}">{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url 'account:register' %}</a>
+            </small>
+        </p>
+        {% endif %} 
+
         </div>
     </div>
     {% endif %} 

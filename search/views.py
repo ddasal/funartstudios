@@ -1,13 +1,13 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import permission_required
 from events.models import Event
-# from articles.models import Article
+from articles.models import Article
 
 SEACH_TYPE_MAPPING = {
     'event': Event,
-    'events': Event
-    # 'article': Article,
-    # 'articles': Article
+    'events': Event,
+    'article': Article,
+    'articles': Article
 }
 
 # Create your views here.

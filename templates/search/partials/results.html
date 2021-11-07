@@ -15,7 +15,7 @@
         <p class="lead">Searched for "{{ request.GET.q }}" under {{ request.GET.type|title }}s</p>
         <ul>
             {% for object in queryset %} 
-                <li>{{ object.date}} : <a href="{{object.get_absolute_url}}">{{object.name}}</a></li>
+                <li>{{ object.publish_date }} : <a href="{{object.get_absolute_url}}">{{object.title|truncatechars:50 }}</a> by {{ object.user.first_name }}</li>
                 {% empty %}
                 <li>No results found</li>
             {% endfor %} 
