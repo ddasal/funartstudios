@@ -3,7 +3,7 @@
         <h3>{{object.name}}
             {% if object.get_edit_url %}
             <small>
-                {% if perms.articles.view_article %}
+                {% if perms.articles.change_article %}
                 <a class="btn btn-outline-primary" href="{{ object.get_edit_url }}">Edit</a> 
                 {% endif %} 
             </small>
@@ -13,15 +13,15 @@
         
         <p>{{ object.content }}</p>
     </div>
-
-
 </div>
-
 
 <div class="row">
     <div class="col-12 col-md-4" style="margin-top: 20px;">
+        {% if perms.articles.view_article %}
+           <a class="btn btn-outline-secondary" href="/">Back</a>
+        {% endif %}
         {% if perms.articles.delete_article %}
-           <p><a class="btn btn-outline-danger" href="{{ object.get_delete_url }}" hx-post="{{ object.get_delete_url }}" hx-confirm='THIS CANNOT BE UNDONE: Are you sure you want to delete {{ object.name }}?' hx-trigger="click">Delete Article</a></p> 
+           <a class="btn btn-outline-danger" href="{{ object.get_delete_url }}" hx-post="{{ object.get_delete_url }}" hx-confirm='THIS CANNOT BE UNDONE: Are you sure you want to delete {{ object.name }}?' hx-trigger="click">Delete Article</a>
         {% endif %}
     </div>
 </div>
