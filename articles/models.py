@@ -30,7 +30,8 @@ class Article(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    publish = models.DateTimeField(auto_now=False, auto_now_add=False, default=timezone.now, null=True, blank=True)
+    publish_date = models.DateField(auto_now=False, auto_now_add=False, default=timezone.now, null=True, blank=True)
+    publish_time = models.TimeField(auto_now=False, auto_now_add=False, default=timezone.now, null=True, blank=True)
 
     objects = ArticleManager()
 
@@ -54,7 +55,7 @@ class Article(models.Model):
         super().save(*args, **kwargs)
 
     class Meta:
-        ordering = [('-publish'), ]
+        ordering = [('-publish_date'), ('-publish_time'), ]
 
 
 def article_pre_save(sender, instance, *args, **kwargs):

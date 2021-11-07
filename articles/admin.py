@@ -4,7 +4,7 @@ from django.contrib import admin
 from .models import Article
 
 class ArticleAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'publish', 'timestamp', 'updated']
+    list_display = ['id', 'title', 'publish_date', 'publish_time', 'updated']
     search_fields = ['title', 'content']
     raw_id_fields = ['user']
 

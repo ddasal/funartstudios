@@ -1,3 +1,4 @@
+import datetime
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator, EmptyPage,PageNotAnInteger
 from django.http import HttpResponse
@@ -9,7 +10,8 @@ from events.models import Event
 
 @login_required
 def home_view(request, *args, **kwargs):
-    queryset = Article.objects.filter(publish__lt=timezone.now()).order_by('-publish')
+    queryset = Article.objects.filter(publish_date__lte=timezone.now(), publish_time__lte=datetime.datetime.now()).order_by('-publish_date', '-publish_time')
+    print(queryset.query)
     context = {
         "object_list": queryset,
     }
