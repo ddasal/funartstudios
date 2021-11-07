@@ -5,18 +5,30 @@
 {% endblock title %} 
 
 {% block content %}
-{% if perms.articles.add_article %} 
-<p>
-  <a class="btn btn-outline-success" href="">Create article</a>  
-</p>
-{% endif %} 
-
+<div class="row">
+  <div class='col-12 col-md-6'>
+      <h3>FAS News</h3>
+  </div>
+  <div class="col-12 col-md-6" style="text-align: right;">
+      {% if perms.articles.add_article %} 
+      <a class="btn btn-outline-success" href="{% url 'articles:create' %}">Create article</a>  
+      {% endif %} 
+  </div>
+</div>
+<p></p>
+<div class="row">
 {% if perms.articles.view_article %} 
   {% for x in object_list %}
-  <li>
-    Hello
-  </li>
+  <div class="col-12 col-md-3 card">
+    <div class="card-body">
+      <h5 class="card-title">{{ x.title }}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">{{ x.user.first_name }} on {{ x.publish }}</h6>
+      <p class="card-text">{{ x.content|truncatechars:50 }}</p>
+      <a href="{{ x.get_absolute_url }}" class="btn btn-primary stretched-link">Read article</a>
+    </div>
+  </div>
   {% endfor %}
+</div>
 {% else %} 
 <h3>Welcome {{ request.user.first_name }}</h3>
 <p class="lead">You have limited access to this site. Please get with management to complete your account registration. You can change your password and update your profile above.</p>

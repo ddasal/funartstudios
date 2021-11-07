@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %} 
+    {{ object.title }}
+{% endblock title %} 
+
+{% block content %}
+{% if not created %}
+
+
+    <div class="row">
+        <div class='{% if object.id %}col-6 col-md-6 {% else %} col-md-6 mx-auto {% endif %}'>
+            <h3>Create Article</h3>
+            <form method="POST" action="">
+                {% csrf_token %}
+                {{ form.as_p }}
+                    <button class="btn btn-primary" type="submit">Create article</button>
+            </form>
+        </div>
+    </div>
+{% else %}
+
+<p>Your article was created</p>
+<li><a href="/articles/{{ object.id }}">{{ object.title }}</a></li>
+
+{% endif %} 
+
+{% endblock %} 
