@@ -30,8 +30,8 @@ class Article(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    publish_date = models.DateField(auto_now=False, auto_now_add=False, default=timezone.now, null=True, blank=True)
-    publish_time = models.TimeField(auto_now=False, auto_now_add=False, default=timezone.now, null=True, blank=True)
+    publish_date = models.DateField(blank=True, default=timezone.now, null=False)
+    publish_time = models.TimeField(blank=True, default=timezone.now, null=False)
 
     objects = ArticleManager()
 

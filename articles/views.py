@@ -24,6 +24,9 @@ def article_create_view(request, id=None):
         "form": form
     }
     if form.is_valid():
+        article_object = form.save(commit=False)
+        article_object.user = request.user
+        article_object.save()
         article_object = form.save()
         context['form'] = ArticleForm()
         context['object'] = article_object
