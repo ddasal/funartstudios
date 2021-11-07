@@ -2,8 +2,6 @@ django>=3.2,<3.3
 gunicorn
 psycopg2-binary
 django-dotenv
-pint
 django-htmx
 django-storages
 boto3
-pillow
