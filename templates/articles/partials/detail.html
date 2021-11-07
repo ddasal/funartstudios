@@ -11,7 +11,7 @@
         </h3> 
         <p><small>By: {{ object.user.first_name }} {{ object.user.last_name }} on {{ object.publish }}</small></p>
         
-        <p>{{ object.content }}</p>
+        <p>{{ object.content|safe|linebreaks }}</p>
     </div>
 </div>
 

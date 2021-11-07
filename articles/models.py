@@ -25,7 +25,7 @@ class ArticleManager(models.Manager):
 
 class Article(models.Model):
     user = models.ForeignKey(User, blank=True, null=True, on_delete=SET_NULL)
-    title = models.CharField(max_length=120)
+    title = models.CharField(max_length=50)
     slug = models.SlugField(null=True, blank=True, unique=True)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)

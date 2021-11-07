@@ -3,8 +3,6 @@ from .models import Article
 
 class DateTimeInput(forms.DateTimeInput):
     input_type = 'datetime'
-    format = 'DATETIME_FORMAT'
-
 
 class ArticleForm(forms.ModelForm):
     class Meta:
@@ -16,7 +14,7 @@ class ArticleForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for field in self.fields:
             new_data = {
-                "class": 'form-control form-control-sm',
+                "class": 'form-control',
             }
             self.fields[str(field)].widget.attrs.update(
                 new_data
