@@ -16,8 +16,7 @@
                     <th>Mobile Phone</th>
                     <th>Home Phone</th>
                     <th>Email</th>
-                    <th>Emergency Contact(s)</th>
-                    <th>Emergency Phone(s)</th>
+                    <th>Emergency Contact(s) Info</th>
                 </tr>
             </thead>
             <tbody>
@@ -33,13 +32,13 @@
                     <td>{{ x.phone_mobile }}</td>
                     <td>{{ x.phone_home }}</td>             
                     <td>{{ x.user.email }}</td>
-                    <td>
-                        {{ x.emergency_contact_name_1 }}<br />
-                        {{ x.emergency_contact_name_2 }}
-                    </td>
-                    <td>
-                        {{ x.emergency_contact_number_1 }}<br />
-                        {{ x.emergency_contact_number_2 }}
+                    <td class="table-warning">
+                        {% if x.emergency_contact_name_1 %}
+                            {{ x.emergency_contact_name_1 }} at {{ x.emergency_contact_number_1 }} or  {{ x.emergency_contact_email_1 }}<br />
+                        {% endif %}
+                        {% if x.emergency_contact_name_2 %}
+                            {{ x.emergency_contact_name_2 }} at {{ x.emergency_contact_number_2 }} or  {{ x.emergency_contact_email_2 }}<br />
+                        {% endif %}
                     </td>
             </tr>
             {% endfor %}
