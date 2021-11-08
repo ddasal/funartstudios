@@ -69,6 +69,7 @@ class Event(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
+    status = models.CharField(max_length=1, null=False, blank=False, default='z')
 
     objects = EventManager()
 
@@ -144,6 +145,11 @@ class EventStaffRole(models.TextChoices):
     STAGE = 's', 'Stage Artist'
     TEAM = 't', 'Team Member'
 
+class PayStatus(models.TextChoices):
+    PENDING = 'p', 'Pending'
+    APPROVED = 'a', 'Approved'
+    COMPLETED = 'c', 'Completed'
+
 class EventStaff(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=SET_NULL)
@@ -157,6 +163,7 @@ class EventStaff(models.Model):
     prepaint_qty = models.IntegerField(default=0, null=True, blank=True)
     event_product = models.ForeignKey(Product, on_delete=CASCADE, null=True, blank=True, related_name='event_product', default=5)
     event_qty = models.IntegerField(default=0, null=True, blank=True)
+    status = models.CharField(max_length=1, choices=PayStatus.choices, default=PayStatus.PENDING)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -218,6 +225,10 @@ class EventCustomerType(models.TextChoices):
     POPINPAINT = 'p', 'Pop In and Paint(s)'
     RESERVATION = 'r', 'Event Reservation(s)'
 
+class CustomerStatus(models.TextChoices):
+    PENDING = 'p', 'Pending Processing'
+    COMPLETED = 'c', 'Completed Processing'
+
 class EventCustomer(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     type = models.CharField(max_length=1, choices=EventCustomerType.choices, default=EventCustomerType.RESERVATION)
@@ -230,6 +241,7 @@ class EventCustomer(models.Model):
     cost_factor = models.DecimalField(decimal_places=2, max_digits=5, default=0.0, null=True, blank=True)
     taxes = models.DecimalField(decimal_places=2, max_digits=5, default=0.0, null=False, blank=False)
     total_price = models.DecimalField(decimal_places=2, max_digits=6, default=0.0, null=False, blank=False)
+    status = models.CharField(max_length=1, choices=CustomerStatus.choices, default=CustomerStatus.PENDING)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -274,3 +286,4 @@ class EventCustomer(models.Model):
 
             self.total_price = self.subtotal_price
         super().save(*args, **kwargs)
+    

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'articles',
     'events',
     'products',
+    'royaltyreports',
     'search'
 ]
 

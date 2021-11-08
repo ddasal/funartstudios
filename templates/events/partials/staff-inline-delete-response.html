@@ -1,1 +1,5 @@
-<span style='color:#ccc'>{{ staff.first_name }} removed from event staff</span>
+{% if staff %} 
+    <span style='color:#ccc'>{{ staff.first_name }} removed from event staff</span>
+{% elif message %} 
+    <span style='color:#ccc'>{{ message }}</span>
+{% endif %}

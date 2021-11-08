@@ -52,14 +52,24 @@ def event_delete_view(request, slug=None):
             return HttpResponse('Not found')
         raise Http404
     if request.method == "POST":
-        obj.delete()
-        success_url = reverse('events:list')
-        if request.htmx:
-            headers = {
-                "HX-Redirect": success_url
-            }
-            return HttpResponse('Success', headers=headers)
-        return redirect(success_url)
+        if obj.status == 'z':
+            obj.delete()
+            success_url = reverse('events:list')
+            if request.htmx:
+                headers = {
+                    "HX-Redirect": success_url
+                }
+                return HttpResponse('Success', headers=headers)
+            return redirect(success_url)
+        else:
+            success_url = reverse('events:list')
+            if request.htmx:
+                headers = {
+                    "HX-Redirect": success_url,
+                }
+                return HttpResponse('Success', headers=headers)
+            return redirect(success_url)
+
     context = {
         "object": obj
     }
@@ -76,12 +86,20 @@ def event_staff_delete_view(request, parent_slug=None, id=None):
             return HttpResponse('Not found')
         raise Http404
     if request.method == "POST":
-        staff = obj.user
-        obj.delete()
-        success_url = reverse('events:detail', kwargs={"slug": parent_slug})
-        if request.htmx:
-            return render(request, "events/partials/staff-inline-delete-response.html", {"staff": staff})
-        return redirect(success_url)
+        if obj.status == 'p':
+            staff = obj.user
+            obj.delete()
+            success_url = reverse('events:detail', kwargs={"slug": parent_slug})
+            if request.htmx:
+                return render(request, "events/partials/staff-inline-delete-response.html", {"staff": staff})
+            return redirect(success_url)
+        else:
+            message = "Unable to delete."
+            success_url = reverse('events:detail', kwargs={"slug": parent_slug})
+            if request.htmx:
+                return render(request, "events/partials/staff-inline-delete-response.html", {"message": message})
+            return redirect(success_url)
+
     context = {
         "object": obj
     }
@@ -99,12 +117,19 @@ def event_customer_delete_view(request, parent_slug=None, id=None):
             return HttpResponse('Not found')
         raise Http404
     if request.method == "POST":
-        customer = obj
-        obj.delete()
-        success_url = reverse('events:detail', kwargs={"slug": parent_slug})
-        if request.htmx:
-            return render(request, "events/partials/customer-inline-delete-response.html", {"customer": customer})
-        return redirect(success_url)
+        if obj.status == 'p':
+            customer = obj
+            obj.delete()
+            success_url = reverse('events:detail', kwargs={"slug": parent_slug})
+            if request.htmx:
+                return render(request, "events/partials/customer-inline-delete-response.html", {"customer": customer})
+            return redirect(success_url)
+        else:
+            message = "Unable to delete."
+            success_url = reverse('events:detail', kwargs={"slug": parent_slug})
+            if request.htmx:
+                return render(request, "events/partials/customer-inline-delete-response.html", {"message": message})
+            return redirect(success_url)
     context = {
         "object": obj
     }

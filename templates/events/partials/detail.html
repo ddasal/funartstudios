@@ -54,7 +54,9 @@
 <div class="row">
     <div class="col-12 col-md-4" style="margin-top: 20px;">
         {% if perms.events.delete_event %}
-           <p><a class="btn btn-outline-danger" href="{{ object.get_delete_url }}" hx-post="{{ object.get_delete_url }}" hx-confirm='THIS CANNOT BE UNDONE: Are you sure you want to delete {{ object.name }}?' hx-trigger="click">Delete Event</a></p> 
+            {% if object.status == 'z' %}
+                <p><a class="btn btn-outline-danger" href="{{ object.get_delete_url }}" hx-post="{{ object.get_delete_url }}" hx-confirm='THIS CANNOT BE UNDONE: Are you sure you want to delete {{ object.name }}?' hx-trigger="click">Delete Event</a></p> 
+           {% endif %}
         {% endif %}
     </div>
 </div>
