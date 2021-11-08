@@ -1,8 +1,9 @@
 <div class="row">
-    <div class="col-12 col-md-6">
+    <div class="col-12 col-md-8">
         <h3>{{object.name}}
             {% if object.get_edit_url %}
             <small>
+                <a class="btn btn-outline-secondary" href="{% url 'products:list' %}">Back</a>
                 {% if perms.products.change_product %}
                 <a class="btn btn-outline-primary" href="{{ object.get_edit_url }}">Edit</a>
                 {% endif %} 
@@ -13,6 +14,32 @@
             Last updated on : {{ object.updated }}<br /></p>
         
         <p>Low Alert Level: {{ object.low_alert_level }}</p>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>PO Number</th>
+                    <th>Date</th>
+                    <th>Supplier</th>
+                    <th>Received of Purchased</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in object.get_pi_list %}
+                <tr>
+                    <td><a href="{% url 'products:po-detail' id=item.purchase_order.id %}">{{ item.purchase_order.id }}</a></td>
+                    <td>{{ item.purchase_order.date }}</td>
+                    <td>{{ item.purchase_order.get_supplier_display }}</td>
+                    <td>
+                        {% if item.received_quantity != item.purchased_quantity %}
+                            <mark>{{ item.received_quantity}} of {{ item.purchased_quantity }}</mark>
+                        {% else %}
+                            {{ item.received_quantity}} of {{ item.purchased_quantity }}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
 

@@ -4,9 +4,12 @@ from django.http import HttpResponse
 from django.http.response import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
+from django.db.models import Sum
+
+from events.models import Event, EventCustomer, EventStaff
 
 from .forms import ProductForm, PurchaseItemForm, PurchaseOrderForm
-from.models import Product, PurchaseItem, PurchaseOrder
+from .models import Product, PurchaseItem, PurchaseOrder
 
 # Create your views here.
 
@@ -14,8 +17,29 @@ from.models import Product, PurchaseItem, PurchaseOrder
 def product_list_view(request):
     qs = Product.objects.all().order_by('type', 'name')
     page = request.GET.get('page', 1)
+    purchased_total = qs[0].total_purchased_all
+    received_total = qs[0].total_received_all
+    inventory_total = 0
 
-    paginator = Paginator(qs, 10)
+    for each in qs:
+        each.temp_customer_used = 0
+        temp_customer_each = [int(each.total_customer_qty) for each in EventCustomer.objects.filter(product=each.id)]
+        each.temp_customer_used = sum(temp_customer_each)
+
+        each.temp_prepaint_used = 0
+        temp_prepaint_each = [int(each.prepaint_qty) for each in EventStaff.objects.filter(prepaint_product=each.id)]
+        each.temp_prepaint_used = sum(temp_prepaint_each)
+
+        each.temp_event_used = 0
+        temp_event_each = [int(each.event_qty) for each in EventStaff.objects.filter(event_product=each.id)]
+        each.temp_event_used = sum(temp_event_each)
+
+
+        each.in_inventory = 0
+        each.in_inventory = each.total_received_each() - each.temp_customer_used - each.temp_prepaint_used - each.temp_event_used
+        inventory_total = inventory_total + each.in_inventory
+
+    paginator = Paginator(qs, 30)
     product_count = paginator.count
     try:
         products = paginator.page(page)
@@ -25,7 +49,10 @@ def product_list_view(request):
         products = paginator.page(paginator.num_pages)
     context = {
         "products": products,
-        "product_count": product_count
+        "product_count": product_count,
+        "purchased_total": purchased_total,
+        "received_total": received_total,
+        "inventory_total": inventory_total
     }
     return render(request, "products/list.html", context)
 
@@ -147,6 +174,8 @@ def po_list_view(request):
 def po_detail_view(request, id=None):
     hx_url = reverse("products:hx-po-detail", kwargs={"id": id})
     po_obj = PurchaseOrder.objects.get(id=id)
+
+
     context = {
         "hx_url": hx_url,
         "po_obj": po_obj
@@ -213,9 +242,32 @@ def po_detail_hx_view(request, id=None):
         obj = None
     if obj is None:
         return HttpResponse("Not found.")
+
+    inventory = Product.objects.filter(active=True).order_by('name')
+    for each in inventory:
+        each.temp_customer_used = 0
+        temp_customer_each = [int(each.total_customer_qty) for each in EventCustomer.objects.filter(product=each.id)]
+        each.temp_customer_used = sum(temp_customer_each)
+
+        each.temp_prepaint_used = 0
+        temp_prepaint_each = [int(each.prepaint_qty) for each in EventStaff.objects.filter(prepaint_product=each.id)]
+        each.temp_prepaint_used = sum(temp_prepaint_each)
+
+        each.temp_event_used = 0
+        temp_event_each = [int(each.event_qty) for each in EventStaff.objects.filter(event_product=each.id)]
+        each.temp_event_used = sum(temp_event_each)
+
+        each.on_order = 0
+        each.on_order = each.total_purchased_each() - each.total_received_each()
+
+        each.in_inventory = 0
+        each.in_inventory = each.total_received_each() - each.temp_customer_used - each.temp_prepaint_used - each.temp_event_used
+
     context = {
         "object": obj,
-        "new_item_url": new_item_url
+        "new_item_url": new_item_url,
+        "inventory": inventory
+
     }
     return render(request, "products/partials/po-detail.html", context)
  

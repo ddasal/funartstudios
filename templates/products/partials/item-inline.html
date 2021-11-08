@@ -15,7 +15,11 @@
         <tbody class="table-striped">
             <tr>
                 <td colspan="2">
-                    - Received {{ object.received_quantity}} of {{ object.purchased_quantity }} <br />
+                    {% if object.received_quantity != object.purchased_quantity %}
+                        <mark>- Received {{ object.received_quantity}} of {{ object.purchased_quantity }}</mark><br />
+                    {% else %}
+                        - Received {{ object.received_quantity}} of {{ object.purchased_quantity }} <br />
+                    {% endif %}
                 </td>
             </tr>
         </tbody>

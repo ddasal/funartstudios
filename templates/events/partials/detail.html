@@ -3,7 +3,7 @@
         <h2>{{object.title}}
             {% if object.get_edit_url %}
             <small>
-                <a class="btn btn-outline-secondary" href="/events/">Back</a>
+                <a class="btn btn-outline-secondary" href="{% url 'events:list' %}">Back</a>
                 {% if perms.events.change_event %}
                 <a class="btn btn-outline-primary" href="{{ object.get_edit_url }}">Edit</a>
                 {% endif %} 

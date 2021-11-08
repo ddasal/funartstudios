@@ -3,6 +3,7 @@
         <h2>PO {{object.id}} from {{ object.get_supplier_display }}
             {% if object.get_edit_url %}
             <small>
+                <a class="btn btn-outline-secondary" href="{% url 'products:po-list' %}">Back</a>
                 {% if perms.products.change_purchaseorder %}
                 <a class="btn btn-outline-primary" href="{{ object.get_edit_url }}">Edit</a>
                 {% endif %} 
@@ -28,6 +29,30 @@
             {% if new_item_url %}
                 <button class="btn btn-outline-success" hx-get="{{ new_item_url }}" hx-trigger="click" hx-target="#item-list" hx-swap="beforeend">Add Item(s)</button>
             {% endif %} 
+    </div>
+
+    <div class="col-6 col-md-4">
+        <h3>Inventory Needed</h3>
+        <table class="table table-sm table-warning">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Current Level</th>
+                    <th>On Order</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in inventory %}
+                    {% if object.low_alert_level >= object.in_inventory %}
+                        <tr>
+                            <td>{{ object.name }}</td>
+                            <td>{{ object.in_inventory }}</td>
+                            <td>{{ object.on_order }}</td>
+                        </tr>
+                    {% endif %} 
+                {% endfor %} 
+            </tbody>
+        </table>
     </div>
 
 </div>

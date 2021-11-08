@@ -3,6 +3,7 @@ from django.db.models.deletion import CASCADE, SET_NULL
 from django.urls import reverse
 from django.db.models import Q
 from django.utils import timezone
+# from events.models import EventCustomer, EventStaff
 from events.utils import slugify_instance_title
 from django.db.models.signals import pre_save, post_save
 from django.conf import settings
@@ -49,6 +50,27 @@ class Product(models.Model):
     @property
     def title(self):
         return self.name
+
+    def total_received_each(self):
+        temp_received_each = [int(each.received_quantity) for each in PurchaseItem.objects.filter(product=self.id)]
+        return sum(temp_received_each)
+
+    def total_received_all(self):
+        temp_received_all = [int(each.received_quantity) for each in PurchaseItem.objects.all()]
+        return sum(temp_received_all)
+
+    def total_purchased_each(self):
+        temp_purchased_each = [int(each.purchased_quantity) for each in PurchaseItem.objects.filter(product=self.id)]
+        return sum(temp_purchased_each)
+
+    def total_purchased_all(self):
+        temp_purchased_all = [int(each.purchased_quantity) for each in PurchaseItem.objects.all()]
+        return sum(temp_purchased_all)
+
+    def get_pi_list(self):
+        temp_pi_list = PurchaseItem.objects.filter(product=self.id)
+        print(temp_pi_list)
+        return temp_pi_list
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

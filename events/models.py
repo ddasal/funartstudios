@@ -208,7 +208,6 @@ class EventStaff(models.Model):
                 self.rate = pay_rate[0][1]
             elif self.role == 't':
                 self.rate = pay_rate[0][2]
-
         self.hourly_pay = Decimal(self.rate) * Decimal(self.hours)
         self.total_pay = Decimal(self.hourly_pay) + Decimal(self.prepaint_pay)
         super().save(*args, **kwargs)
@@ -226,6 +225,7 @@ class EventCustomer(models.Model):
     price = models.DecimalField(decimal_places=2, max_digits=5, default=0.0, null=False, blank=False)
     product = models.ForeignKey(Product, on_delete=CASCADE, null=False, blank=False, related_name='customer_product', default=5)
     per_customer_qty = models.IntegerField(default=1, null=False, blank=False)
+    total_customer_qty = models.IntegerField(default=0, null=False, blank=False)
     subtotal_price = models.DecimalField(decimal_places=2, max_digits=6, default=0.0, null=False, blank=False)
     cost_factor = models.DecimalField(decimal_places=2, max_digits=5, default=0.0, null=True, blank=True)
     taxes = models.DecimalField(decimal_places=2, max_digits=5, default=0.0, null=False, blank=False)
@@ -254,6 +254,7 @@ class EventCustomer(models.Model):
         return reverse("events:hx-eventcustomer-update", kwargs=kwargs)
 
     def save(self, *args, **kwargs):
+        self.total_customer_qty = self.per_customer_qty * self.quantity
         self.subtotal_price = self.quantity * self.price
         if self.type == 'h':
             self.taxes = self.subtotal_price * self.event.tax_rate

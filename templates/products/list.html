@@ -22,7 +22,9 @@
                 <tr>
                     <th>Product Name</th>
                     <th>Product Type</th>
-                    <th>Low Alert Level</th>
+                    <th>Purchased</th>
+                    <th>Received</th>
+                    <th>In Inventory</th>
                     <th>Active</th>
                 </tr>
             </thead>
@@ -32,11 +34,22 @@
                 {% if x.name %}
                     <td><a href="{% url 'products:detail' slug=x.slug %}">{{ x.name }}</a></td>
                     <td>{{ x.get_type_display }}</a></td>
-                    <td>{{ x.low_alert_level }}</td>
+                    <td>{{ x.total_purchased_each }}</td>
+                    <td {% if x.total_purchased_each > x.total_received_each %}class="table-warning"{% endif %}>{{ x.total_received_each }}</td>
+                    <td {% if x.low_alert_level >= x.in_inventory %}class="table-danger"{% endif %}>{{ x.in_inventory }}</td>
                     <td>{{ x.active }}</td>
                     {% endif %}
             </tr>
             {% endfor %}
+            <tr class="table-dark">
+                    <td>Totals</td>
+                    <td></a></td>
+                    <td>{{ purchased_total }}</td>
+                    <td>{{ received_total }}</td>
+                    <td> {{ inventory_total }}</td>
+                    <td></td>
+            </tr>
+
             </tbody>
         </table>
 

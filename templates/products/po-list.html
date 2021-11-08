@@ -25,6 +25,7 @@
                     <th>Date</th>
                     <th>Supplier</th>
                     <th>Purchaser</th>
+                    <th>Products: (Received of Purchased)</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,6 +35,16 @@
                     <td>{{ x.date }}</td>
                     <td>{{ x.get_supplier_display }}</td>
                     <td>{{ x.user.first_name }}</td>
+                    <td>
+                        {% for each in x.get_purchaseitem_children %}
+                            {% if each.received_quantity != each.purchased_quantity %}
+                                <mark>({{ each.received_quantity }} of {{ each.purchased_quantity }}) x {{ each.product.name }}</mark><br />
+                            {% else %}
+                                ({{ each.received_quantity }} of {{ each.purchased_quantity }}) x {{ each.product.name }}<br />
+                            {% endif %}
+                                {% endfor %} 
+                        {{ x.product }}
+                    </td>
             </tr>
             {% endfor %}
             </tbody>
