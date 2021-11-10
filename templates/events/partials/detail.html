@@ -5,7 +5,11 @@
             <small>
                 <a class="btn btn-outline-secondary" href="{% url 'events:list' %}">Back</a>
                 {% if perms.events.change_event %}
-                <a class="btn btn-outline-primary" href="{{ object.get_edit_url }}">Edit</a>
+                    {% if object.status == 'c' %}
+                        <a class="btn btn-outline-secondary" hx-trigger='click'>Completed</a>
+                    {% elif object.status == 'p' %}
+                        <a class="btn btn-outline-primary" href="{{ object.get_edit_url }}">Edit</a>
+                    {% endif %} 
                 {% endif %} 
             </small>
             {% endif %}
@@ -13,9 +17,7 @@
         <p><span class="lead">{{ object.get_length_display }} {{ object.get_type_display }} on <b>{{ object.date }}</b> at {{ object.time }} </span><br />
             Last updated on : {{ object.updated }}<br /></p>
         
-        <p>Customer Credit Card Tips: ${{ object.credit_tips }}<br />
-        To Be Paid/Shared Tips (minus fees): ${{ object.credit_tips_reduced }}<br />
-        Effective Tax Rate: {{ object.tax_rate_percentage }}%</p>
+        <p>Effective Tax Rate: {{ object.tax_rate_percentage }}%</p>
     </div>
 
 
@@ -29,11 +31,13 @@
                     {% include 'events/partials/customer-inline.html' with object=customer %}
                 {% endfor %} 
             </div>
-            {% if perms.events.add_eventcustomer %}
-                {% if new_customer_url %}
-                    <button class="btn btn-outline-success" hx-get="{{ new_customer_url }}" hx-trigger="click" hx-target="#customer-list" hx-swap="beforeend">Add Customer(s)</button>
+            {% if object.status == 'p' %}
+                {% if perms.events.add_eventcustomer %}
+                    {% if new_customer_url %}
+                        <button class="btn btn-outline-success" hx-get="{{ new_customer_url }}" hx-trigger="click" hx-target="#customer-list" hx-swap="beforeend">Add Customer(s)</button>
+                    {% endif %} 
                 {% endif %} 
-            {% endif %} 
+            {% endif %}
     </div>
     <div class='col-6 col-md-4'>
         <h3>Event Staff</h3>
@@ -47,8 +51,19 @@
                     <button class="btn btn-outline-success" hx-get="{{ new_staff_url }}" hx-trigger="click" hx-target="#staff-list" hx-swap="beforeend">Add Staff</button>
                 {% endif %} 
             {% endif %} 
+            <p></p>
+            <h3>Event Tips</h3>
+            <div id="tip-list">
+                {% for tip in object.get_eventtip_children %}
+                    {% include 'events/partials/tip-inline.html' with object=tip %}
+                {% endfor %} 
+            </div>
+            {% if perms.events.add_eventtip %}
+                {% if new_tip_url %}
+                    <button class="btn btn-outline-success" hx-get="{{ new_tip_url }}" hx-trigger="click" hx-target="#tip-list" hx-swap="beforeend">Add Tip</button>
+                {% endif %} 
+            {% endif %} 
     </div>
-
 </div>
 
 <div class="row">

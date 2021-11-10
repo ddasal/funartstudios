@@ -4,7 +4,7 @@ from django.utils.encoding import smart_text
 from django import forms
 
 from products.models import Product
-from .models import Event, EventCustomer, EventStaff
+from .models import Event, EventCustomer, EventStaff, EventTip
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -17,7 +17,7 @@ class EventForm(forms.ModelForm):
     required_css_class = 'required-field'
     class Meta:
         model = Event
-        fields = ['title', 'date', 'time', 'length', 'type', 'credit_tips', 'active']
+        fields = ['title', 'date', 'time', 'length', 'type', 'active']
         widgets = {'date': DateInput(), 'time': TimeInput()}
 
     def __init__(self, *args, **kwargs):
@@ -76,3 +76,22 @@ class EventCustomerForm(forms.ModelForm):
                 new_data
             )
         self.fields['product'].queryset = self.fields['product'].queryset.exclude(active=False)
+
+
+class EventTipForm(forms.ModelForm):
+    error_css_class = 'error-field'
+    required_css_class = 'required-field'
+
+    class Meta:
+        model = EventTip
+        fields = ['tip_amount', 'stage_split']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            new_data = {
+                "class": 'form-control form-control-sm',
+            }
+            self.fields[str(field)].widget.attrs.update(
+                new_data
+            )

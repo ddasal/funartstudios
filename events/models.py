@@ -2,12 +2,13 @@ from decimal import Decimal
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
-from django.db.models.deletion import CASCADE, SET_NULL
+from django.db.models.deletion import CASCADE, PROTECT, SET_NULL
 from django.db.models.fields import DecimalField
 from django.urls import reverse
 from django.utils import timezone
 
 from products.models import Product, PurchaseItem
+from royaltyreports.models import Report
 from .utils import slugify_instance_title
 from django.db.models.signals import pre_save, post_save
 from accounts.models import UserProfile, UserPay
@@ -56,6 +57,10 @@ class EventManager(models.Manager):
     def search(self, query=None):
         return self.get_queryset().search(query=query)
 
+class EventStatus(models.TextChoices):
+    PENDING = 'p', 'Pending'
+    COMPLETED = 'c', 'Completed'
+
 class Event(models.Model):
     title = models.CharField(max_length=50, null=False, blank=False)
     date = models.DateField(null=False, blank=False, default=timezone.now, auto_now=False, auto_now_add=False)
@@ -64,12 +69,11 @@ class Event(models.Model):
     type = models.CharField(max_length=1, choices=EventType.choices, default=EventType.STANDARD)
     slug = models.SlugField(null=True, blank=True, unique=True)
     tax_rate = models.DecimalField(decimal_places=3, max_digits=4, null=False, blank=False, default=0.000)
-    credit_tips =models.DecimalField(decimal_places=2, max_digits=5, null=False, blank=False, default=0.00)
-    credit_tips_reduced =models.DecimalField(decimal_places=2, max_digits=5, null=False, blank=False, default=0.00)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
-    status = models.CharField(max_length=1, null=False, blank=False, default='z')
+    status = models.CharField(max_length=1, choices=EventStatus.choices, default=EventStatus.PENDING)
+    royalty_report = models.ForeignKey(Report, on_delete=SET_NULL, null=True, blank=True)
 
     objects = EventManager()
 
@@ -102,8 +106,10 @@ class Event(models.Model):
     def get_eventcustomer_children(self):
         return self.eventcustomer_set.all()
 
+    def get_eventtip_children(self):
+        return self.eventtip_set.all()
+
     def save(self, *args, **kwargs):
-        self.credit_tips_reduced = self.credit_tips * Decimal(.97)
         effective_tax_rate = list(EventTax.objects.values_list('tax_rate').filter(start_date__lte=self.date, end_date__gte=self.date))
         if self.type == 'i':
             self.tax_rate = 0.00
@@ -118,14 +124,6 @@ class Event(models.Model):
         elif self.type == 't':
             self.tax_rate = 0.00 
         super().save(*args, **kwargs)
-
-
-    INTERNAL = 'i', 'Internal Event'
-    PAINTPOUR = 'p', 'Paint Pour Event'
-    PWAP = 'w', 'Painting with a Purpose Event'
-    RETAILONLY = 'r', 'Retail Only'
-    STANDARD = 's', 'Standard Event'
-    TAXFREE = 't', 'Other Tax Free Event'
 
 
 def event_pre_save(sender, instance, *args, **kwargs):
@@ -219,7 +217,41 @@ class EventStaff(models.Model):
         self.total_pay = Decimal(self.hourly_pay) + Decimal(self.prepaint_pay)
         super().save(*args, **kwargs)
 
-       
+class EventTip(models.Model):
+    event = models.ForeignKey(Event, on_delete=CASCADE)
+    tip_amount = models.DecimalField(decimal_places=2, max_digits=6, default=0.00, null=False, blank=False)
+    stage_split = models.DecimalField(decimal_places=2, max_digits=3, null=False, blank=False, default=0.70)
+    floor_split = models.DecimalField(decimal_places=2, max_digits=3, null=False, blank=False, default=0.30)
+    stage_amount = models.DecimalField(decimal_places=2, max_digits=6, null=False, blank=False, default=0.0)
+    floor_amount = models.DecimalField(decimal_places=2, max_digits=6, null=False, blank=False, default=0.0)
+    credit_fee = models.DecimalField(decimal_places=2, max_digits=2, null=False, blank=False, default=.03)
+    status = models.CharField(max_length=1, choices=PayStatus.choices, default=PayStatus.PENDING)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    def get_absolute_url(self):
+        return self.event.get_absolute_url()
+
+    def get_delete_url(self):
+        kwargs = {
+            "parent_slug": self.event.slug,
+            "id": self.id
+        }
+        return reverse("events:eventtip-delete", kwargs=kwargs)
+
+    def get_htmx_edit_url(self):
+        kwargs = {
+            "parent_slug": self.event.slug,
+            "id": self.id
+        }
+        return reverse("events:hx-eventtip-update", kwargs=kwargs)
+
+    def save(self, *args, **kwargs):
+        self.floor_split = 1 - self.stage_split
+        self.stage_amount = Decimal(self.tip_amount) * (Decimal(1) - Decimal(self.credit_fee)) * Decimal(self.stage_split)
+        self.floor_amount = Decimal(self.tip_amount) * (Decimal(1) - Decimal(self.credit_fee)) * Decimal(self.floor_split)
+        super().save(*args, **kwargs)
+
+
 class EventCustomerType(models.TextChoices):
     HOMEKIT = 'h', 'Twist at Home Kit(s)'
     POPINPAINT = 'p', 'Pop In and Paint(s)'

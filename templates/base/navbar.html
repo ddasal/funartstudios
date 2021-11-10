@@ -35,16 +35,16 @@
             </ul>
           {% endif %} 
 
-          {% if perms.products.view_product %}
+          {% if perms.events.view_event %}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Payroll  
+              Reports  
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li>
-                <a class="dropdown-item" href="#">Pending</a>
-                <a class="dropdown-item" href="#">Approved</a>
-                <a class="dropdown-item" href="#">Completed</a>
+                {% if perms.royaltyreports.view_report %}
+                  <a class="dropdown-item" href="{% url 'royalty:list' %}">Royalty Reports</a>
+                {% endif %}
               </li>
             </ul>
           {% endif %} 

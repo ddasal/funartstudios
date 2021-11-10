@@ -1,0 +1,128 @@
+{% load humanize %}
+<div class="row">
+    <div class="col-12 col-md-10">
+        <h2>Report: {{object.start_date}}
+            {% if object.get_edit_url %}
+            <small>
+                <a class="btn btn-outline-secondary" href="{% url 'royalty:list' %}">Back</a>
+                {% if perms.royaltyreports.change_report %}
+                <a class="btn btn-outline-primary" href="{{ object.get_edit_url }}">Edit</a>
+                {% endif %} 
+            </small>
+            {% endif %}
+        </h2> 
+        <p>
+            <span class="lead">
+                Date Range: {{ object.start_date }} - {{ object.end_date }}
+            </span><br />
+            Last updated on : {{ object.updated }}<br />
+            Adj. Gross Revenue: ${{ report_adjusted_gross_revenue|intcomma }}<br />
+            Adjustments: (${{ report_adjustments|intcomma }})<br />
+            Net Revenue: ${{ report_net_revenue|intcomma }}<br />
+            Royalty: ${{ report_royalty|floatformat:2|intcomma }}<br />
+            Ad Fund: ${{ report_ad_funds|floatformat:2|intcomma }}<br />
+
+        </p>
+        
+        <p>
+            {% if perms.royaltyreports.change_report %}
+                {% if object.status == 'p' %}
+                    <a class="btn btn-outline-success" href="{% url 'royalty:hx-report-complete' id=object.id %}">Mark Complete</a>
+                {% else %} 
+                    <a class="btn btn-outline-success" href="{% url 'royalty:hx-report-pending' id=object.id %}">Revert to Pending</a>
+                {% endif %}
+            {% endif %} 
+        </p>
+    </div>
+
+
+</div>
+
+<div class="row">
+    <div class="col-12 col-md-12">
+        <h3>Events:</h3>
+        <div id="event-list">
+            <table class="table table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Event Name</th>
+                        <th>Seats</th>
+                        <th>Gross Revenue</th>
+                        <th>Adjustments</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                {% for event in events %}
+                    <tr>
+                        <td>{{ event.date }}</td>
+                        <td><a href="{% url 'events:detail' slug=event.slug %}" target="_blank">{{ event.name }}</a></td>
+                        <td>{{ event.temp_customer_seats }}</td>
+                        <td>${{ event.temp_gross_revenue|intcomma }}</td>
+                        <td>
+                            {% if event.temp_adjustments > 0 %}
+                                <span id="adj-{{event.id}}">-{{ event.temp_adjustments }}</span> 
+                                <button onclick="copyToClipboard('#adj-{{event.id}}')">Copy</button>
+                            {% else %} 
+                            
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if event.temp_adjustments > 0 %}
+                                <span id="note-{{event.id}}">MO Sales Tax of {{ event.tax_rate}} of ${{ event.temp_cost_factors }}</span>
+                                <button onclick="copyToClipboard('#note-{{event.id}}')">Copy</button>
+                            {% else %} 
+                            
+                            {% endif %}    
+                        </td>
+                    </tr>
+                {% endfor %} 
+                <tr class="table-dark">
+                    <td >Totals</td>
+                    <td></td>
+                    <td>{{ report_seats }}</td>
+                    <td>${{ report_gross_revenue|intcomma }}</td>
+                    <td>-${{ report_adjustments }}</td>
+                    <td></td>
+                </tr>                
+                </tbody>
+            </table>
+            <p>
+                <b>Inventory Count:</b> <span id="inventory">{{ inventory_total|intcomma }}</span>
+                <button onclick="copyToClipboard('#inventory')">Copy</button>
+
+            </p>
+            <p><b>Total Kits Sold:</b> {{ report_kits }} for ${{ kit_gross_revenue }} in revenue. <small>(${{ kit_adjustments}} in taxes.)</small></p>
+            <p>
+                <b>Square Retail Sales</b> (to be added to report): <span id="square">TBD</span>
+                <button onclick="copyToClipboard('#square')">Copy</button>
+
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-12 col-md-4" style="margin-top: 20px;">
+        {% if perms.royaltyreports.delete_report %}
+            {% if object.status == 'p' %}
+                <p><a class="btn btn-outline-danger" href="{{ object.get_delete_url }}" hx-post="{{ object.get_delete_url }}" hx-confirm='THIS CANNOT BE UNDONE: Are you sure you want to delete report starting on {{ object.start_date }}?' hx-trigger="click">Delete Report</a></p> 
+           {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+
+<script id="rendered-js">
+function copyToClipboard(element) {
+  var $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val($(element).text()).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
+</script>

@@ -27,5 +27,6 @@ urlpatterns = [
     path('events/', include('events.urls')),
     path('products/', include('products.urls')),
     path('search/', search_view, name='search'),
+    path('royalty/', include('royaltyreports.urls')),
     path('admin/', admin.site.urls),
 ]

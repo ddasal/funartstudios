@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %} 
+    Royalty Report List
+{% endblock title %} 
+
+{% block content %}
+<div class="row">
+    <div class='col-12 col-md-6'>
+        <h3>Royalty Reports</h3>
+    </div>
+    <div class="col-12 col-md-6" style="text-align: right;">
+        {% if perms.royaltyreports.add_report %} 
+        <a class="btn btn-outline-success" href="{% url 'royalty:create' %}">Create New Report</a>  
+        {% endif %} 
+    </div>
+</div>
+<div class="row">
+    <div class='col-12'>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Adjusted Gross Revenue</th>
+                    <th>Adjustments</th>
+                    <th>Net Revenue</th>
+                    <th>Royalty</th>
+                    <th>Ad Fund</th>
+                    <th>Reservations</th>
+                    <th>Kits</th>
+                    <th>Surface Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                    <tr>
+                        <td><a class="btn btn-outline-secondary" href="{% url 'royalty:detail' id=report.id %}">{{ report.get_status_display }}</a></a></td>
+                        <td>{{ report.start_date }}</td>
+                        <td>{{ report.end_date }}</td>
+                        <td>${{ report.adjusted_gross_revenue|intcomma }}</td>
+                        <td>${{ report.adjustments|intcomma }}</td>
+                        <td>${{ report.net_revenue|intcomma }}</td>
+                        <td>${{ report.royalty|intcomma }}</td>
+                        <td>${{ report.ad_funds|intcomma }}</td>
+                        <td>{{ report.reservations|intcomma }}</td>
+                        <td>{{ report.kits|intcomma }}</td>
+                        <td>{{ report.surface_count|intcomma }}</td>
+                        <td></td>
+                    </tr>
+                {% endfor %} 
+            </tbody>
+        </table>
+
+        <div style="margin-top: 15px;">
+        {% if reports.has_other_pages %}
+        <ul class="pagination pagination ">
+            {% if reports.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ reports.previous_page_number }}">Previous</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link">Previous</a></li>
+            {% endif %}
+            {% for i in reports.paginator.page_range %}
+            {% if events.number == i %}
+                <li class="page-item active"><a class="page-link">{{ i }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if reports.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ reports.next_page_number }}">Next</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link">Next</a></li>
+            {% endif %}
+        </ul>
+        {% endif %}
+        Total Royalty Report Count: {{ report_count }}
+        </div>
+    </div>
+</div>
+{% endblock content %} 

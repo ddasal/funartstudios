@@ -22,17 +22,6 @@ class UserForm(forms.ModelForm):
                 new_data
             )
 
-    # def __init__(self, coin_price = None, user = None, *args, **kwargs):
-    #     super(TransactionForm, self).__init__(*args, **kwargs)
-    #     if user:
-    #         self.user = user
-    #         qs_coin = Portfolio.objects.filter(user = self.user).values('coin').distinct()
-    #         self.fields['coin'].queryset = qs_coin
-
-    #     if coin_price:
-    #         self.coin_price = coin_price
-    #         self.fields['price'] = self.coin_price
-
 
 
 class RegisterForm(UserCreationForm):

@@ -5,8 +5,8 @@ from django.http.response import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 
-from .forms import EventForm, EventStaffForm, EventCustomerForm
-from.models import Event, EventCustomer, EventStaff
+from .forms import EventForm, EventStaffForm, EventCustomerForm, EventTipForm
+from.models import Event, EventCustomer, EventStaff, EventTip
 
 # Create your views here.
 
@@ -145,6 +145,7 @@ def event_detail_hx_view(request, slug=None):
         obj = Event.objects.get(slug=slug)
         new_staff_url = reverse("events:hx-staff-create", kwargs={"parent_slug": obj.slug})
         new_customer_url = reverse("events:hx-customer-create", kwargs={"parent_slug": obj.slug})
+        new_tip_url = reverse("events:hx-tip-create", kwargs={"parent_slug": obj.slug})
     except:
         obj = None
     if obj is None:
@@ -152,7 +153,8 @@ def event_detail_hx_view(request, slug=None):
     context = {
         "object": obj,
         "new_staff_url": new_staff_url,
-        "new_customer_url": new_customer_url
+        "new_customer_url": new_customer_url,
+        "new_tip_url": new_tip_url
     }
     return render(request, "events/partials/detail.html", context)
  
@@ -182,11 +184,13 @@ def event_update_view(request, slug=None):
     form = EventForm(request.POST or None, instance=obj)
     new_staff_url = reverse("events:hx-staff-create", kwargs={"parent_slug": obj.slug})
     new_customer_url = reverse("events:hx-customer-create", kwargs={"parent_slug": obj.slug})
+    new_tip_url = reverse("events:hx-tip-create", kwargs={"parent_slug": obj.slug})
     context = {
         "form": form,
         "object": obj,
         "new_staff_url": new_staff_url,
-        "new_customer_url": new_customer_url
+        "new_customer_url": new_customer_url,
+        "new_tip_url": new_tip_url
     }
     if form.is_valid():
         form.save()
@@ -272,4 +276,73 @@ def event_customer_update_hx_view(request, parent_slug=None, id=None):
         return render(request, "events/partials/customer-inline.html", context)
     
     return render(request, "events/partials/customer-form.html", context)
+
+
+
+@permission_required('events.change_eventtip')
+def event_tip_update_hx_view(request, parent_slug=None, id=None):
+    if not request.htmx:
+        raise Http404
+    try:
+        parent_obj = Event.objects.get(slug=parent_slug)
+    except:
+        parent_obj = None
+    if parent_obj is None:
+        return HttpResponse("Not found.")
+
+    instance = None
+    if id is not None:
+        try:
+            instance = EventTip.objects.get(event=parent_obj, id=id)
+        except:
+            instance = None
+    form = EventTipForm(request.POST or None, instance=instance)
+    url = reverse("events:hx-tip-create", kwargs={"parent_slug": parent_obj.slug})
+    if instance:
+        url = instance.get_htmx_edit_url()        
+    
+    context = {
+        "url": url,
+        "form": form,
+        "object": instance
+    }
+    if form.is_valid():
+        new_obj = form.save(commit=False)
+        if instance is None:
+            new_obj.event = parent_obj
+        new_obj.save()
+        context['object'] = new_obj
+        return render(request, "events/partials/tip-inline.html", context)
+    
+    return render(request, "events/partials/tip-form.html", context)
+
+@permission_required('events.delete_eventtip')
+def event_tip_delete_view(request, parent_slug=None, id=None):
+    try:
+        obj = EventTip.objects.get(event__slug=parent_slug, id=id)
+    except:
+        obj = None
+    if obj is None:
+        if request.htmx:
+            return HttpResponse('Not found')
+        raise Http404
+    if request.method == "POST":
+        if obj.status == 'p':
+            tip = obj.tip_amount
+            obj.delete()
+            success_url = reverse('events:detail', kwargs={"slug": parent_slug})
+            if request.htmx:
+                return render(request, "events/partials/tip-inline-delete-response.html", {"tip": tip})
+            return redirect(success_url)
+        else:
+            message = "Unable to delete."
+            success_url = reverse('events:detail', kwargs={"slug": parent_slug})
+            if request.htmx:
+                return render(request, "events/partials/tip-inline-delete-response.html", {"message": message})
+            return redirect(success_url)
+
+    context = {
+        "object": obj
+    }
+    return render(request, "events/delete.html", context)
 

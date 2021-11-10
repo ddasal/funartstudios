@@ -19,6 +19,7 @@ def product_list_view(request):
     page = request.GET.get('page', 1)
     purchased_total = qs[0].total_purchased_all
     received_total = qs[0].total_received_all
+    print(received_total)
     inventory_total = 0
 
     for each in qs:
