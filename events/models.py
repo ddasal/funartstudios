@@ -1,7 +1,7 @@
 from decimal import Decimal
 from django.conf import settings
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.db.models.deletion import CASCADE, PROTECT, SET_NULL
 from django.db.models.fields import DecimalField
 from django.urls import reverse
@@ -73,6 +73,7 @@ class Event(models.Model):
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
     status = models.CharField(max_length=1, choices=EventStatus.choices, default=EventStatus.PENDING)
+    payroll_status = models.CharField(max_length=1, choices=EventStatus.choices, default=EventStatus.PENDING)
     royalty_report = models.ForeignKey(Report, on_delete=SET_NULL, null=True, blank=True)
 
     objects = EventManager()
@@ -156,6 +157,8 @@ class EventStaff(models.Model):
     rate = models.DecimalField(decimal_places=2, max_digits=4, default=0.00, null=False, blank=False)
     prepaint_pay = models.DecimalField(decimal_places=2, max_digits=5, default=0.00, null=False, blank=False)
     hourly_pay = models.DecimalField(decimal_places=2, max_digits=5, default=0.00, null=False, blank=False)
+    tip_pay = models.DecimalField(decimal_places=2, max_digits=5, default=0.00, null=False, blank=False)
+    commission_pay = models.DecimalField(decimal_places=2, max_digits=5, default=0.00, null=False, blank=False)
     total_pay = models.DecimalField(decimal_places=2, max_digits=5, default=0.00, null=False, blank=False)
     prepaint_product = models.ForeignKey(Product, on_delete=CASCADE, null=True, blank=True, related_name='prepaint_product', default=5)
     prepaint_qty = models.IntegerField(default=0, null=True, blank=True)
@@ -214,7 +217,7 @@ class EventStaff(models.Model):
             elif self.role == 't':
                 self.rate = pay_rate[0][2]
         self.hourly_pay = Decimal(self.rate) * Decimal(self.hours)
-        self.total_pay = Decimal(self.hourly_pay) + Decimal(self.prepaint_pay)
+        self.total_pay = Decimal(self.hourly_pay) + Decimal(self.prepaint_pay) + Decimal(self.tip_pay) + Decimal(self.commission_pay)
         super().save(*args, **kwargs)
 
 class EventTip(models.Model):

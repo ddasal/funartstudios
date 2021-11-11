@@ -1,0 +1,147 @@
+{% load humanize %}
+<div class="row">
+    <div class="col-12 col-md-7">
+        <h2>Report Pay Date: {{object.pay_date}}
+            {% if object.get_edit_url %}
+            <small class=".d-print-none">
+                <a class="btn btn-outline-secondary" href="{% url 'payroll:list' %}">Back</a>
+                {% if perms.payroll.change_report %}
+                <a class="btn btn-outline-primary" href="{{ object.get_edit_url }}">Edit</a>
+                {% endif %} 
+            </small>
+            {% endif %}
+        </h2> 
+        <p>
+            <span class="lead">
+                Pay Period: {{ object.start_date }} - {{ object.end_date }}
+            </span><br />
+            Last updated on : {{ object.updated }}<br />
+            <span class="d-print-none">Payroll Gross Amount: ${{ payroll_gross|intcomma }}<br /></span>
+
+        </p>
+        
+        <p class=".d-print-none">
+            {% if perms.payroll.change_report %}
+                {% if object.status == 'p' %}
+                    <a class="btn btn-outline-success" href="{% url 'payroll:hx-report-complete' id=object.id %}">Mark Complete</a>
+                {% else %} 
+                    <a class="btn btn-outline-success" href="{% url 'payroll:hx-report-pending' id=object.id %}">Revert to Pending</a>
+                {% endif %}
+            {% endif %} 
+        </p>
+    </div>
+    <div class="col-12 col-md-5 d-print-none">
+        {% if events_without_workers > 0 %}
+        <table class="table table-sm table-warning">
+            <thead>
+                <th>Events in Pay Period w/o Staffing</th>
+            </thead>
+            <tbody>
+                {% for event in events %}
+                    {% if event.worker_count == 0 %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'events:detail' slug=event.slug %}" target="_blank">{{ event.name }}</a> on {{ event.date}} at {{ event.time }}</li>
+                        </td>
+                    </tr>
+                    {% endif %} 
+                {% endfor %} 
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-12 col-md-12">
+        <h3>Time Entries:</h3>
+        <div id="event-list">
+            <table class="table table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th>Staff Member</th>
+                        <th>Role</th>
+                        <th>Event Name / Date</th>
+                        <th>Rate x</th>
+                        <th>Hours =</th>
+                        <th><i>Subtotal +</i></th>
+                        <th>Prepaint +</th>
+                        <th>Tips +</th>
+                        <th>Commissions =</th>
+                        <th class="table-success">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for event in events %}
+                    {% for staff in event.get_eventstaff_children %}
+                        <tr>
+                            <td>{{ staff.user.first_name }} {{ staff.user.last_name }}</td>
+                            <td>{{ staff.get_role_display }}</td>
+                            <td><a href="{% url 'events:detail' slug=staff.event.slug %}" target="_blank">{{ staff.event.name }}</a> on {{ staff.event.date }} at {{ staff.event.time }}</td>
+                            <td>
+                                {% if staff.rate %}
+                                    ${{ staff.rate }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if staff.rate %}
+                                    {{ staff.hours }}
+                                {% endif %} 
+                            </td>
+                            <td>{% if staff.hourly_pay %} 
+                                <i>${{ staff.hourly_pay }}</i>
+                                {% endif %} 
+                            </td>
+                            <td>
+                                {% if staff.prepaint_pay %}
+                                    ${{ staff.prepaint_pay }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if staff.tip_pay %}
+                                    ${{ staff.tip_pay }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if staff.commission_pay %}
+                                    ${{ staff.commission_pay }}
+                                {% endif %}
+                            </td>
+                            <td class="table-success">
+                                {% if staff.total_pay %} 
+                                    <b>${{ staff.total_pay }}</b>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %} 
+                {% endfor %} 
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-12 col-md-4" style="margin-top: 20px;">
+        {% if perms.royaltyreports.delete_report %}
+            {% if object.status == 'p' %}
+                <p><a class="btn btn-outline-danger" href="{{ object.get_delete_url }}" hx-post="{{ object.get_delete_url }}" hx-confirm='THIS CANNOT BE UNDONE: Are you sure you want to delete report starting on {{ object.start_date }}?' hx-trigger="click">Delete Report</a></p> 
+           {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+
+<script id="rendered-js">
+function copyToClipboard(element) {
+  var $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val($(element).text()).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
+</script>

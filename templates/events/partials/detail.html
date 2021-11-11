@@ -46,9 +46,11 @@
                     {% include 'events/partials/staff-inline.html' with object=staff %}
                 {% endfor %} 
             </div>
-            {% if perms.events.add_eventstaff %}
-                {% if new_staff_url %}
-                    <button class="btn btn-outline-success" hx-get="{{ new_staff_url }}" hx-trigger="click" hx-target="#staff-list" hx-swap="beforeend">Add Staff</button>
+            {% if object.payroll_status == 'p' %}
+                {% if perms.events.add_eventstaff %}
+                    {% if new_staff_url %}
+                        <button class="btn btn-outline-success" hx-get="{{ new_staff_url }}" hx-trigger="click" hx-target="#staff-list" hx-swap="beforeend">Add Staff</button>
+                    {% endif %} 
                 {% endif %} 
             {% endif %} 
             <p></p>
@@ -58,9 +60,11 @@
                     {% include 'events/partials/tip-inline.html' with object=tip %}
                 {% endfor %} 
             </div>
-            {% if perms.events.add_eventtip %}
-                {% if new_tip_url %}
-                    <button class="btn btn-outline-success" hx-get="{{ new_tip_url }}" hx-trigger="click" hx-target="#tip-list" hx-swap="beforeend">Add Tip</button>
+            {% if object.payroll_status == 'p' %}
+                {% if perms.events.add_eventtip %}
+                    {% if new_tip_url %}
+                        <button class="btn btn-outline-success" hx-get="{{ new_tip_url }}" hx-trigger="click" hx-target="#tip-list" hx-swap="beforeend">Add Tip</button>
+                    {% endif %} 
                 {% endif %} 
             {% endif %} 
     </div>

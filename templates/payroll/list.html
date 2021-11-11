@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %} 
+    Payroll Report List
+{% endblock title %} 
+
+{% block content %}
+<div class="row">
+    <div class='col-12 col-md-6'>
+        <h3>Payroll Reports</h3>
+    </div>
+    <div class="col-12 col-md-6" style="text-align: right;">
+        {% if perms.payroll.add_report %} 
+        <a class="btn btn-outline-success" href="{% url 'payroll:create' %}">Create New Report</a>  
+        {% endif %} 
+    </div>
+</div>
+<div class="row">
+    <div class='col-12'>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Pay Date</th>
+                    <th>Pay Period Start</th>
+                    <th>Pay Period End</th>
+                    <th>Payroll Gross Ammount</th>
+                    <th>Staff Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                    <tr>
+                        <td><a class="btn btn-outline-secondary" href="{% url 'payroll:detail' id=report.id %}">{{ report.get_status_display }}</a></a></td>
+                        <td>{{ report.pay_date }}</td>
+                        <td>{{ report.start_date }}</td>
+                        <td>{{ report.end_date }}</td>
+                        <td>${{ report.payroll_gross|intcomma }}</td>
+                        <td>{{ report.staff_count }}</td>
+                        <td></td>
+                    </tr>
+                {% endfor %} 
+            </tbody>
+        </table>
+
+        <div style="margin-top: 15px;">
+        {% if reports.has_other_pages %}
+        <ul class="pagination pagination ">
+            {% if reports.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ reports.previous_page_number }}">Previous</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link">Previous</a></li>
+            {% endif %}
+            {% for i in reports.paginator.page_range %}
+            {% if events.number == i %}
+                <li class="page-item active"><a class="page-link">{{ i }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if reports.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ reports.next_page_number }}">Next</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link">Next</a></li>
+            {% endif %}
+        </ul>
+        {% endif %}
+        Total Payroll Report Count: {{ report_count }}
+        </div>
+    </div>
+</div>
+{% endblock content %} 

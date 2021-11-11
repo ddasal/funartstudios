@@ -43,7 +43,8 @@
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li>
                 {% if perms.royaltyreports.view_report %}
-                  <a class="dropdown-item" href="{% url 'royalty:list' %}">Royalty Reports</a>
+                <a class="dropdown-item" href="{% url 'payroll:list' %}">Payroll Reports</a>
+                <a class="dropdown-item" href="{% url 'royalty:list' %}">Royalty Reports</a>
                 {% endif %}
               </li>
             </ul>
@@ -64,6 +65,7 @@
                 {% if user.is_authenticated %} 
                 <a class="dropdown-item" href="{% url 'account:profile' %}">View/Edit Profile</a>
                 <a class="dropdown-item" href="{% url 'account:change-password' %}">Change Password</a>
+                <a class="dropdown-item" href="{% url 'payroll:list' %}">Payroll Reports</a>
                 {% if perms.permission.change_permission %} 
                 <a class="dropdown-item" href="/admin/">Site Admin</a>
                 {% endif %} 

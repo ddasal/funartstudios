@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'accounts',
     'articles',
     'events',
+    'payroll',
     'products',
     'royaltyreports',
     'search'
