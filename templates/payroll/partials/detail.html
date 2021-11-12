@@ -1,12 +1,12 @@
 {% load humanize %}
 <div class="row">
-    <div class="col-12 col-md-7">
+    <div class="col-12 col-7-auto">
         <h2>Report Pay Date: {{object.pay_date}}
             {% if object.get_edit_url %}
             <small class=".d-print-none">
-                <a class="btn btn-outline-secondary" href="{% url 'payroll:list' %}">Back</a>
+                <a class="btn btn-outline-secondary d-print-none" href="{% url 'payroll:list' %}">Back</a>
                 {% if perms.payroll.change_report %}
-                <a class="btn btn-outline-primary" href="{{ object.get_edit_url }}">Edit</a>
+                <a class="btn btn-outline-primary d-print-none" href="{{ object.get_edit_url }}">Edit</a>
                 {% endif %} 
             </small>
             {% endif %}
@@ -16,11 +16,12 @@
                 Pay Period: {{ object.start_date }} - {{ object.end_date }}
             </span><br />
             Last updated on : {{ object.updated }}<br />
-            <span class="d-print-none">Payroll Gross Amount: ${{ total_total_pay|intcomma|floatformat:'2' }}<br /></span>
+            <span>Payroll Gross Amount: ${{ total_total_pay|intcomma|floatformat:'2' }}<br />
+            Total Staff Members in Pay Report: {{ object.staff_count }}</span>
 
         </p>
         
-        <p class=".d-print-none">
+        <p class="d-print-none">
             {% if perms.payroll.change_report %}
                 {% if object.status == 'p' %}
                     <a class="btn btn-outline-success" href="{% url 'payroll:hx-report-complete' id=object.id %}">Mark Complete</a>
@@ -55,8 +56,8 @@
 
 <div class="row">
     <div class="col-12 col-md-12">
-        <h3>Time Entries:</h3>
-        <div id="event-list">
+        <h3 class="d-print-none">Time Entries:</h3>
+        <div id="event-list" class="d-print-none">
             <table class="table table-sm table-striped">
                 <thead>
                     <tr>
@@ -131,11 +132,11 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <th>Hours</th>
-                        <td>{{ total_stage_hours|floatformat:'2' }}</td>
-                        <td>{{ total_floor_hours|floatformat:'2' }}</td>
-                        <td>{{ total_team_hours|floatformat:'2' }}</td>
-                        <th>{{ total_total_hours|floatformat:'2' }}</th>
+                        <th><i>Hours</i></th>
+                        <td><i>{{ total_stage_hours|floatformat:'2' }}</i></td>
+                        <td><i>{{ total_floor_hours|floatformat:'2' }}</i></td>
+                        <td><i>{{ total_team_hours|floatformat:'2' }}</i></td>
+                        <th><i>{{ total_total_hours|floatformat:'2' }}</i></th>
                     </tr>
                     <tr>
                         <th>Hourly Pay</th>
@@ -173,7 +174,7 @@
 
 </div>
 
-<div class="row">
+<div class="row d-print-none">
     <div class="col-12 col-md-4" style="margin-top: 20px;">
         {% if perms.royaltyreports.delete_report %}
             {% if object.status == 'p' %}

@@ -111,6 +111,8 @@ def report_detail_hx_view(request, id=None):
         total_team_pay = 0
         total_total_pay = 0
         for event in events:
+            event.payroll_report = obj
+            event.save()
             if event.worker_count == 0:
                 events_without_workers = events_without_workers + 1
             tip_details = EventTip.objects.all().filter(event=event.id)
@@ -233,6 +235,11 @@ def report_detail_hx_view(request, id=None):
         total_floor_pay = total_floor_hourly_pay + total_floor_tip_pay + total_floor_commission_pay
         total_team_pay = total_team_hourly_pay + total_team_tip_pay + total_team_commission_pay
         total_total_pay = total_stage_pay + total_floor_pay + total_team_pay
+
+        staff_count = EventStaff.objects.all().filter(event__payroll_report=obj).order_by('user').distinct('user').count()
+        obj.staff_count = staff_count
+        obj.payroll_gross = total_total_pay
+        obj.save()
         # payroll_gross = Decimal(report_gross_revenue)
 
         # obj.payroll_gross = payroll_gross
@@ -317,8 +324,6 @@ def report_hx_mark_complete(request, id=None):
     if parent_obj is None:
         return HttpResponse("Not found.")
     else:
-        parent_obj.status = 'c'
-        parent_obj.save()
         children = Event.objects.filter(date__range=(parent_obj.start_date, parent_obj.end_date))
         for event in children:
             event.payroll_status = 'c'
@@ -331,6 +336,9 @@ def report_hx_mark_complete(request, id=None):
             for each in tips:
                 each.status = 'c'
                 each.save()
+        parent_obj.status = 'c'
+        parent_obj.save()
+
         success_url = reverse('payroll:list')
         # if request.htmx:
         #     headers = {

@@ -6,6 +6,7 @@ from django.db.models.deletion import CASCADE, PROTECT, SET_NULL
 from django.db.models.fields import DecimalField
 from django.urls import reverse
 from django.utils import timezone
+from payroll.models import PayReport
 
 from products.models import Product, PurchaseItem
 from royaltyreports.models import RoyaltyReport
@@ -75,6 +76,7 @@ class Event(models.Model):
     status = models.CharField(max_length=1, choices=EventStatus.choices, default=EventStatus.PENDING)
     payroll_status = models.CharField(max_length=1, choices=EventStatus.choices, default=EventStatus.PENDING)
     royalty_report = models.ForeignKey(RoyaltyReport, on_delete=SET_NULL, null=True, blank=True)
+    payroll_report = models.ForeignKey(PayReport, on_delete=SET_NULL, null=True, blank=True)
 
     objects = EventManager()
 
