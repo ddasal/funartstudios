@@ -12,7 +12,7 @@
     </div>
     <div class="col-12 col-md-6" style="text-align: right;">
         {% if perms.payroll.add_report %} 
-        <a class="btn btn-outline-success" href="{% url 'payroll:create' %}">Create New Report</a>  
+        <a class="btn btn-outline-success" href="{% url 'payroll:create' %}">Create Payroll Report</a>  
         {% endif %} 
     </div>
 </div>
@@ -41,6 +41,7 @@
                         <td></td>
                     </tr>
                 {% endfor %} 
+
             </tbody>
         </table>
 

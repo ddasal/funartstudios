@@ -17,7 +17,8 @@
         <p><span class="lead">{{ object.get_length_display }} {{ object.get_type_display }} on <b>{{ object.date }}</b> at {{ object.time }} </span><br />
             Last updated on : {{ object.updated }}<br /></p>
         
-        <p>Effective Tax Rate: {{ object.tax_rate_percentage }}%</p>
+        <p>Effective Tax Rate: {{ object.tax_rate_percentage }}%<br />
+        Royalty Report ID: {{ object.royalty_report.id }}</p>
     </div>
 
 
@@ -73,7 +74,7 @@
 <div class="row">
     <div class="col-12 col-md-4" style="margin-top: 20px;">
         {% if perms.events.delete_event %}
-            {% if object.status == 'z' %}
+            {% if object.status == 'p' %}
                 <p><a class="btn btn-outline-danger" href="{{ object.get_delete_url }}" hx-post="{{ object.get_delete_url }}" hx-confirm='THIS CANNOT BE UNDONE: Are you sure you want to delete {{ object.name }}?' hx-trigger="click">Delete Event</a></p> 
            {% endif %}
         {% endif %}

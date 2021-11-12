@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.utils.encoding import smart_text
 from django import forms
 
-from payroll.models import Report
+from payroll.models import PayReport
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -18,7 +18,7 @@ class ReportForm(forms.ModelForm):
     required_css_class = 'required-field'
 
     class Meta:
-        model = Report
+        model = PayReport
         fields = ['start_date', 'end_date', 'pay_date']
         widgets = {'start_date': DateInput(), 'end_date': DateInput(), 'pay_date': DateInput()}
 

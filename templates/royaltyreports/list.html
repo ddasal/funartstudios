@@ -12,7 +12,7 @@
     </div>
     <div class="col-12 col-md-6" style="text-align: right;">
         {% if perms.royaltyreports.add_report %} 
-        <a class="btn btn-outline-success" href="{% url 'royalty:create' %}">Create New Report</a>  
+        <a class="btn btn-outline-success" href="{% url 'royalty:create' %}">Create Royalty Report</a>  
         {% endif %} 
     </div>
 </div>
@@ -21,7 +21,7 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>Status</th>
+                    <th>ID: Status</th>
                     <th>Start</th>
                     <th>End</th>
                     <th>Adjusted Gross Revenue</th>
@@ -37,7 +37,7 @@
             <tbody>
                 {% for report in reports %}
                     <tr>
-                        <td><a class="btn btn-outline-secondary" href="{% url 'royalty:detail' id=report.id %}">{{ report.get_status_display }}</a></a></td>
+                        <td><a class="btn btn-outline-secondary" href="{% url 'royalty:detail' id=report.id %}">{{ report.id }}: {{ report.get_status_display }}</a></a></td>
                         <td>{{ report.start_date }}</td>
                         <td>{{ report.end_date }}</td>
                         <td>${{ report.adjusted_gross_revenue|intcomma }}</td>

@@ -7,6 +7,7 @@ from django.urls import reverse
 
 from .forms import EventForm, EventStaffForm, EventCustomerForm, EventTipForm
 from.models import Event, EventCustomer, EventStaff, EventTip
+from royaltyreports.models import RoyaltyReport
 
 # Create your views here.
 
@@ -52,7 +53,7 @@ def event_delete_view(request, slug=None):
             return HttpResponse('Not found')
         raise Http404
     if request.method == "POST":
-        if obj.status == 'z':
+        if obj.status == 'p':
             obj.delete()
             success_url = reverse('events:list')
             if request.htmx:
@@ -168,14 +169,18 @@ def event_create_view(request):
     }
     if form.is_valid():
         obj = form.save(commit=False)
-        obj.user = request.user
-        obj.save()
-        if request.htmx:
-            headers = {
-                "HX-Redirect": obj.get_absolute_url()
-            }
-            return HttpResponse('Created', headers=headers)
-        return redirect(obj.get_absolute_url())
+        royalty_date_check = RoyaltyReport.objects.filter(end_date__gte=obj.date, start_date__lte=obj.date, status='c')
+        if royalty_date_check:
+            return HttpResponse("Unable to create event. Check that your date isn't conflicting with a closed Pay Period or Royalty Report.")
+        else:
+            obj.user = request.user
+            obj.save()
+            if request.htmx:
+                headers = {
+                    "HX-Redirect": obj.get_absolute_url()
+                }
+                return HttpResponse('Created', headers=headers)
+            return redirect(obj.get_absolute_url())
     return render(request, "events/create-update.html", context) 
 
 @permission_required('events.change_event')

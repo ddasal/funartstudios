@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.utils.encoding import smart_text
 from django import forms
 
-from royaltyreports.models import Report
+from royaltyreports.models import RoyaltyReport
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -20,7 +20,7 @@ class ReportForm(forms.ModelForm):
     user = UserFullnameChoiceField(queryset=User.objects.filter(is_active=True).exclude(first_name__exact='').order_by('first_name'))
 
     class Meta:
-        model = Report
+        model = RoyaltyReport
         fields = ['start_date', 'end_date', 'user']
         widgets = {'start_date': DateInput(), 'end_date': DateInput()}
 

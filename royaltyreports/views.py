@@ -9,15 +9,14 @@ from events.models import Event, EventCustomer, EventStaff
 from products.models import Product, PurchaseItem, PurchaseOrder
 from royaltyreports.forms import ReportForm
 from django.db.models import Q
-# from .forms import EventForm, EventStaffForm, EventCustomerForm
-from royaltyreports.models import Report
+from royaltyreports.models import RoyaltyReport
 from decimal import Decimal
 
 # Create your views here.
 
 @permission_required('royaltyreports.view_report')
 def report_list_view(request):
-    qs = Report.objects.all().order_by('-start_date')
+    qs = RoyaltyReport.objects.all().order_by('-start_date')
     page = request.GET.get('page', 1)
 
     paginator = Paginator(qs, 10)
@@ -37,7 +36,7 @@ def report_list_view(request):
 @permission_required('royaltyreports.view_report')
 def report_detail_view(request, id=None):
     hx_url = reverse("royalty:hx-detail", kwargs={"id": id})
-    report_obj = Report.objects.get(id=id)
+    report_obj = RoyaltyReport.objects.get(id=id)
     context = {
         "hx_url": hx_url,
         "report_obj": report_obj
@@ -48,7 +47,7 @@ def report_detail_view(request, id=None):
 @permission_required('royaltyreports.delete_report')
 def report_delete_view(request, id=None):
     try:
-        obj = Report.objects.get(id=id)
+        obj = RoyaltyReport.objects.get(id=id)
     except:
         obj = None
     if obj is None:
@@ -85,7 +84,7 @@ def report_detail_hx_view(request, id=None):
     if not request.htmx:
         raise Http404
     try:
-        obj = Report.objects.get(id=id)
+        obj = RoyaltyReport.objects.get(id=id)
         events = Event.objects.filter(Q(type='s') | Q(type='p') | Q(type='w') | Q(type='t'), date__range=(obj.start_date, obj.end_date)).order_by('date', 'time')
         kits = Event.objects.filter(Q(type='s') | Q(type='p') | Q(type='w') | Q(type='t') | Q(type='r'), date__range=(obj.start_date, obj.end_date)).order_by('date', 'time')
         report_adjusted_gross_revenue = 0
@@ -221,7 +220,7 @@ def report_create_view(request):
 
 @permission_required('royaltyreports.change_report')
 def report_update_view(request, id=None):
-    obj = get_object_or_404(Report, id=id)
+    obj = get_object_or_404(RoyaltyReport, id=id)
     form = ReportForm(request.POST or None, instance=obj)
     context = {
         "form": form,
@@ -240,7 +239,7 @@ def report_hx_mark_complete(request, id=None):
     # if not request.htmx:
     #     raise Http404
     try:
-        parent_obj = Report.objects.get(id=id)
+        parent_obj = RoyaltyReport.objects.get(id=id)
     except:
         parent_obj = None
 
@@ -252,6 +251,7 @@ def report_hx_mark_complete(request, id=None):
         children = Event.objects.filter(date__range=(parent_obj.start_date, parent_obj.end_date))
         for event in children:
             event.status = 'c'
+            event.royalty_report = parent_obj
             event.save()
             customers = EventCustomer.objects.filter(event=event.id)
             for each in customers:
@@ -271,7 +271,7 @@ def report_hx_mark_pending(request, id=None):
     # if not request.htmx:
     #     raise Http404
     try:
-        parent_obj = Report.objects.get(id=id)
+        parent_obj = RoyaltyReport.objects.get(id=id)
     except:
         parent_obj = None
 

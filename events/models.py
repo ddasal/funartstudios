@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from products.models import Product, PurchaseItem
-from royaltyreports.models import Report
+from royaltyreports.models import RoyaltyReport
 from .utils import slugify_instance_title
 from django.db.models.signals import pre_save, post_save
 from accounts.models import UserProfile, UserPay
@@ -74,7 +74,7 @@ class Event(models.Model):
     active = models.BooleanField(default=True)
     status = models.CharField(max_length=1, choices=EventStatus.choices, default=EventStatus.PENDING)
     payroll_status = models.CharField(max_length=1, choices=EventStatus.choices, default=EventStatus.PENDING)
-    royalty_report = models.ForeignKey(Report, on_delete=SET_NULL, null=True, blank=True)
+    royalty_report = models.ForeignKey(RoyaltyReport, on_delete=SET_NULL, null=True, blank=True)
 
     objects = EventManager()
 

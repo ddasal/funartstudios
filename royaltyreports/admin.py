@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from royaltyreports.models import Report
+from royaltyreports.models import RoyaltyReport
 
 # Register your models here.
 
-admin.site.register(Report)
+admin.site.register(RoyaltyReport)

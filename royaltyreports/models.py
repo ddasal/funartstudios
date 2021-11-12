@@ -12,7 +12,7 @@ class ReportStatus(models.TextChoices):
     COMPLETED = 'c', 'Completed'
 
 
-class Report(models.Model):
+class RoyaltyReport(models.Model):
     user = models.ForeignKey(User, on_delete=SET_NULL, null=True)
     start_date = models.DateField(null=False, blank=False, default=timezone.now)
     end_date = models.DateField(null=False, blank=False, default=timezone.now)

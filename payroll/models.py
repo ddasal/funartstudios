@@ -12,11 +12,12 @@ class ReportStatus(models.TextChoices):
     COMPLETED = 'c', 'Completed'
 
 
-class Report(models.Model):
+class PayReport(models.Model):
     start_date = models.DateField(null=False, blank=False, default=timezone.now)
     end_date = models.DateField(null=False, blank=False, default=timezone.now)
     pay_date = models.DateField(null=False, blank=False, default=timezone.now)
     payroll_gross = models.DecimalField(max_digits=7, decimal_places=2, default=0, null=False, blank=False)
+    staff_count = models.IntegerField(null=False, blank=False, default=0)
     status = models.CharField(max_length=1, choices=ReportStatus.choices, default=ReportStatus.PENDING)
     prev_status = models.CharField(max_length=1, null=True, choices=ReportStatus.choices, default=None)
     timestamp = models.DateTimeField(auto_now_add=True) 

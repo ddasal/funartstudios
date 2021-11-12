@@ -11,14 +11,14 @@ from products.models import Product, PurchaseItem, PurchaseOrder
 from payroll.forms import ReportForm
 from django.db.models import Q
 # from .forms import EventForm, EventStaffForm, EventCustomerForm
-from payroll.models import Report
+from payroll.models import PayReport
 from decimal import Decimal
 
 # Create your views here.
 
 @permission_required('payroll.view_report')
 def report_list_view(request):
-    qs = Report.objects.all().order_by('-start_date')
+    qs = PayReport.objects.all().order_by('-start_date')
     page = request.GET.get('page', 1)
 
     paginator = Paginator(qs, 10)
@@ -38,7 +38,7 @@ def report_list_view(request):
 @permission_required('payroll.view_report')
 def report_detail_view(request, id=None):
     hx_url = reverse("payroll:hx-detail", kwargs={"id": id})
-    report_obj = Report.objects.get(id=id)
+    report_obj = PayReport.objects.get(id=id)
     context = {
         "hx_url": hx_url,
         "report_obj": report_obj
@@ -49,7 +49,7 @@ def report_detail_view(request, id=None):
 @permission_required('payroll.delete_report')
 def report_delete_view(request, id=None):
     try:
-        obj = Report.objects.get(id=id)
+        obj = PayReport.objects.get(id=id)
     except:
         obj = None
     if obj is None:
@@ -86,58 +86,107 @@ def report_detail_hx_view(request, id=None):
     if not request.htmx:
         raise Http404
     try:
-        obj = Report.objects.get(id=id)
+        obj = PayReport.objects.get(id=id)
         events = Event.objects.filter(date__range=(obj.start_date, obj.end_date)).order_by('date', 'time').annotate(worker_count=Count('eventstaff'))
         payroll_gross = 0
         events_without_workers = 0
+        total_stage_hours = 0
+        total_floor_hours = 0
+        total_team_hours = 0
+        total_total_hours = 0
+        total_stage_hourly_pay = 0
+        total_floor_hourly_pay = 0
+        total_team_hourly_pay = 0
+        total_total_hourly_pay = 0
+        total_stage_tip_pay = 0
+        total_floor_tip_pay = 0
+        total_team_tip_pay = 0
+        total_total_tip_pay = 0
+        total_stage_commission_pay = 0
+        total_floor_commission_pay = 0
+        total_team_commission_pay = 0
+        total_total_commission_pay = 0
+        total_stage_pay = 0
+        total_floor_pay = 0
+        total_team_pay = 0
+        total_total_pay = 0
         for event in events:
             if event.worker_count == 0:
                 events_without_workers = events_without_workers + 1
-
             tip_details = EventTip.objects.all().filter(event=event.id)
+            event.count_stage = EventStaff.objects.all().filter(event=event.id, role='s').count()
+            event.count_other = EventStaff.objects.all().filter(Q(role='f') | Q(role='t'), event=event.id).count()
+            total_stage_tips = 0
+            total_floor_tips = 0
             if tip_details:
-                total_stage_tips = 0
-                total_floor_tips = 0
                 for tip in tip_details:
                     total_stage_tips = total_stage_tips + tip.stage_amount
                     total_floor_tips = total_floor_tips + tip.floor_amount
-                event.total_stage_tips = total_stage_tips
-                event.total_floor_tips = total_floor_tips
-                event.total_total_tips = total_stage_tips + total_floor_tips
-                event.count_stage = EventStaff.objects.all().filter(event=event.id, role='s').count()
-                event.count_other = EventStaff.objects.all().filter(Q(role='f') | Q(role='t'), event=event.id).count()
-                if event.count_other == 0:
-                    if event.count_stage == 1:
-                        update_tip = EventStaff.objects.get(event=event.id)
-                        update_tip.tip_pay = event.total_total_tips
-                        update_tip.save()
-                    elif event.count_stage > 1:
-                        tip_each = event.total_total_tips / event.count_stage
-                        update_tip = EventStaff.objects.filter(event=event.id)
-                        for staff in update_tip:
+            event.total_stage_tips = total_stage_tips
+            event.total_floor_tips = total_floor_tips
+            event.total_total_tips = total_stage_tips + total_floor_tips
+            if event.count_other == 0:
+                if event.count_stage == 1:
+                    update_tip = EventStaff.objects.get(event=event.id)
+                    if update_tip.role == 's':
+                        total_stage_hours = total_stage_hours + update_tip.hours
+                        total_stage_hourly_pay = total_stage_hourly_pay + update_tip.hourly_pay
+                    update_tip.tip_pay = event.total_total_tips
+                    total_stage_tip_pay = total_stage_tip_pay + update_tip.tip_pay
+                    update_tip.save()
+                elif event.count_stage > 1:
+                    tip_each = event.total_total_tips / event.count_stage
+                    update_tip = EventStaff.objects.filter(event=event.id)
+                    for staff in update_tip:
+                        if staff.role == 's':
+                            total_stage_hours = total_stage_hours + staff.hours
+                            total_stage_hourly_pay = total_stage_hourly_pay + staff.hourly_pay
                             staff.tip_pay = tip_each
+                            total_stage_tip_pay = total_stage_tip_pay + staff.tip_pay
                             staff.save()
-                if event.count_other > 0:
-                    if event.count_stage == 1:
-                        update_tip = EventStaff.objects.get(event=event.id, role='s')
+            if event.count_other > 0:
+                if event.count_stage == 1:
+                    update_tip = EventStaff.objects.get(event=event.id, role='s')
+                    total_stage_hours = total_stage_hours + update_tip.hours
+                    total_stage_hourly_pay = total_stage_hourly_pay + update_tip.hourly_pay
+                    if update_tip.role == 's':
                         update_tip.tip_pay = event.total_stage_tips
+                        total_stage_tip_pay = total_stage_tip_pay + update_tip.tip_pay
                         update_tip.save()
-                    elif event.count_stage > 1:
-                        tip_each = event.total_stage_tips / event.count_stage
-                        update_tip = EventStaff.objects.filter(event=event.id, role='s')
-                        for staff in update_tip:
+                elif event.count_stage > 1:
+                    tip_each = event.total_stage_tips / event.count_stage
+                    update_tip = EventStaff.objects.filter(event=event.id, role='s')
+                    for staff in update_tip:
+                        if staff.role == 's':
+                            total_stage_hours = total_stage_hours + staff.hours
+                            total_stage_hourly_pay = total_stage_hourly_pay + staff.hourly_pay
                             staff.tip_pay = tip_each
+                            total_stage_tip_pay = total_stage_tip_pay + staff.tip_pay
                             staff.save()
-                    if event.count_other == 1:
-                        update_tip = EventStaff.objects.get(Q(role='f') | Q(role='t'), event=event.id)
-                        update_tip.tip_pay = event.total_floor_tips
-                        update_tip.save()
-                    elif event.count_other > 1:
-                        tip_each = event.total_floor_tips / event.count_other
-                        update_tip = EventStaff.objects.filter(Q(role='f') | Q(role='t'), event=event.id)
-                        for staff in update_tip:
-                            staff.tip_pay = tip_each
-                            staff.save()
+                if event.count_other == 1:
+                    update_tip = EventStaff.objects.get(Q(role='f') | Q(role='t'), event=event.id)
+                    update_tip.tip_pay = event.total_floor_tips
+                    if update_tip.role == 'f':
+                        total_floor_hours = total_floor_hours + update_tip.hours
+                        total_floor_hourly_pay = total_floor_hourly_pay + update_tip.hourly_pay
+                        total_floor_tip_pay = total_floor_tip_pay + update_tip.tip_pay
+                    elif update_tip.role == 't':
+                        total_team_hours = total_team_hours + update_tip.hours
+                        total_team_hourly_pay = total_team_hourly_pay + update_tip.hourly_pay
+                        total_team_tip_pay = total_team_tip_pay + update_tip.tip_pay
+                    update_tip.save()
+                elif event.count_other > 1:
+                    tip_each = event.total_floor_tips / event.count_other
+                    update_tip = EventStaff.objects.filter(Q(role='f') | Q(role='t'), event=event.id)
+                    for staff in update_tip:
+                        if staff.role == 'f':
+                            total_floor_hours = total_floor_hours + staff.hours
+                            total_floor_hourly_pay = total_floor_hourly_pay + staff.hourly_pay
+                        elif staff.role == 't':
+                            total_team_hours = total_team_hours + staff.hours
+                            total_team_hourly_pay = total_team_hourly_pay + staff.hourly_pay
+                        staff.tip_pay = tip_each
+                        staff.save()
             kit_sales = EventCustomer.objects.filter(event=event.id, type='h')
             if kit_sales:
                 kit_count = 0
@@ -150,14 +199,40 @@ def report_detail_hx_view(request, id=None):
                         for staff in update_commission:
                             staff.commission_pay = Decimal(5.00) * kit_count
                             staff.save()
+                            if staff.role == 's':
+                                total_stage_commission_pay = total_stage_commission_pay + staff.commission_pay
+                            elif staff.role == 'f':
+                                total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
+                            elif staff.role == 't':
+                                total_team_commission_pay = total_team_commission_pay + staff.commission_pay
                     if event.count_staff == 2:
                         for staff in update_commission:
                             staff.commission_pay = Decimal(3.00) * kit_count
                             staff.save()                        
+                            if staff.role == 's':
+                                total_stage_commission_pay = total_stage_commission_pay + staff.commission_pay
+                            elif staff.role == 'f':
+                                total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
+                            elif staff.role == 't':
+                                total_team_commission_pay = total_team_commission_pay + staff.commission_pay
                     if event.count_staff > 2:
                         for staff in update_commission:
                             staff.commission_pay = Decimal(2.00) * kit_count
                             staff.save()     
+                            if staff.role == 's':
+                                total_stage_commission_pay = total_stage_commission_pay + staff.commission_pay
+                            elif staff.role == 'f':
+                                total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
+                            elif staff.role == 't':
+                                total_team_commission_pay = total_team_commission_pay + staff.commission_pay
+        total_total_hours = total_stage_hours + total_floor_hours + total_team_hours
+        total_total_hourly_pay = total_stage_hourly_pay + total_floor_hourly_pay + total_team_hourly_pay
+        total_total_tip_pay = total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay
+        total_total_commission_pay = total_stage_commission_pay + total_floor_commission_pay + total_team_commission_pay
+        total_stage_pay = total_stage_hourly_pay + total_stage_tip_pay + total_stage_commission_pay
+        total_floor_pay = total_floor_hourly_pay + total_floor_tip_pay + total_floor_commission_pay
+        total_team_pay = total_team_hourly_pay + total_team_tip_pay + total_team_commission_pay
+        total_total_pay = total_stage_pay + total_floor_pay + total_team_pay
         # payroll_gross = Decimal(report_gross_revenue)
 
         # obj.payroll_gross = payroll_gross
@@ -170,7 +245,27 @@ def report_detail_hx_view(request, id=None):
         "object": obj,
         "events": events,
         "payroll_gross": payroll_gross,
-        "events_without_workers": events_without_workers
+        "events_without_workers": events_without_workers,
+        "total_stage_hours": total_stage_hours,
+        "total_floor_hours": total_floor_hours,
+        "total_team_hours": total_team_hours,
+        "total_total_hours": total_total_hours,
+        "total_stage_hourly_pay": total_stage_hourly_pay,
+        "total_floor_hourly_pay": total_floor_hourly_pay,
+        "total_team_hourly_pay": total_team_hourly_pay,
+        "total_total_hourly_pay": total_total_hourly_pay,
+        "total_stage_tip_pay": total_stage_tip_pay,
+        "total_floor_tip_pay": total_floor_tip_pay,
+        "total_team_tip_pay": total_team_tip_pay,
+        "total_total_tip_pay": total_total_tip_pay,
+        "total_stage_commission_pay": total_stage_commission_pay,
+        "total_floor_commission_pay": total_floor_commission_pay,
+        "total_team_commission_pay": total_team_commission_pay,
+        "total_total_commission_pay": total_total_commission_pay,
+        "total_stage_pay": total_stage_pay,
+        "total_floor_pay": total_floor_pay,
+        "total_team_pay": total_team_pay,
+        "total_total_pay": total_total_pay
     }
     return render(request, "payroll/partials/detail.html", context)
  
@@ -196,7 +291,7 @@ def report_create_view(request):
 
 @permission_required('payroll.change_report')
 def report_update_view(request, id=None):
-    obj = get_object_or_404(Report, id=id)
+    obj = get_object_or_404(PayReport, id=id)
     form = ReportForm(request.POST or None, instance=obj)
     context = {
         "form": form,
@@ -215,7 +310,7 @@ def report_hx_mark_complete(request, id=None):
     # if not request.htmx:
     #     raise Http404
     try:
-        parent_obj = Report.objects.get(id=id)
+        parent_obj = PayReport.objects.get(id=id)
     except:
         parent_obj = None
 
@@ -250,7 +345,7 @@ def report_hx_mark_pending(request, id=None):
     # if not request.htmx:
     #     raise Http404
     try:
-        parent_obj = Report.objects.get(id=id)
+        parent_obj = PayReport.objects.get(id=id)
     except:
         parent_obj = None
 
