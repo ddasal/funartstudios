@@ -2,18 +2,13 @@
 {% load humanize %}
 
 {% block title %} 
-    Payroll Report List
+    Payroll Reports
 {% endblock title %} 
 
 {% block content %}
 <div class="row">
-    <div class='col-12 col-md-6'>
-        <h3>Payroll Reports</h3>
-    </div>
-    <div class="col-12 col-md-6" style="text-align: right;">
-        {% if perms.payroll.add_report %} 
-        <a class="btn btn-outline-success" href="{% url 'payroll:create' %}">Create Payroll Report</a>  
-        {% endif %} 
+    <div class='col-12 col-md-12'>
+        <h3>{{ request.user.first_name }} {{ request.user.last_name }} - Payroll Reports</h3>
     </div>
 </div>
 <div class="row">
@@ -25,20 +20,15 @@
                     <th>Pay Date</th>
                     <th>Pay Period Start</th>
                     <th>Pay Period End</th>
-                    <th>Payroll Gross Ammount</th>
-                    <th>Staff Count</th>
                 </tr>
             </thead>
             <tbody>
                 {% for report in reports %}
                     <tr>
-                        <td><a class="btn btn-outline-{% if report.status == 'p' %}success{% else %}secondary{% endif %}" href="{% url 'payroll:detail' id=report.id %}">{{ report.get_status_display }}</a></a></td>
+                        <td><a class="btn btn-outline-{% if report.status == 'p' %}success{% else %}secondary{% endif %}" href="{% url 'payroll:staff-detail' id=report.id %}">{{ report.get_status_display }}</a></a></td>
                         <td>{{ report.pay_date }}</td>
                         <td>{{ report.start_date }}</td>
                         <td>{{ report.end_date }}</td>
-                        <td>${{ report.payroll_gross|intcomma }}</td>
-                        <td>{{ report.staff_count }}</td>
-                        <td></td>
                     </tr>
                 {% endfor %} 
 

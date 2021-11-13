@@ -1,6 +1,6 @@
 import decimal
 from django.db.models import Count
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator, EmptyPage,PageNotAnInteger
 from django.http import HttpResponse
 from django.http.response import Http404
@@ -44,6 +44,7 @@ def report_detail_view(request, id=None):
         "report_obj": report_obj
     }
     return render(request, "payroll/detail.html", context)
+
 
 
 @permission_required('payroll.delete_report')
@@ -381,3 +382,123 @@ def report_hx_mark_pending(request, id=None):
         #     }
         #     return HttpResponse('Success', headers=headers)
         return redirect(success_url)
+
+
+@login_required
+def report_staff_detail_view(request, id=None):
+    user = request.user
+    hx_url = reverse("payroll:hx-staff-detail", kwargs={"id": id})
+    report_obj = PayReport.objects.get(id=id)
+    context = {
+        "hx_url": hx_url,
+        "report_obj": report_obj
+    }
+    return render(request, "payroll/staff-detail.html", context)
+
+
+@login_required
+def report_staff_detail_hx_view(request, id=None, user=None):
+    if not request.htmx:
+        raise Http404
+    try:
+        obj = PayReport.objects.get(id=id)
+        print(obj)
+        events = Event.objects.all().filter(payroll_report=obj).order_by('date', 'time')
+        event_staff = EventStaff.objects.all().filter(event__payroll_report=obj, user=request.user.id)
+        print(events)
+        # event_staff = EventStaff.objects.all().filter(event=events, user=request.user.id)
+        print(event_staff)
+        total_stage_hours = 0
+        total_floor_hours = 0
+        total_team_hours = 0
+        total_total_hours = 0
+        total_stage_hourly_pay = 0
+        total_floor_hourly_pay = 0
+        total_team_hourly_pay = 0
+        total_total_hourly_pay = 0
+        total_stage_tip_pay = 0
+        total_floor_tip_pay = 0
+        total_team_tip_pay = 0
+        total_total_tip_pay = 0
+        total_stage_commission_pay = 0
+        total_floor_commission_pay = 0
+        total_team_commission_pay = 0
+        total_total_commission_pay = 0
+        total_stage_pay = 0
+        total_floor_pay = 0
+        total_team_pay = 0
+        total_total_pay = 0
+        for staff in event_staff:
+            if staff.role == 's':
+                total_stage_hours = total_stage_hours + staff.hours
+                total_stage_hourly_pay = total_stage_hourly_pay + staff.hourly_pay
+                total_stage_tip_pay = total_stage_tip_pay + staff.tip_pay
+                total_stage_commission_pay = total_stage_commission_pay + staff.commission_pay
+                total_stage_pay = total_stage_pay + total_stage_hourly_pay + total_stage_commission_pay + total_stage_tip_pay
+            elif staff.role == 'f':
+                total_floor_hours = total_floor_hours + staff.hours
+                total_floor_hourly_pay = total_floor_hourly_pay + staff.hourly_pay
+                total_floor_tip_pay = total_floor_tip_pay + staff.tip_pay
+                total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
+                total_floor_pay = total_floor_pay + total_floor_hourly_pay + total_floor_commission_pay + total_floor_tip_pay
+            elif staff.role == 't':
+                total_team_hours = total_team_hours + staff.hours
+                total_team_hourly_pay = total_team_hourly_pay + staff.hourly_pay
+                total_team_tip_pay = total_team_tip_pay + staff.tip_pay
+                total_team_commission_pay = total_team_commission_pay + staff.commission_pay
+                total_team_pay = total_team_pay + total_team_hourly_pay + total_team_commission_pay + total_team_tip_pay
+        total_total_hours = total_stage_hours + total_floor_hours + total_team_hours
+        total_total_hourly_pay = total_stage_hourly_pay + total_floor_hourly_pay + total_team_hourly_pay
+        total_total_tip_pay = total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay
+        total_total_commission_pay = total_stage_commission_pay + total_floor_commission_pay + total_team_commission_pay
+        total_total_pay = total_stage_pay + total_floor_pay + total_team_pay
+
+    except:
+        obj = None
+    if obj is None:
+        return HttpResponse("Not found.")
+    context = {
+        "object": obj,
+        "event_staff": event_staff,
+        "total_stage_hours": total_stage_hours,
+        "total_floor_hours": total_floor_hours,
+        "total_team_hours": total_team_hours,
+        "total_total_hours": total_total_hours,
+        "total_stage_hourly_pay": total_stage_hourly_pay,
+        "total_floor_hourly_pay": total_floor_hourly_pay,
+        "total_team_hourly_pay": total_team_hourly_pay,
+        "total_total_hourly_pay": total_total_hourly_pay,
+        "total_stage_tip_pay": total_stage_tip_pay,
+        "total_floor_tip_pay": total_floor_tip_pay,
+        "total_team_tip_pay": total_team_tip_pay,
+        "total_total_tip_pay": total_total_tip_pay,
+        "total_stage_commission_pay": total_stage_commission_pay,
+        "total_floor_commission_pay": total_floor_commission_pay,
+        "total_team_commission_pay": total_team_commission_pay,
+        "total_total_commission_pay": total_total_commission_pay,
+        "total_stage_pay": total_stage_pay,
+        "total_floor_pay": total_floor_pay,
+        "total_team_pay": total_team_pay,
+        "total_total_pay": total_total_pay
+    }
+    return render(request, "payroll/partials/staff-detail.html", context)
+ 
+
+@login_required
+def report_staff_list_view(request):
+    qs = PayReport.objects.filter(event__eventstaff__user=request.user.id).order_by('-start_date').distinct()
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(qs, 10)
+    report_count = paginator.count
+    try:
+        reports = paginator.page(page)
+    except PageNotAnInteger:
+        reports = paginator.page(1)
+    except EmptyPage:
+        events = paginator.page(paginator.num_pages)
+    context = {
+        "reports": reports,
+        "report_count": report_count
+    }
+    return render(request, "payroll/staff-list.html", context)

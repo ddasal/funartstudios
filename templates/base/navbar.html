@@ -20,7 +20,7 @@
             <a class="nav-link" href="{% url 'account:staff' %}">Staff</a>
           </li>
           {% endif %} 
-          {% if perms.products.view_product %}
+          {% if perms.royaltyreports.view_royaltyreport %}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Products 
@@ -35,15 +35,17 @@
             </ul>
           {% endif %} 
 
-          {% if perms.events.view_event %}
+          {% if perms.royaltyreports.view_royaltyreport %}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Reports  
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li>
-                {% if perms.royaltyreports.view_report %}
+                {% if perms.payroll.view_payrollreport %}
                 <a class="dropdown-item" href="{% url 'payroll:list' %}">Payroll Reports</a>
+                {% endif %}
+                {% if perms.royaltyreports.view_royaltyreport %}
                 <a class="dropdown-item" href="{% url 'royalty:list' %}">Royalty Reports</a>
                 {% endif %}
               </li>
@@ -65,7 +67,7 @@
                 {% if user.is_authenticated %} 
                 <a class="dropdown-item" href="{% url 'account:profile' %}">View/Edit Profile</a>
                 <a class="dropdown-item" href="{% url 'account:change-password' %}">Change Password</a>
-                <a class="dropdown-item" href="{% url 'payroll:list' %}">Payroll Reports</a>
+                <a class="dropdown-item" href="{% url 'payroll:staff-list' %}">Payroll Reports</a>
                 {% if perms.permission.change_permission %} 
                 <a class="dropdown-item" href="/admin/">Site Admin</a>
                 {% endif %} 
