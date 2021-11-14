@@ -14,6 +14,7 @@ class UserProfile(models.Model):
     city = models.CharField(max_length=220, null=True, blank=True)
     state = models.CharField(max_length=2, null=True, blank=True)
     zip = models.IntegerField(null=True, blank=True)
+    pin = models.IntegerField(null=False, blank=False, default=3444)
     emergency_contact_name_1 = models.CharField(max_length=220, null=True, blank=True)
     emergency_contact_number_1 = models.CharField(max_length=10, null=True, blank=True)
     emergency_contact_email_1 = models.CharField(max_length=220, null=True, blank=True)

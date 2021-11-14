@@ -3,7 +3,7 @@
     <div class="col-12 col-7-auto">
         <h2>{{ request.user.first_name }} {{ request.user.last_name }} - Report Pay Date: {{object.pay_date}}
             {% if object.get_edit_url %}
-            <small class=".d-print-none">
+            <small class="d-print-none">
                 <a class="btn btn-outline-secondary d-print-none" href="{% url 'payroll:staff-list' %}">Back</a>
             </small>
             {% endif %}
@@ -29,13 +29,13 @@
                 <thead>
                     <tr>
                         <th scope="col">Role</th>
-                        <th scope="col">Event Name / Date</th>
-                        <th scope="col">Rate x</th>
-                        <th scope="col">Hours =</th>
-                        <th scope="col"><i>Subtotal +</i></th>
-                        <th scope="col">Prepaint +</th>
-                        <th scope="col">Tips +</th>
-                        <th scope="col">Comms. =</th>
+                        <th scope="col">Event / Date</th>
+                        <th scope="col">Rate</th>
+                        <th scope="col">Hours</th>
+                        <th scope="col"><i>Subtotal</i></th>
+                        <th scope="col">Prepaint</th>
+                        <th scope="col">Tips</th>
+                        <th scope="col">Commsissions</th>
                         <th scope="col" class="table-success">Total</th>
                     </tr>
                 </thead>

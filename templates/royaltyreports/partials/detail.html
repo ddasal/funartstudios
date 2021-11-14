@@ -29,7 +29,7 @@
                 {% if object.status == 'p' %}
                     <a class="btn btn-outline-success" href="{% url 'royalty:hx-report-complete' id=object.id %}">Mark Complete</a>
                 {% else %} 
-                    <a class="btn btn-outline-success" href="{% url 'royalty:hx-report-pending' id=object.id %}">Revert to Pending</a>
+                    <a class="btn btn-outline-danger" href="{% url 'royalty:hx-report-pending' id=object.id %}">Revert to Pending</a>
                 {% endif %}
             {% endif %} 
         </p>
@@ -79,15 +79,17 @@
                         </td>
                     </tr>
                 {% endfor %} 
-                <tr class="table-dark">
-                    <td >Totals</td>
-                    <td></td>
-                    <td>{{ report_seats }}</td>
-                    <td>${{ report_gross_revenue|intcomma }}</td>
-                    <td>-${{ report_adjustments }}</td>
-                    <td></td>
-                </tr>                
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td >Totals</td>
+                        <td></td>
+                        <td>{{ report_seats }}</td>
+                        <td>${{ report_gross_revenue|intcomma }}</td>
+                        <td>-${{ report_adjustments }}</td>
+                        <td></td>
+                    </tr>   
+                </tfoot>                 
             </table>
             <p>
                 <b>Inventory Count:</b> <span id="inventory">{{ inventory_total|intcomma }}</span>

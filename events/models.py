@@ -187,8 +187,8 @@ class EventStaff(models.Model):
         }
         return reverse("events:hx-eventstaff-update", kwargs=kwargs)
 
-    class Meta:
-        ordering = [('-event_qty'), ]
+    # class Meta:
+    #     ordering = [('-event_qty'), ]
 
     # def __str__(self):
     #    return self.user

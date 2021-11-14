@@ -16,7 +16,7 @@
                 Pay Period: {{ object.start_date }} - {{ object.end_date }}
             </span><br />
             Last updated on : {{ object.updated }}<br />
-            <span>Payroll Gross Amount: ${{ total_total_pay|intcomma|floatformat:'2' }}<br />
+            <span class="d-print-none">Payroll Gross Amount: ${{ total_total_pay|intcomma|floatformat:'2' }}<br />
             Total Staff Members in Pay Report: {{ object.staff_count }}</span>
 
         </p>
@@ -54,7 +54,7 @@
 
 </div>
 
-<div class="row">
+<div class="row d-print-none">
     <div class="col-12 col-md-12">
         <h3 class="d-print-none">Time Entries:</h3>
         <div id="event-list" class="d-print-none">
@@ -63,13 +63,13 @@
                     <tr>
                         <th>Staff Member</th>
                         <th>Role</th>
-                        <th>Event Name / Date</th>
-                        <th>Rate x</th>
-                        <th>Hours =</th>
-                        <th><i>Subtotal +</i></th>
-                        <th>Prepaint +</th>
-                        <th>Tips +</th>
-                        <th>Commissions =</th>
+                        <th>Event / Date</th>
+                        <th>Rate</th>
+                        <th>Hours</th>
+                        <th><i>Subtotal</i></th>
+                        <th>Prepaint</th>
+                        <th>Tips</th>
+                        <th>Commissions</th>
                         <th class="table-success">Total</th>
                     </tr>
                 </thead>
@@ -158,20 +158,26 @@
                         <td>${{ total_floor_commission_pay|floatformat:'2' }}</td>
                         <td>${{ total_team_commission_pay|floatformat:'2' }}</td>
                         <th>${{ total_total_commission_pay|floatformat:'2' }}</th>
-                    </tr>               
-                    <tr class="table-dark">
+                    </tr>      
+                </tbody>
+                <tfoot>
+                    <tr>
                         <th>Subtotals</th>
                         <th>${{ total_stage_pay|floatformat:'2' }}</th>
                         <th>${{ total_floor_pay|floatformat:'2' }}</th>
                         <th>${{ total_team_pay|floatformat:'2' }}</th>
                         <th>${{ total_total_pay|floatformat:'2' }}</th>
                     </tr>
-                
-                </tbody>
+                </tfoot>
             </table>
         </div>
+    </div>
+    </div>
+    <div class="row">    
         <div id="staff-summaries" class="col-12 col-md-12">
-            {% include 'payroll/partials/perstaff-inline.html' with report=object.id %}
+            <div hx-get="{{ hx_url }}" hx-trigger='load'>
+                <div class="htmx-indicator">Loading...</div>
+            </div>
         </div>
     </div>
 

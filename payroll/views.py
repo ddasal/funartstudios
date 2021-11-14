@@ -84,6 +84,7 @@ def report_delete_view(request, id=None):
 
 @permission_required('payroll.view_report')
 def report_detail_hx_view(request, id=None):
+    hx_url = reverse("payroll:hx-staff-summary", kwargs={"id": id})
     if not request.htmx:
         raise Http404
     try:
@@ -241,10 +242,8 @@ def report_detail_hx_view(request, id=None):
         obj.staff_count = staff_count
         obj.payroll_gross = total_total_pay
         obj.save()
-        # payroll_gross = Decimal(report_gross_revenue)
 
-        # obj.payroll_gross = payroll_gross
-        # obj.save()
+
     except:
         obj = None
     if obj is None:
@@ -252,6 +251,7 @@ def report_detail_hx_view(request, id=None):
     context = {
         "object": obj,
         "events": events,
+        "hx_url": hx_url,
         "payroll_gross": payroll_gross,
         "events_without_workers": events_without_workers,
         "total_stage_hours": total_stage_hours,
@@ -405,9 +405,6 @@ def report_staff_detail_hx_view(request, id=None, user=None):
         print(obj)
         events = Event.objects.all().filter(payroll_report=obj).order_by('date', 'time')
         event_staff = EventStaff.objects.all().filter(event__payroll_report=obj, user=request.user.id)
-        print(events)
-        # event_staff = EventStaff.objects.all().filter(event=events, user=request.user.id)
-        print(event_staff)
         total_stage_hours = 0
         total_floor_hours = 0
         total_team_hours = 0
@@ -502,3 +499,71 @@ def report_staff_list_view(request):
         "report_count": report_count
     }
     return render(request, "payroll/staff-list.html", context)
+
+
+@permission_required('payroll.change_report')
+def report_staff_summary_hx_view(request, id=None):
+    if not request.htmx:
+        raise Http404
+    try:
+        obj = PayReport.objects.get(id=id)
+        eventstaff_list = EventStaff.objects.filter(event__payroll_report=obj)
+        distinct_users = eventstaff_list.values('user').distinct() #.exclude(Q(user=7) | Q(user=1))
+        print(type(distinct_users))
+        for staff in distinct_users:
+            staff['total_stage_hours'] = 0
+            staff['total_floor_hours'] = 0
+            staff['total_team_hours'] = 0
+            staff['total_total_hours'] = 0
+            staff['total_stage_hourly_pay'] = 0
+            staff['total_floor_hourly_pay'] = 0
+            staff['total_team_hourly_pay'] = 0
+            staff['total_total_hourly_pay'] = 0
+            staff['total_stage_tip_pay'] = 0
+            staff['total_floor_tip_pay'] = 0
+            staff['total_team_tip_pay'] = 0
+            staff['total_total_tip_pay'] = 0
+            staff['total_stage_commission_pay'] = 0
+            staff['total_floor_commission_pay'] = 0
+            staff['total_team_commission_pay'] = 0
+            staff['total_total_commission_pay'] = 0
+            staff['total_stage_pay'] = 0
+            staff['total_floor_pay'] = 0
+            staff['total_team_pay'] = 0
+            staff['total_total_pay'] = 0
+            event_staff = EventStaff.objects.filter(event__payroll_report=obj, user=staff['user']).order_by('user')
+            # print(event_staff.count())
+            for item in event_staff:
+                if item.role == 's':
+                    staff['total_stage_hours'] = staff['total_stage_hours'] + item.hours
+                    staff['total_stage_hourly_pay'] = staff['total_stage_hourly_pay'] + item.hourly_pay
+                    staff['total_stage_tip_pay'] = staff['total_stage_tip_pay'] + item.tip_pay
+                    staff['total_stage_commission_pay'] = staff['total_stage_commission_pay'] + item.commission_pay
+                    staff['total_stage_pay'] = staff['total_stage_hourly_pay'] + staff['total_stage_commission_pay'] + staff['total_stage_tip_pay']
+                elif item.role == 'f':
+                    staff['total_floor_hours'] = staff['total_floor_hours'] + item.hours
+                    staff['total_floor_hourly_pay'] = staff['total_floor_hourly_pay'] + item.hourly_pay
+                    staff['total_floor_tip_pay'] = staff['total_floor_tip_pay'] + item.tip_pay
+                    staff['total_floor_commission_pay'] = staff['total_floor_commission_pay'] + item.commission_pay
+                    staff['total_floor_pay'] = staff['total_floor_hourly_pay'] + staff['total_floor_commission_pay'] + staff['total_floor_tip_pay']
+                elif item.role == 't':
+                    staff['total_team_hours'] = staff['total_team_hours'] + item.hours
+                    staff['total_team_hourly_pay'] = staff['total_team_hourly_pay'] + item.hourly_pay
+                    staff['total_team_tip_pay'] = staff['total_team_tip_pay'] + item.tip_pay
+                    staff['total_team_commission_pay'] = staff['total_team_commission_pay'] + item.commission_pay
+                    staff['total_team_pay'] = staff['total_team_hourly_pay'] + staff['total_team_commission_pay'] + staff['total_team_tip_pay']
+                staff['total_total_hours'] = staff['total_stage_hours'] + staff['total_floor_hours'] + staff['total_team_hours']
+                staff['total_total_hourly_pay'] = staff['total_stage_hourly_pay'] + staff['total_floor_hourly_pay'] + staff['total_team_hourly_pay']
+                staff['total_total_tip_pay'] = staff['total_stage_tip_pay'] + staff['total_floor_tip_pay'] + staff['total_team_tip_pay']
+                staff['total_total_commission_pay'] = staff['total_stage_commission_pay'] + staff['total_floor_commission_pay'] + staff['total_team_commission_pay']
+                staff['total_total_pay'] = staff['total_total_hourly_pay'] + staff['total_total_tip_pay'] + staff['total_total_commission_pay']
+                staff['name'] = item.user.first_name + ' ' + item.user.last_name
+    except:
+        obj = None
+    if obj is None:
+        return HttpResponse("Not found.")
+    context = {
+        "object": obj,
+        "distinct_users": distinct_users,
+    }
+    return render(request, "payroll/partials/perstaff-inline.html", context)

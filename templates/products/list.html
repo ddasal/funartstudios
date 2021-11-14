@@ -41,16 +41,17 @@
                     {% endif %}
             </tr>
             {% endfor %}
-            <tr class="table-dark">
+            </tbody>
+            <tfoot>
+                <tr>
                     <td>Totals</td>
                     <td></a></td>
                     <td>{{ purchased_total }}</td>
                     <td>{{ received_total }}</td>
                     <td> {{ inventory_total }}</td>
                     <td></td>
-            </tr>
-
-            </tbody>
+                </tr>
+            </tfoot>
         </table>
 
         <div style="margin-top: 15px;">

@@ -10,7 +10,8 @@ from .views import (
     report_hx_mark_pending,
     report_staff_detail_view,
     report_staff_detail_hx_view,
-    report_staff_list_view
+    report_staff_list_view,
+    report_staff_summary_hx_view
 )
 
 app_name='payroll'  # events:list
@@ -24,6 +25,7 @@ urlpatterns = [
     path("hx/<int:id>/complete/", report_hx_mark_complete, name='hx-report-complete'),    
     path("hx/<int:id>/pending/", report_hx_mark_pending, name='hx-report-pending'),    
     path("hx/<int:id>/staff/", report_staff_detail_hx_view, name='hx-staff-detail'),
+    path("hx/<int:id>/staff/summary/", report_staff_summary_hx_view, name='hx-staff-summary'),
     path("<int:id>/delete/", report_delete_view, name='delete'),
     path("<int:id>/edit/", report_update_view, name='update'),
     path("<int:id>/staff/", report_staff_detail_view, name='staff-detail'),
