@@ -42,7 +42,7 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li>
-                {% if perms.payroll.view_payrollreport %}
+                {% if perms.payroll.view_report %}
                 <a class="dropdown-item" href="{% url 'payroll:list' %}">Payroll Reports</a>
                 {% endif %}
                 {% if perms.royaltyreports.view_royaltyreport %}

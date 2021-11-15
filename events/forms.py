@@ -11,6 +11,7 @@ class DateInput(forms.DateInput):
 
 class TimeInput(forms.TimeInput):
     input_type = 'time'
+    # format = 'I:M p'
 
 class EventForm(forms.ModelForm):
     error_css_class = 'error-field'
