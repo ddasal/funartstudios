@@ -4,4 +4,5 @@ psycopg2-binary
 django-dotenv
 django-htmx
 django-storages
+django-heroku
 boto3
