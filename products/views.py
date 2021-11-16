@@ -15,31 +15,32 @@ from .models import Product, PurchaseItem, PurchaseOrder
 
 @permission_required('products.view_product')
 def product_list_view(request):
-    qs = Product.objects.all().order_by('type', 'name')
-    page = request.GET.get('page', 1)
-    purchased_total = qs[0].total_purchased_all
-    received_total = qs[0].total_received_all
-    print(received_total)
-    inventory_total = 0
+    try:
+        qs = Product.objects.all().order_by('type', 'name')
+        page = request.GET.get('page', 1)
+        purchased_total = qs[0].total_purchased_all
+        received_total = qs[0].total_received_all
+        inventory_total = 0
 
-    for each in qs:
-        each.temp_customer_used = 0
-        temp_customer_each = [int(each.total_customer_qty) for each in EventCustomer.objects.filter(product=each.id)]
-        each.temp_customer_used = sum(temp_customer_each)
+        for each in qs:
+            each.temp_customer_used = 0
+            temp_customer_each = [int(each.total_customer_qty) for each in EventCustomer.objects.filter(product=each.id)]
+            each.temp_customer_used = sum(temp_customer_each)
 
-        each.temp_prepaint_used = 0
-        temp_prepaint_each = [int(each.prepaint_qty) for each in EventStaff.objects.filter(prepaint_product=each.id)]
-        each.temp_prepaint_used = sum(temp_prepaint_each)
+            each.temp_prepaint_used = 0
+            temp_prepaint_each = [int(each.prepaint_qty) for each in EventStaff.objects.filter(prepaint_product=each.id)]
+            each.temp_prepaint_used = sum(temp_prepaint_each)
 
-        each.temp_event_used = 0
-        temp_event_each = [int(each.event_qty) for each in EventStaff.objects.filter(event_product=each.id)]
-        each.temp_event_used = sum(temp_event_each)
+            each.temp_event_used = 0
+            temp_event_each = [int(each.event_qty) for each in EventStaff.objects.filter(event_product=each.id)]
+            each.temp_event_used = sum(temp_event_each)
 
 
-        each.in_inventory = 0
-        each.in_inventory = each.total_received_each() - each.temp_customer_used - each.temp_prepaint_used - each.temp_event_used
-        inventory_total = inventory_total + each.in_inventory
-
+            each.in_inventory = 0
+            each.in_inventory = each.total_received_each() - each.temp_customer_used - each.temp_prepaint_used - each.temp_event_used
+            inventory_total = inventory_total + each.in_inventory
+    except:
+        pass
     paginator = Paginator(qs, 30)
     product_count = paginator.count
     try:
