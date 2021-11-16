@@ -1,0 +1,6 @@
+<form method="POST" action="." hx-post='{% if url %}{{ url }}{% else %}.{% endif %}' hx-swap='outerHTML'>
+    {% csrf_token %}
+    {{ form.as_p }}
+        <button class="btn btn-outline-primary" style='margin-top:10px;' type="submit">Save</button>
+        <a class="btn btn-outline-secondary" style='margin-top:10px;' href="{{ object.get_absolute_url }}">Cancel</a>
+    </form>

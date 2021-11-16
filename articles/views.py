@@ -3,8 +3,8 @@ from django.http import Http404
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls.base import reverse
-from .models import Article, ArticleManager
-from .forms import ArticleForm
+from .models import Article, ArticleManager, Comment
+from .forms import ArticleForm, CommentForm
 
 # Create your views here.
 
@@ -76,12 +76,15 @@ def article_detail_hx_view(request, slug=None):
         raise Http404
     try:
         obj = Article.objects.get(slug=slug)
+        new_comment_url = reverse("articles:hx-comment-create", kwargs={"parent_slug": obj.slug})
+
     except:
         obj = None
     if obj is None:
         return HttpResponse("Not found.")
     context = {
-        "object": obj
+        "object": obj,
+        "new_comment_url": new_comment_url
     }
     return render(request, "articles/partials/detail.html", context)
 
@@ -89,9 +92,11 @@ def article_detail_hx_view(request, slug=None):
 def article_update_view(request, slug=None):
     obj = get_object_or_404(Article, slug=slug)
     form = ArticleForm(request.POST or None, instance=obj)
+    new_comment_url = reverse("articles:hx-comment-create", kwargs={"parent_slug": obj.slug})
     context = {
         "form": form,
-        "object": obj
+        "object": obj,
+        "new_comment_url": new_comment_url
     }
     if form.is_valid():
         form.save()
@@ -99,3 +104,66 @@ def article_update_view(request, slug=None):
     if request.htmx:
         return render(request, "articles/partials/forms.html", context)
     return render(request, "articles/create-update.html", context) 
+
+
+@permission_required('articles.delete_comment')
+def article_comment_delete_view(request, parent_slug=None, id=None):
+    try:
+        obj = Comment.objects.get(article__slug=parent_slug, id=id)
+    except:
+        obj = None
+    if obj is None:
+        if request.htmx:
+            return HttpResponse('Not found')
+        raise Http404
+    if request.method == "POST":
+        commenter = obj.user
+        obj.delete()
+        success_url = reverse('articles:detail', kwargs={"slug": parent_slug})
+        if request.htmx:
+            return render(request, "articles/partials/comment-inline-delete-response.html", {"commenter": commenter})
+        return redirect(success_url)
+
+    context = {
+        "object": obj
+    }
+    return render(request, "articles/delete.html", context)
+
+@permission_required('articles.change_comment')
+def article_comment_update_hx_view(request, parent_slug=None, id=None):
+    if not request.htmx:
+        raise Http404
+    try:
+        parent_obj = Article.objects.get(slug=parent_slug)
+    except:
+        parent_obj = None
+    if parent_obj is None:
+        return HttpResponse("Not found.")
+ 
+    instance = None
+    if id is not None:
+        try:
+            instance = Comment.objects.get(article=parent_obj, id=id)
+        except:
+            instance = None
+    form = CommentForm(request.POST or None, instance=instance)
+    url = reverse("articles:hx-comment-create", kwargs={"parent_slug": parent_obj.slug})
+    if instance:
+        url = instance.get_htmx_edit_url()        
+    
+    context = {
+        "url": url,
+        "form": form,
+        "object": instance
+    }
+    if form.is_valid():
+        new_obj = form.save(commit=False)
+        if instance is None:
+            new_obj.article = parent_obj
+            new_obj.user = request.user
+        new_obj.save()
+        context['object'] = new_obj
+        return render(request, "articles/partials/comment-inline.html", context)
+    
+    return render(request, "articles/partials/comment-form.html", context)
+

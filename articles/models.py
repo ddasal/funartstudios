@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
-from django.db.models.deletion import SET_NULL
+from django.db.models.deletion import CASCADE, SET_NULL
 from django.db.models.signals import pre_save, post_save
 from django.urls import reverse
 from django.utils import timezone
@@ -50,6 +50,12 @@ class Article(models.Model):
     def get_delete_url(self):
         return reverse("articles:delete", kwargs={"slug": self.slug})
 
+    def get_comment_children(self):
+        return self.comment_set.all()
+
+    def get_like_children(self):
+        return self.like_set.all()
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
@@ -68,3 +74,38 @@ def article_post_save(sender, instance, created, *args, **kwargs):
         slugify_instance_title(instance, save=True)
 
 post_save.connect(article_post_save, sender=Article)
+
+class Comment(models.Model):
+    comment = models.TextField()
+    article = models.ForeignKey(Article, on_delete=CASCADE)
+    user = models.ForeignKey(User, blank=False, null=False, on_delete=CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        return self.article.get_absolute_url()
+
+    def get_delete_url(self):
+        kwargs = {
+            "parent_slug": self.article.slug,
+            "id": self.id
+        }
+        return reverse("articles:comment-delete", kwargs=kwargs)
+
+    def get_htmx_edit_url(self):
+        kwargs = {
+            "parent_slug": self.article.slug,
+            "id": self.id
+        }
+        return reverse("articles:hx-comment-update", kwargs=kwargs)
+
+    class Meta:
+        ordering = [('timestamp'), ]
+
+
+class Like(models.Model):
+    like = models.BooleanField(null=False, blank=False, default=0)
+    article = models.ForeignKey(Article, on_delete=CASCADE)
+    user = models.ForeignKey(User, blank=False, null=False, on_delete=CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)

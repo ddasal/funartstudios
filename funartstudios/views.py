@@ -5,14 +5,16 @@ from django.http import HttpResponse
 from django.http.response import Http404
 from django.shortcuts import render
 from django.utils import timezone
-from articles.models import Article
+from articles.models import Article, Comment
 from events.models import Event
 
 @login_required
 def home_view(request, *args, **kwargs):
     qs = Article.objects.filter(publish__lte=timezone.now()).order_by('-publish')
     page = request.GET.get('page', 1)
-
+    for each in qs:
+        comments = Comment.objects.filter(article=each.id).count()
+        each.comment = comments
     paginator = Paginator(qs, 8)
     article_count = paginator.count
     try:

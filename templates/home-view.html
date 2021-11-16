@@ -22,7 +22,7 @@
     <div class="col-12 col-md-3 card">
       <div class="card-body">
         <h5 class="card-title">{{ x.title }}</h5>
-        <h6 class="card-subtitle mb-2 text-muted">{{ x.publish }}</h6>
+        <h6 class="card-subtitle mb-2 text-muted">{{ x.publish }} <br /><small>({{x.comment}} comments)</small></h6>
         <p class="card-text">{{ x.content|safe|truncatechars:70 }}</p>
         <a href="{{ x.get_absolute_url }}" class="btn btn-outline-primary stretched-link">Read article</a>
       </div>

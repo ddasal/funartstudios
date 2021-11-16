@@ -1,0 +1,6 @@
+<div id="comment-{{object.id}}" class="col-8">
+    
+        <b>{{ object.user.first_name }}</b><small> {{ object.timestamp }}{% if request.user == object.user %} - <a class="link-success" hx-trigger='click' hx-get='{{ object.get_htmx_edit_url }}' hx-target='#comment-{{object.id}}' href='{{ object.get_htmx_edit_url }}'>Edit</a> : <a class="link-danger" hx-confirm='Remove comment?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#comment-{{object.id}}' hx-swap='outerHTML'>Remove</a>{% endif %}
+    </small>
+        {{ object.comment|safe|linebreaks  }}
+</div>

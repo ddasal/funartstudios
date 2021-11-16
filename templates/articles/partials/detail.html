@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-12 col-md-8">
+    <div class="col-12 col-md-12">
         <h3>{{object.name}}
             {% if object.get_edit_url %}
             <small>
@@ -13,8 +13,20 @@
         
         <p>{{ object.content|safe|linebreaks }}</p>
     </div>
-</div>
-
+    <div id="comments" style="margin: 10px;">
+        <div id="comment-list">
+            <hr />  
+            <h6><u>Comments:</u></h6>
+            {% for comment in object.get_comment_children %}
+                {% include 'articles/partials/comment-inline.html' with object=comment %}
+            {% endfor %} 
+        </div>
+            {% if new_comment_url %}
+                <button class="btn btn-outline-success" hx-get="{{ new_comment_url }}" hx-trigger="click" hx-target="#comment-list" hx-swap="beforeend">Add Comment</button>
+            {% endif %} 
+    </div>
+    </div>
+ 
 <div class="row">
     <div class="col-12 col-md-4" style="margin-top: 20px;">
         <a class="btn btn-outline-secondary" href="/">Back</a>
