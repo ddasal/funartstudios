@@ -17,6 +17,7 @@ def event_list_view(request):
     page = request.GET.get('page', 1)
 
     paginator = Paginator(qs, 10)
+
     event_count = paginator.count
     try:
         events = paginator.page(page)
@@ -24,9 +25,10 @@ def event_list_view(request):
         events = paginator.page(1)
     except EmptyPage:
         events = paginator.page(paginator.num_pages)
+
     context = {
         "events": events,
-        "event_count": event_count
+        "event_count": event_count,
     }
     return render(request, "events/list.html", context)
 
