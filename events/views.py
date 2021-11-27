@@ -353,3 +353,51 @@ def event_tip_delete_view(request, parent_slug=None, id=None):
     }
     return render(request, "events/delete.html", context)
 
+
+
+from django.shortcuts import render
+from django.http import HttpResponse,JsonResponse
+from datetime import datetime
+from django.views import View
+from .models import EventStaff
+import io,csv
+
+
+class StaffUpload(View):
+    def get(self, request):
+        template_name = 'events/import-staff.html'
+        return render(request, template_name)
+    def post(self, request):
+        user = request.user #get the current login user details
+        paramFile = io.TextIOWrapper(request.FILES['eventstaff'].file)
+        portfolio1 = csv.DictReader(paramFile)
+        list_of_dict = list(portfolio1)
+        objs = [
+            EventStaff(
+            role=row['role'],
+            hours=row['hours'],
+            timestamp=row['timestamp'],
+            updated=row['updated'],
+            event_id=row['event_id'],
+            user_id=row['user_id'],
+            event_qty=row['event_qty'],
+            prepaint_qty=row['prepaint_qty'],
+            rate=row['rate'],
+            total_pay=row['total_pay'],
+            hourly_pay=row['hourly_pay'],
+            prepaint_pay=row['prepaint_pay'],
+            status=row['status'],
+            commission_pay=row['commission_pay'],
+            tip_pay=row['tip_pay'],           
+         )
+         for row in list_of_dict
+     ]
+        try:
+            msg = EventStaff.objects.bulk_create(objs)
+            returnmsg = {"status_code": 200}
+            print('imported successfully')
+        except Exception as e:
+            print('Error While Importing Data: ',e)
+            returnmsg = {"status_code": 500}
+       
+        return JsonResponse(returnmsg)
