@@ -147,18 +147,29 @@ def report_detail_hx_view(request, id=None):
             inventory_total = inventory_total + each.temp_received_quantity
 
         event_qs = Event.objects.filter(date__lte=obj.end_date)
+        
         for item in event_qs:
             item.temp_customer_used = 0
-            temp_customer_each = [int(item.total_customer_qty) for item in EventCustomer.objects.filter(event=item.id)]
-            item.temp_customer_used = sum(temp_customer_each)
+            try:
+                temp_customer_each = [int(item.total_customer_qty) for item in EventCustomer.objects.filter(event=item.id)]
+                item.temp_customer_used = sum(temp_customer_each)
+            except:
+                pass
 
             item.temp_prepaint_used = 0
-            temp_prepaint_each = [int(item.prepaint_qty) for item in EventStaff.objects.filter(event=item.id)]
-            item.temp_prepaint_used = sum(temp_prepaint_each)
+            try:
+                temp_prepaint_each = [int(item.prepaint_qty) for item in EventStaff.objects.filter(event=item.id)]
+                item.temp_prepaint_used = sum(temp_prepaint_each)
+            except:
+                pass
 
             item.temp_event_used = 0
-            temp_event_each = [int(item.event_qty) for item in EventStaff.objects.filter(event=item.id)]
-            item.temp_event_used = sum(temp_event_each)
+            try:
+                temp_event_each = [int(item.event_qty) for item in EventStaff.objects.filter(event=item.id)]
+                item.temp_event_used = sum(temp_event_each)
+            except:
+                pass
+
 
             inventory_total = inventory_total - item.temp_customer_used - item.temp_prepaint_used - item.temp_event_used
 
@@ -166,7 +177,7 @@ def report_detail_hx_view(request, id=None):
         report_net_revenue = Decimal(report_adjusted_gross_revenue) - Decimal(report_adjustments)
         report_royalty = Decimal(report_net_revenue) * Decimal(.06)
         report_ad_funds = Decimal(report_net_revenue) * Decimal(.02)
-
+        
         obj.adjusted_gross_revenue = report_adjusted_gross_revenue
         obj.adjustments = report_adjustments
         obj.net_revenue = report_net_revenue
@@ -176,7 +187,6 @@ def report_detail_hx_view(request, id=None):
         obj.surface_count = int(inventory_total)
         obj.kits = report_kits
         obj.save()
-
     except:
         obj = None
     if obj is None:
