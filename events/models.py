@@ -155,7 +155,7 @@ class EventStaff(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=SET_NULL)
     role = models.CharField(max_length=1, choices=EventStaffRole.choices, default=EventStaffRole.STAGE)
-    hours = models.DecimalField(decimal_places=2, max_digits=4, null=False, blank=False, default=3.5)
+    hours = models.DecimalField(decimal_places=2, max_digits=4, null=False, blank=False, default=0)
     rate = models.DecimalField(decimal_places=2, max_digits=4, default=0.00, null=False, blank=False)
     prepaint_pay = models.DecimalField(decimal_places=2, max_digits=5, default=0.00, null=False, blank=False)
     hourly_pay = models.DecimalField(decimal_places=2, max_digits=5, default=0.00, null=False, blank=False)
