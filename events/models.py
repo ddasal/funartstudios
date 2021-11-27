@@ -271,7 +271,7 @@ class EventCustomer(models.Model):
     type = models.CharField(max_length=1, choices=EventCustomerType.choices, default=EventCustomerType.RESERVATION)
     quantity = models.IntegerField(null=False, blank=False)
     price = models.DecimalField(decimal_places=2, max_digits=5, default=0.0, null=False, blank=False)
-    product = models.ForeignKey(Product, on_delete=CASCADE, null=False, blank=False, related_name='customer_product', default=5)
+    product = models.ForeignKey(Product, on_delete=CASCADE, null=False, blank=False, related_name='customer_product', default=1)
     per_customer_qty = models.IntegerField(default=1, null=False, blank=False)
     total_customer_qty = models.IntegerField(default=0, null=False, blank=False)
     subtotal_price = models.DecimalField(decimal_places=2, max_digits=6, default=0.0, null=False, blank=False)
