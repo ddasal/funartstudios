@@ -24,7 +24,7 @@ class EventAdmin(admin.ModelAdmin):
     inlines = [EventCustomerInline, EventStaffInline, EventTipInline]
     list_display = ['title', 'date', 'time', 'updated']
     search_fields = ['title']
-    readonly_fields = ['tax_rate', 'timestamp', 'updated', 'payroll_report']
+    readonly_fields = ['tax_rate', 'timestamp', 'updated', 'payroll_report', 'royalty_report']
     ordering = ['-date', '-time']
 
 admin.site.register(Event, EventAdmin)
