@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator, EmptyPage,PageNotAnInteger
 from django.http import HttpResponse
 from django.http.response import Http404
@@ -362,7 +362,7 @@ from django.views import View
 from .models import EventStaff
 import io,csv
 
-
+@login_required
 class StaffUpload(View):
     def get(self, request):
         template_name = 'events/import-staff.html'

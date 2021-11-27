@@ -59,6 +59,11 @@ def report_delete_view(request, id=None):
         raise Http404
     if request.method == "POST":
         if obj.status == 'p':
+            parent_obj = obj
+            events = Event.objects.filter(payroll_report=parent_obj)
+            for each in events:
+                each.payroll_report = None
+                each.save()
             obj.delete()
             success_url = reverse('payroll:list')
             if request.htmx:
@@ -148,6 +153,9 @@ def report_detail_hx_view(request, id=None):
                             staff.tip_pay = tip_each
                             total_stage_tip_pay = total_stage_tip_pay + staff.tip_pay
                             staff.save()
+                elif event.count_stage == 0:
+                    total_stage_tip_pay = total_stage_tip_pay + event.total_total_tips
+
             if event.count_other > 0:
                 if event.count_stage == 1:
                     update_tip = EventStaff.objects.get(event=event.id, role='s')
