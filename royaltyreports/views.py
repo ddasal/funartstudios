@@ -150,25 +150,16 @@ def report_detail_hx_view(request, id=None):
         
         for item in event_qs:
             item.temp_customer_used = 0
-            try:
-                temp_customer_each = [int(item.total_customer_qty) for item in EventCustomer.objects.filter(event=item.id)]
-                item.temp_customer_used = sum(temp_customer_each)
-            except:
-                pass
+            temp_customer_each = [int(item.total_customer_qty) for item in EventCustomer.objects.filter(event=item.id)]
+            item.temp_customer_used = sum(temp_customer_each)
 
             item.temp_prepaint_used = 0
-            try:
-                temp_prepaint_each = [int(item.prepaint_qty) for item in EventStaff.objects.filter(event=item.id)]
-                item.temp_prepaint_used = sum(temp_prepaint_each)
-            except:
-                pass
+            temp_prepaint_each = [int(item.prepaint_qty) for item in EventStaff.objects.filter(event=item.id)]
+            item.temp_prepaint_used = sum(temp_prepaint_each)
 
             item.temp_event_used = 0
-            try:
-                temp_event_each = [int(item.event_qty) for item in EventStaff.objects.filter(event=item.id)]
-                item.temp_event_used = sum(temp_event_each)
-            except:
-                pass
+            temp_event_each = [int(item.event_qty) for item in EventStaff.objects.filter(event=item.id)]
+            item.temp_event_used = sum(temp_event_each)
 
 
             inventory_total = inventory_total - item.temp_customer_used - item.temp_prepaint_used - item.temp_event_used
