@@ -94,6 +94,7 @@ def report_detail_hx_view(request, id=None):
         events = Event.objects.filter(Q(type='s') | Q(type='p') | Q(type='w') | Q(type='t'), date__range=(obj.start_date, obj.end_date)).order_by('date', 'time')
         kits = Event.objects.filter(Q(type='s') | Q(type='p') | Q(type='w') | Q(type='t') | Q(type='r'), date__range=(obj.start_date, obj.end_date)).order_by('date', 'time')
         sqaure_info = Square.objects.filter(date__range=(obj.start_date, obj.end_date)).exclude(Q(description__icontains='Twist at Home Kit') | Q(description__icontains='Event'))
+        square_last_entry_date = Square.objects.latest('date', 'time')
         report_adjusted_gross_revenue = 0
         report_gross_revenue = 0
         report_adjustments = 0
@@ -210,7 +211,8 @@ def report_detail_hx_view(request, id=None):
         "report_royalty": report_royalty,
         "report_ad_funds": report_ad_funds,
         "report_square_sales": report_square_sales,
-        "report_surface_count": report_surface_count
+        "report_surface_count": report_surface_count,
+        "square_last_entry_date": square_last_entry_date
     }
     return render(request, "royaltyreports/partials/detail.html", context)
  
