@@ -13,7 +13,7 @@
                         {% if object.status == 'p' %}
                             <a class="btn btn-outline-danger" hx-confirm='Remove {{object.quantity }} x {{object.get_type_display }} from event?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#customer-{{object.id}}' hx-swap='outerHTML'>Remove</a>
                         {% elif object.status == 'c' %}
-                            <a class="btn btn-outline-secondary" hx-trigger='click'>Completed</a>
+                            <a class="btn btn-outline-secondary" hx-trigger='click'>Royalty Sent</a>
                         {% endif %}
                     {% endif %} 
                 </td>

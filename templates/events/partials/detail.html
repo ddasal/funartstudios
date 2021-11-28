@@ -6,7 +6,7 @@
                 <a class="btn btn-outline-secondary" href="{% url 'events:list' %}">Back</a>
                 {% if perms.events.change_event %}
                     {% if object.status == 'c' %}
-                        <a class="btn btn-outline-secondary" hx-trigger='click'>Completed</a>
+                        <a class="btn btn-outline-secondary" hx-trigger='click'>Royalty Sent</a>
                     {% elif object.status == 'p' %}
                         <a class="btn btn-outline-primary" href="{{ object.get_edit_url }}">Edit</a>
                     {% endif %} 
