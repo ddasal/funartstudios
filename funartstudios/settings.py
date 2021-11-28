@@ -64,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_htmx.middleware.HtmxMiddleware',
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',
 ]
 
 ROOT_URLCONF = 'funartstudios.urls'
@@ -89,6 +90,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'funartstudios.wsgi.application'
 
+SESSION_EXPIRE_SECONDS = 60 # 1 minute
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True # after last activity
+# SESSION_EXPIRE_AFTER_LAST_ACTIVITY_GRACE_PERIOD = 60 # group by minute
+SESSION_TIMEOUT_REDIRECT = '/'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
