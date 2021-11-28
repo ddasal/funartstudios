@@ -207,6 +207,7 @@ def report_detail_hx_view(request, id=None):
                     event.count_staff = int(event.count_other) + int(event.count_stage)
                     update_commission = EventStaff.objects.filter(event=event.id)
                     if event.count_staff == 1:
+                        print('1')
                         for staff in update_commission:
                             staff.commission_pay = Decimal(5.00) * kit_count
                             staff.save()
@@ -217,6 +218,7 @@ def report_detail_hx_view(request, id=None):
                             elif staff.role == 't':
                                 total_team_commission_pay = total_team_commission_pay + staff.commission_pay
                     if event.count_staff == 2:
+                        print('2')
                         for staff in update_commission:
                             staff.commission_pay = Decimal(3.00) * kit_count
                             staff.save()                        
@@ -227,6 +229,7 @@ def report_detail_hx_view(request, id=None):
                             elif staff.role == 't':
                                 total_team_commission_pay = total_team_commission_pay + staff.commission_pay
                     if event.count_staff > 2:
+                        print('>2')
                         for staff in update_commission:
                             staff.commission_pay = Decimal(2.00) * kit_count
                             staff.save()     
@@ -236,8 +239,8 @@ def report_detail_hx_view(request, id=None):
                                 total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
                             elif staff.role == 't':
                                 total_team_commission_pay = total_team_commission_pay + staff.commission_pay
-            print('1')
-        print('2')
+            print('loop')
+        print('outside of loop')
         total_total_hours = total_stage_hours + total_floor_hours + total_team_hours
         total_total_hourly_pay = total_stage_hourly_pay + total_floor_hourly_pay + total_team_hourly_pay
         total_total_tip_pay = total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay
