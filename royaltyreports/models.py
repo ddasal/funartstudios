@@ -26,6 +26,7 @@ class RoyaltyReport(models.Model):
     kits = models.IntegerField(null=False, blank=False, default=0)
     status = models.CharField(max_length=1, choices=ReportStatus.choices, default=ReportStatus.PENDING)
     prev_status = models.CharField(max_length=1, null=True, choices=ReportStatus.choices, default=None)
+    square_retail_sales = models.DecimalField(max_digits=7, decimal_places=2, default=0, null=False, blank=False)
     timestamp = models.DateTimeField(auto_now_add=True) 
     updated = models.DateTimeField(auto_now=True) 
 

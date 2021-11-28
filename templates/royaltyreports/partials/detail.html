@@ -94,11 +94,11 @@
             <p>
                 <b>Inventory Count:</b> <span id="inventory">{{ inventory_total|intcomma }}</span>
                 <button onclick="copyToClipboard('#inventory')">Copy</button>
-
             </p>
-            <p><b>Total Kits Sold:</b> {{ report_kits }} for ${{ kit_gross_revenue }} in revenue. <small>(${{ kit_adjustments}} in taxes.)</small></p>
+            <p><b>Total Kits Sold:</b> {{ report_kits }} for ${{ kit_gross_revenue }} in revenue. <small>(${{ kit_adjustments}} in taxes.)</small><br />
+            <b>Total Surfaces Used:</b> {{ report_surface_count}} </p>
             <p>
-                <b>Square Retail Sales</b> (to be added to report): <span id="square">TBD</span>
+                <b>Square Retail Sales</b> (to be added to report): $<span id="square">{{ report_square_sales|intcomma }}</span>
                 <button onclick="copyToClipboard('#square')">Copy</button>
 
             </p>

@@ -10,6 +10,7 @@ from products.models import Product, PurchaseItem, PurchaseOrder
 from royaltyreports.forms import ReportForm
 from django.db.models import Q
 from royaltyreports.models import RoyaltyReport
+from square.models import Square
 from decimal import Decimal
 
 # Create your views here.
@@ -92,6 +93,7 @@ def report_detail_hx_view(request, id=None):
         obj = RoyaltyReport.objects.get(id=id)
         events = Event.objects.filter(Q(type='s') | Q(type='p') | Q(type='w') | Q(type='t'), date__range=(obj.start_date, obj.end_date)).order_by('date', 'time')
         kits = Event.objects.filter(Q(type='s') | Q(type='p') | Q(type='w') | Q(type='t') | Q(type='r'), date__range=(obj.start_date, obj.end_date)).order_by('date', 'time')
+        sqaure_info = Square.objects.filter(date__range=(obj.start_date, obj.end_date)).exclude(Q(description__icontains='Twist at Home Kit') | Q(description__icontains='Event'))
         report_adjusted_gross_revenue = 0
         report_gross_revenue = 0
         report_adjustments = 0
@@ -103,6 +105,7 @@ def report_detail_hx_view(request, id=None):
         kit_gross_revenue = 0
         kit_adjustments = 0
         report_surface_count = 0
+        report_square_sales = 0
         for each in events:
             each.temp_customer_seats = 0
             temp_customer_seats = [int(each.quantity) for each in EventCustomer.objects.filter(event=each.id, type='r')]
@@ -168,6 +171,10 @@ def report_detail_hx_view(request, id=None):
 
 
             inventory_total = inventory_total - item.temp_customer_used - item.temp_prepaint_used - item.temp_event_used
+            report_surface_count = report_surface_count + item.temp_customer_used + item.temp_prepaint_used + item.temp_event_used
+
+        for sq in sqaure_info:
+            report_square_sales = report_square_sales + sq.gross_sales
 
         report_adjusted_gross_revenue = Decimal(report_gross_revenue) + Decimal(kit_gross_revenue)
         report_net_revenue = Decimal(report_adjusted_gross_revenue) - Decimal(report_adjustments)
@@ -182,6 +189,7 @@ def report_detail_hx_view(request, id=None):
         obj.reservations = report_seats
         obj.surface_count = int(inventory_total)
         obj.kits = report_kits
+        obj.square_retail_sales = report_square_sales
         obj.save()
     except:
         obj = None
@@ -200,7 +208,9 @@ def report_detail_hx_view(request, id=None):
         "report_adjusted_gross_revenue": report_adjusted_gross_revenue,
         "report_net_revenue": report_net_revenue,
         "report_royalty": report_royalty,
-        "report_ad_funds": report_ad_funds
+        "report_ad_funds": report_ad_funds,
+        "report_square_sales": report_square_sales,
+        "report_surface_count": report_surface_count
     }
     return render(request, "royaltyreports/partials/detail.html", context)
  
