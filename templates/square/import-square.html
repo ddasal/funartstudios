@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h4>Import Square</h4>
+  <p>Visit <a href="https://squareup.com/dashboard/sales/transactions" target="_blank">Square</a> to download transactions, then select the file to upload/import into FAS Admin.</p>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="squarefile">
+    <button type="submit">Upload</button>
+  </form>
+{% endblock %}

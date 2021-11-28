@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %} 
+    Square List
+{% endblock title %} 
+
+{% block content %}
+<div class="row">
+    <div class='col-12 col-md-6'>
+        <h3>Square List</h3>
+    </div>
+    <div class="col-12 col-md-6" style="text-align: right;">
+        {% if perms.square.add_square %} 
+        <a class="btn btn-outline-success" href="{% url 'square:import' %}">Upload sqaure transactions</a>  
+        {% endif %} 
+    </div>
+</div>
+<div class="row">
+    <div class='col-12'>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Date / Time</th>
+                    <th>Staff</th>
+                    <th>Gross Sales</th>
+                    <th>Tax</th>
+                    <th>Tip</th>
+                    <th>Net Sales</th>
+                    <th>Card</th>
+                    <th>Cash</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for x in square %}
+            <tr {% if 'Refund' in x.event_type %} class="table-danger"{% endif %}>
+                    <td><a href="{{ x.details }}" target="_blank">{{ x.date }} {{ x.time }}</a></td>
+                    <td>{{ x.staff_name }}</td>
+                    <td>{{ x.gross_sales }}</td>
+                    <td>{{ x.tax }}</td>
+                    <td {% if x.tip > 0 %} class="table-success"{% endif %}>{{ x.tip }}</td>
+                    <td>{{ x.net_sales }}</td>
+                    <td>{{ x.card }}</td>
+                    <td>{{ x.cash }}</td>
+                    <td {% if 'Kit' in x.description %} class="table-success"{% endif%}>{{ x.description }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="margin-top: 15px;">
+        {% if square.has_other_pages %}
+        <ul class="pagination pagination ">
+            {% if square.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ square.previous_page_number }}">Previous</a></li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link">Previous</a></li>
+            {% endif %}
+
+            {% if square.number|add:'-4' > 1 %}
+                <li class="page-item"><a class="page-link" href="?page={{ square.number|add:'-5' }}">&hellip;</a></li>
+            {% endif %}
+
+            {% for i in square.paginator.page_range %}
+                {% if square.number == i %}
+                    <li class="page-item active"><a class="page-link">{{ i }}</a></li>
+                {% elif i > square.number|add:'-5' and i < square.number|add:'5' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if square.paginator.num_pages > square.number|add:'4' %}
+                <li class="page-item"><a class="page-link" href="?page={{ square.number|add:'5' }}">&hellip;</a></li>
+            {% endif %}
+
+            {% if square.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ square.next_page_number }}">Next</a></li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link">Next</a></li>
+            {% endif %}
+        </ul>
+        {% endif %}
+        Total Square Count: {{ square_count }}
+        </div>
+    </div>
+</div>
+{% endblock content %} 

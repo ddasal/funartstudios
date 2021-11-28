@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'payroll',
     'products',
     'royaltyreports',
-    'search'
+    'search',
+    'square'
 ]
 
 MIDDLEWARE = [

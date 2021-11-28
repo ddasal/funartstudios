@@ -28,6 +28,7 @@ urlpatterns = [
     path('payroll/', include('payroll.urls')),
     path('products/', include('products.urls')),
     path('search/', search_view, name='search'),
+    path('square/', include('square.urls')),
     path('royalty/', include('royaltyreports.urls')),
     path('admin/', admin.site.urls),
 ]
