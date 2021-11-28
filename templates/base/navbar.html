@@ -48,6 +48,9 @@
                 {% if perms.royaltyreports.view_royaltyreport %}
                 <a class="dropdown-item" href="{% url 'royalty:list' %}">Royalty Reports</a>
                 {% endif %}
+                {% if perms.square.view_square %}
+                <a class="dropdown-item" href="{% url 'square:list' %}">Square Transactions</a>
+                {% endif %}
               </li>
             </ul>
           {% endif %} 

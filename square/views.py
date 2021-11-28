@@ -16,7 +16,7 @@ def square_list_view(request):
     qs = Square.objects.all().order_by('-date', '-time')
     page = request.GET.get('page', 1)
 
-    paginator = Paginator(qs, 10)
+    paginator = Paginator(qs, 20)
 
     square_count = paginator.count
     try:

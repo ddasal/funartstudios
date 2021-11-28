@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 
 {% block title %} 
-    Square List
+    Square Transactions
 {% endblock title %} 
 
 {% block content %}
 <div class="row">
     <div class='col-12 col-md-6'>
-        <h3>Square List</h3>
+        <h3>Square Transactions</h3>
     </div>
     <div class="col-12 col-md-6" style="text-align: right;">
         {% if perms.square.add_square %} 
-        <a class="btn btn-outline-success" href="{% url 'square:import' %}">Upload sqaure transactions</a>  
+        <a class="btn btn-outline-success" href="{% url 'square:import' %}">Upload Square Transactions</a>  
         {% endif %} 
     </div>
 </div>
