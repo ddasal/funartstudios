@@ -21,26 +21,30 @@
             <thead>
                 <tr>
                     <th>Date / Time</th>
-                    <th>Event Title</th>
+                    <th>Event Title (Length)</th>
                     <th>Customers</th>
-                    <th>Staff</th>
+                    <th>Team Members</th>
                 </tr>
             </thead>
             <tbody>
             {% for x in events %}
             <tr>
                 {% if x.title %}
-                    <td>{{ x.date }} at {{ x.time }}</td>
-                    <td><a href="{% url 'events:detail' slug=x.slug %}">{{ x.title }}</a></td>
+                    <td><small>{{ x.date | date:"D, n/j/y" }} at {{ x.time | date:"g:i a" }}</small></td>
+                    <td><a href="{% url 'events:detail' slug=x.slug %}">{{ x.title }} ({{ x.length }} hrs)</a></td>
                     <td>
                         {% for customer in x.get_eventcustomer_children %}
-                            {{ customer.quantity }} x {{ customer.get_type_display }}<br />
-                        {% endfor %} 
+                            <small><b>{{ customer.quantity }} x {{ customer.get_type_display }}</b><br />
+                                &ThickSpace; of {{ customer.product }} at {{ customer.price }}</small><br />
+                        {% endfor %}  
                     </td>
                     <td>
                         {% for staff in x.get_eventstaff_children %}
-                            {{ staff.user.first_name }} as {{ staff.get_role_display }}<br />
-                        {% endfor %} 
+                            <small>{{ staff.user.first_name }} as {{ staff.get_role_display }} for {{ staff.hours }} hrs</small><br />
+                        {% endfor %}
+                            {% if x.get_eventtip_children.count > 0 %}
+                            <small>{{ x.get_eventtip_children.count }} tip(s)</small>
+                            {% endif %}
                     </td>
                     {% endif %}
             </tr>
