@@ -155,7 +155,6 @@ def report_detail_hx_view(request, id=None):
                             staff.save()
                 elif event.count_stage == 0:
                     total_stage_tip_pay = total_stage_tip_pay + event.total_total_tips
-
             if event.count_other > 0:
                 if event.count_stage == 1:
                     update_tip = EventStaff.objects.get(event=event.id, role='s')
@@ -205,7 +204,7 @@ def report_detail_hx_view(request, id=None):
                 for kit in kit_sales:
                     kit_count = kit_count + kit.quantity
                 if kit_count > 0:
-                    event.count_staff = event.count_other + event.count_stage
+                    event.count_staff = int(event.count_other) + int(event.count_stage)
                     update_commission = EventStaff.objects.filter(event=event.id)
                     if event.count_staff == 1:
                         for staff in update_commission:
@@ -237,6 +236,7 @@ def report_detail_hx_view(request, id=None):
                                 total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
                             elif staff.role == 't':
                                 total_team_commission_pay = total_team_commission_pay + staff.commission_pay
+        print('hello')
         total_total_hours = total_stage_hours + total_floor_hours + total_team_hours
         total_total_hourly_pay = total_stage_hourly_pay + total_floor_hourly_pay + total_team_hourly_pay
         total_total_tip_pay = total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay
@@ -245,17 +245,16 @@ def report_detail_hx_view(request, id=None):
         total_floor_pay = total_floor_hourly_pay + total_floor_tip_pay + total_floor_commission_pay
         total_team_pay = total_team_hourly_pay + total_team_tip_pay + total_team_commission_pay
         total_total_pay = total_stage_pay + total_floor_pay + total_team_pay
-
         staff_count = EventStaff.objects.all().filter(event__payroll_report=obj).order_by('user').distinct('user').count()
         obj.staff_count = staff_count
         obj.payroll_gross = total_total_pay
         obj.save()
 
-
+ 
     except:
         obj = None
-    if obj is None:
-        return HttpResponse("Not found.")
+    # if obj is None:
+    #     return HttpResponse("Not found.")
     context = {
         "object": obj,
         "events": events,
@@ -410,7 +409,6 @@ def report_staff_detail_hx_view(request, id=None, user=None):
         raise Http404
     try:
         obj = PayReport.objects.get(id=id)
-        print(obj)
         events = Event.objects.all().filter(payroll_report=obj).order_by('date', 'time')
         event_staff = EventStaff.objects.all().filter(event__payroll_report=obj, user=request.user.id)
         total_stage_hours = 0
@@ -517,7 +515,6 @@ def report_staff_summary_hx_view(request, id=None):
         obj = PayReport.objects.get(id=id)
         eventstaff_list = EventStaff.objects.filter(event__payroll_report=obj)
         distinct_users = eventstaff_list.values('user').distinct() #.exclude(Q(user=7) | Q(user=1))
-        print(type(distinct_users))
         for staff in distinct_users:
             staff['total_stage_hours'] = 0
             staff['total_floor_hours'] = 0
@@ -540,7 +537,6 @@ def report_staff_summary_hx_view(request, id=None):
             staff['total_team_pay'] = 0
             staff['total_total_pay'] = 0
             event_staff = EventStaff.objects.filter(event__payroll_report=obj, user=staff['user']).order_by('user')
-            # print(event_staff.count())
             for item in event_staff:
                 if item.role == 's':
                     staff['total_stage_hours'] = staff['total_stage_hours'] + item.hours
