@@ -24,12 +24,12 @@
                     <th>ID: Status</th>
                     <th>Start</th>
                     <th>End</th>
-                    <th>Adjusted Gross Revenue</th>
+                    <th>Adj. Gross Revenue</th>
                     <th>Adjustments</th>
                     <th>Net Revenue</th>
                     <th>Royalty</th>
                     <th>Ad Fund</th>
-                    <th>Reservations</th>
+                    <th>Seats</th>
                     <th>Kits</th>
                     <th>Surface Count</th>
                 </tr>
@@ -37,7 +37,7 @@
             <tbody>
                 {% for report in reports %}
                     <tr>
-                        <td><a class="btn btn-outline-{% if report.status == 'p' %}success{% else %}secondary{% endif %}" href="{% url 'royalty:detail' id=report.id %}">{{ report.id }}: {{ report.get_status_display }}</a></a></td>
+                        <td><a class="btn btn-outline-{% if report.status == 'p' %}success{% else %}secondary{% endif %}" href="{% url 'royalty:detail' id=report.id %}">{{ report.id }}:{{ report.get_status_display }}</a></a></td>
                         <td>{{ report.start_date }}</td>
                         <td>{{ report.end_date }}</td>
                         <td>${{ report.adjusted_gross_revenue|intcomma }}</td>
