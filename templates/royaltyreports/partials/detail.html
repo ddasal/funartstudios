@@ -61,7 +61,7 @@
                         <td><a href="{% url 'events:detail' slug=event.slug %}" target="_blank">{{ event.name }}</a></td>
                         <td>{{ event.temp_customer_seats }}</td>
                         <td>${{ event.temp_gross_revenue|intcomma }}</td>
-                        <td>
+                        <td style="text-align: right;">
                             {% if event.temp_adjustments > 0 %}
                                 <span id="adj-{{event.id}}">-{{ event.temp_adjustments }}</span> 
                                 <button onclick="copyToClipboard('#adj-{{event.id}}')">Copy</button>
@@ -69,7 +69,7 @@
                             
                             {% endif %}
                         </td>
-                        <td>
+                        <td style="text-align: right;">
                             {% if event.temp_adjustments > 0 %}
                                 <span id="note-{{event.id}}">MO Sales Tax of {{ event.tax_rate}} of ${{ event.temp_cost_factors }}</span>
                                 <button onclick="copyToClipboard('#note-{{event.id}}')">Copy</button>
