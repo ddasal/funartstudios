@@ -36,7 +36,12 @@
     </div>
     <div class="col-12 col-md-4" style="text-align: right;">
         <p><b><a href="{% url 'square:import' %}">Import</a> Square transactions<br />prior to submitting report</b><br />
-        <small>Most Recent Imported Transaction Date:<br />{{ square_last_entry_date.date | date:"D, n/j/y" }} at {{ square_last_entry_date.time | date:"g:i a" }}</small></p>
+        <small>{% if square_last_entry_date.date < object.end_date %}
+            <mark> Most Recent Imported Transaction Date:<br />{{ square_last_entry_date.date | date:"D, n/j/y" }} at {{ square_last_entry_date.time | date:"g:i a" }}</small></mark>
+            {% else %} 
+            Most Recent Imported Transaction Date:<br />{{ square_last_entry_date.date | date:"D, n/j/y" }} at {{ square_last_entry_date.time | date:"g:i a" }}</small>
+            {% endif %}
+        </p>
     </div>
 </div>
 
