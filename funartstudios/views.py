@@ -51,6 +51,6 @@ def github_pull(request):
     if request.method == "POST":
         if 'payload' in request.form:
             os.system("cd //home/ubuntu/funartstudios/ && git pull" )
-        return HttpResponse('Hi')
-    return HttpResponse('Hello')
+        return HttpResponse('Thank you')
+    return HttpResponse('Hello World')
 
