@@ -52,8 +52,7 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def github_pull(request):
     if request.method == "POST":
-        if 'payload' in request.form:
-            os.system("cd //home/ubuntu/funartstudios/ && git pull" )
+        os.system("cd //home/ubuntu/funartstudios/ && git pull" )
         return HttpResponse('It Works')
     return HttpResponse('Hi')
 
