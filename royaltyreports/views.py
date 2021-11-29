@@ -109,7 +109,7 @@ def report_detail_hx_view(request, id=None):
         report_square_sales = Decimal(0.0)
         for each in events:
             each.temp_customer_seats = 0
-            temp_customer_seats = [int(each.quantity) for each in EventCustomer.objects.filter(event=each.id, type='r')]
+            temp_customer_seats = [int(each.quantity) for each in EventCustomer.objects.filter(event=each.id, type='r').prefetch_related()]
             each.temp_customer_seats = sum(temp_customer_seats)
             report_seats = report_seats + each.temp_customer_seats
 
