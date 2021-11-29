@@ -248,10 +248,11 @@ def report_detail_hx_view(request, id=None):
         obj.payroll_gross = total_total_pay
         obj.save()
 
-    except:
+    except Exception as e:
         obj = None
+        msg = e
     if obj is None:
-        return HttpResponse('not found')
+        return HttpResponse(msg)
     context = {
         "object": obj,
         "events": events,
