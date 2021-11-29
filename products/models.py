@@ -108,6 +108,7 @@ class Suppliers(models.TextChoices):
     ARTDISTRIBUTORS = 'a', 'Art Supply Distributors'
     DIVERSEWOOD = 'd', 'Diverse Woodworking'
     HOBBYLOBBY = 'h', 'Hobby Lobby'
+    INVENTORYADJUSTMENT = 'i', 'Inventory Adjustment'
     PGDUNN = 'p', 'P. Graham Dunn'
     TDART = 't', 'TD Art Supply'
     OTHER = 'o', 'Other'
