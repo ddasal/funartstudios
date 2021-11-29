@@ -248,10 +248,12 @@ def report_detail_hx_view(request, id=None):
         obj.payroll_gross = total_total_pay
         obj.save()
 
-    except Exception as e:
-        import sys
+    # except Exception as e:
+    #     import sys
+    #     obj = None
+    #     msg = "error on line {}".format(sys.exc_info()[-1].tb_lineno)
+    except:
         obj = None
-        msg = "error on line {}".format(sys.exc_info()[-1].tb_lineno)
     if obj is None:
         return HttpResponse(msg)
     context = {
