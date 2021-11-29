@@ -54,4 +54,4 @@ def github_pull(request):
     if request.method == "POST":
         os.system("sudo /home/ubuntu/.githubpull.sh" )
         return HttpResponse('It Works')
-    return HttpResponse('Hello')
+    return HttpResponse('Hello World')
