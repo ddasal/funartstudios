@@ -118,7 +118,6 @@ def report_detail_hx_view(request, id=None):
         total_floor_pay = Decimal(0.0)
         total_team_pay = Decimal(0.0)
         total_total_pay = Decimal(0.0)
-        print(obj)
         for event in events:
             event.payroll_report = obj
             event.save()
@@ -141,6 +140,7 @@ def report_detail_hx_view(request, id=None):
                     update_tip_stage = EventStaff.objects.get(event=event.id, role='s')
                     total_stage_hours = total_stage_hours + update_tip_stage.hours
                     total_stage_hourly_pay = total_stage_hourly_pay + update_tip_stage.hourly_pay
+                    total_stage_commission_pay = total_stage_commission_pay + update_tip_stage.prepaint_pay
                     update_tip_stage.tip_pay = event.total_total_tips
                     total_stage_tip_pay = total_stage_tip_pay + update_tip_stage.tip_pay
                     update_tip_stage.save()
@@ -151,6 +151,7 @@ def report_detail_hx_view(request, id=None):
                         if staff.role == 's':
                             total_stage_hours = total_stage_hours + staff.hours
                             total_stage_hourly_pay = total_stage_hourly_pay + staff.hourly_pay
+                            total_stage_commission_pay = total_stage_commission_pay + staff.prepaint_pay
                             staff.tip_pay = tip_each
                             total_stage_tip_pay = total_stage_tip_pay + staff.tip_pay
                             staff.save()
@@ -161,6 +162,7 @@ def report_detail_hx_view(request, id=None):
                     update_tip_stage = EventStaff.objects.get(event=event.id, role='s')
                     total_stage_hours = total_stage_hours + update_tip_stage.hours
                     total_stage_hourly_pay = total_stage_hourly_pay + update_tip_stage.hourly_pay
+                    total_stage_commission_pay = total_stage_commission_pay + update_tip_stage.prepaint_pay
                     update_tip_stage.tip_pay = event.total_stage_tips
                     total_stage_tip_pay = total_stage_tip_pay + update_tip_stage.tip_pay
                     update_tip_stage.save()
@@ -171,6 +173,7 @@ def report_detail_hx_view(request, id=None):
                         if staff.role == 's':
                             total_stage_hours = total_stage_hours + staff.hours
                             total_stage_hourly_pay = total_stage_hourly_pay + staff.hourly_pay
+                            total_stage_commission_pay = total_stage_commission_pay + staff.prepaint_pay
                             staff.tip_pay = tip_each
                             total_stage_tip_pay = total_stage_tip_pay + staff.tip_pay
                             staff.save()
@@ -180,10 +183,12 @@ def report_detail_hx_view(request, id=None):
                     if update_tip.role == 'f':
                         total_floor_hours = total_floor_hours + update_tip.hours
                         total_floor_hourly_pay = total_floor_hourly_pay + update_tip.hourly_pay
+                        total_floor_commission_pay = total_floor_commission_pay + update_tip.prepaint_pay
                         total_floor_tip_pay = total_floor_tip_pay + update_tip.tip_pay
                     elif update_tip.role == 't':
                         total_team_hours = total_team_hours + update_tip.hours
                         total_team_hourly_pay = total_team_hourly_pay + update_tip.hourly_pay
+                        total_team_commission_pay = total_team_commission_pay + update_tip.prepaint_pay
                         total_team_tip_pay = total_team_tip_pay + update_tip.tip_pay
                     update_tip.save()
                 elif event.count_other > 1:
@@ -193,12 +198,19 @@ def report_detail_hx_view(request, id=None):
                         if staff.role == 'f':
                             total_floor_hours = total_floor_hours + staff.hours
                             total_floor_hourly_pay = total_floor_hourly_pay + staff.hourly_pay
+                            total_floor_commission_pay = total_floor_commission_pay + staff.prepaint_pay
                         elif staff.role == 't':
                             total_team_hours = total_team_hours + staff.hours
                             total_team_hourly_pay = total_team_hourly_pay + staff.hourly_pay
+                            total_team_commission_pay = total_team_commission_pay + staff.prepaint_pay
                         staff.tip_pay = tip_each
                         staff.save()
             kit_sales = EventCustomer.objects.filter(event=event.id, type='h')
+            if not kit_sales:
+                update_commission = EventStaff.objects.filter(event=event.id)
+                for staff in update_commission:
+                    staff.commission_pay = Decimal(0.00)
+                    staff.save()
             if kit_sales:
                 kit_count = 0
                 for kit in kit_sales:
@@ -236,6 +248,7 @@ def report_detail_hx_view(request, id=None):
                                 total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
                             elif staff.role == 't':
                                 total_team_commission_pay = total_team_commission_pay + staff.commission_pay
+        print(total_stage_commission_pay)
         total_total_hours = total_stage_hours + total_floor_hours + total_team_hours
         total_total_hourly_pay = total_stage_hourly_pay + total_floor_hourly_pay + total_team_hourly_pay
         total_total_tip_pay = total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay
@@ -437,19 +450,19 @@ def report_staff_detail_hx_view(request, id=None, user=None):
                 total_stage_hours = total_stage_hours + staff.hours
                 total_stage_hourly_pay = total_stage_hourly_pay + staff.hourly_pay
                 total_stage_tip_pay = total_stage_tip_pay + staff.tip_pay
-                total_stage_commission_pay = total_stage_commission_pay + staff.commission_pay
+                total_stage_commission_pay = total_stage_commission_pay + staff.commission_pay + staff.prepaint_pay
                 total_stage_pay = total_stage_hourly_pay + total_stage_commission_pay + total_stage_tip_pay
             elif staff.role == 'f':
                 total_floor_hours = total_floor_hours + staff.hours
                 total_floor_hourly_pay = total_floor_hourly_pay + staff.hourly_pay
                 total_floor_tip_pay = total_floor_tip_pay + staff.tip_pay
-                total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
+                total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay + staff.prepaint_pay
                 total_floor_pay = total_floor_hourly_pay + total_floor_commission_pay + total_floor_tip_pay
             elif staff.role == 't':
                 total_team_hours = total_team_hours + staff.hours
                 total_team_hourly_pay = total_team_hourly_pay + staff.hourly_pay
                 total_team_tip_pay = total_team_tip_pay + staff.tip_pay
-                total_team_commission_pay = total_team_commission_pay + staff.commission_pay
+                total_team_commission_pay = total_team_commission_pay + staff.commission_pay + staff.prepaint_pay
                 total_team_pay = total_team_hourly_pay + total_team_commission_pay + total_team_tip_pay
         total_total_hours = total_stage_hours + total_floor_hours + total_team_hours
         total_total_hourly_pay = total_stage_hourly_pay + total_floor_hourly_pay + total_team_hourly_pay
@@ -543,19 +556,19 @@ def report_staff_summary_hx_view(request, id=None):
                     staff['total_stage_hours'] = staff['total_stage_hours'] + item.hours
                     staff['total_stage_hourly_pay'] = staff['total_stage_hourly_pay'] + item.hourly_pay
                     staff['total_stage_tip_pay'] = staff['total_stage_tip_pay'] + item.tip_pay
-                    staff['total_stage_commission_pay'] = staff['total_stage_commission_pay'] + item.commission_pay
+                    staff['total_stage_commission_pay'] = staff['total_stage_commission_pay'] + item.commission_pay + item.prepaint_pay
                     staff['total_stage_pay'] = staff['total_stage_hourly_pay'] + staff['total_stage_commission_pay'] + staff['total_stage_tip_pay']
                 elif item.role == 'f':
                     staff['total_floor_hours'] = staff['total_floor_hours'] + item.hours
                     staff['total_floor_hourly_pay'] = staff['total_floor_hourly_pay'] + item.hourly_pay
                     staff['total_floor_tip_pay'] = staff['total_floor_tip_pay'] + item.tip_pay
-                    staff['total_floor_commission_pay'] = staff['total_floor_commission_pay'] + item.commission_pay
+                    staff['total_floor_commission_pay'] = staff['total_floor_commission_pay'] + item.commission_pay + item.prepaint_pay
                     staff['total_floor_pay'] = staff['total_floor_hourly_pay'] + staff['total_floor_commission_pay'] + staff['total_floor_tip_pay']
                 elif item.role == 't':
                     staff['total_team_hours'] = staff['total_team_hours'] + item.hours
                     staff['total_team_hourly_pay'] = staff['total_team_hourly_pay'] + item.hourly_pay
                     staff['total_team_tip_pay'] = staff['total_team_tip_pay'] + item.tip_pay
-                    staff['total_team_commission_pay'] = staff['total_team_commission_pay'] + item.commission_pay
+                    staff['total_team_commission_pay'] = staff['total_team_commission_pay'] + item.commission_pay + item.prepaint_pay
                     staff['total_team_pay'] = staff['total_team_hourly_pay'] + staff['total_team_commission_pay'] + staff['total_team_tip_pay']
                 staff['total_total_hours'] = staff['total_stage_hours'] + staff['total_floor_hours'] + staff['total_team_hours']
                 staff['total_total_hourly_pay'] = staff['total_stage_hourly_pay'] + staff['total_floor_hourly_pay'] + staff['total_team_hourly_pay']
