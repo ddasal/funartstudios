@@ -418,7 +418,7 @@ class EventCustomerUpload(View):
         list_of_dict = list(portfolio1)
         objs = [
             EventCustomer(
-                type='h',
+                type='r',
                 quantity=row['surface_qty'],
                 event_id=row['event_id'],
                 per_customer_qty='1',
