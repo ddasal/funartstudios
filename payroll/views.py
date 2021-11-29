@@ -118,8 +118,9 @@ def report_detail_hx_view(request, id=None):
         total_floor_pay = 0
         total_team_pay = 0
         total_total_pay = 0
+        parent_obj = obj
         for event in events:
-            event.payroll_report = obj
+            event.payroll_report = parent_obj
             event.save()
             if event.worker_count == 0:
                 events_without_workers = events_without_workers + 1
@@ -243,9 +244,9 @@ def report_detail_hx_view(request, id=None):
         total_floor_pay = total_floor_hourly_pay + total_floor_tip_pay + total_floor_commission_pay
         total_team_pay = total_team_hourly_pay + total_team_tip_pay + total_team_commission_pay
         total_total_pay = total_stage_pay + total_floor_pay + total_team_pay
-        obj.staff_count = staff_count
-        obj.payroll_gross = total_total_pay
-        obj.save()
+        parent_obj.staff_count = staff_count
+        parent_obj.payroll_gross = total_total_pay
+        parent_obj.save()
 
  
     except:
