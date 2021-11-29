@@ -235,6 +235,7 @@ def report_detail_hx_view(request, id=None):
             #                     total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
             #                 elif staff.role == 't':
             #                     total_team_commission_pay = total_team_commission_pay + staff.commission_pay
+        print(obj)
         total_total_hours = total_stage_hours + total_floor_hours + total_team_hours
         total_total_hourly_pay = total_stage_hourly_pay + total_floor_hourly_pay + total_team_hourly_pay
         total_total_tip_pay = total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay
