@@ -94,7 +94,7 @@ def report_detail_hx_view(request, id=None):
         raise Http404
     try:
         obj = PayReport.objects.get(id=id)
-        events = Event.objects.filter(date__range=(obj.start_date, obj.end_date)).order_by('date', 'time').annotate(worker_count=Count('eventstaff'))
+        events = Event.objects.filter(date__range=(obj.start_date, obj.end_date)).order_by('date', 'time').annotate(worker_count=Count('eventstaff')).prefetch_related()
         staff_count = EventStaff.objects.all().filter(event__payroll_report=obj).order_by('user').distinct('user').count()
         payroll_gross = 0
         events_without_workers = 0
@@ -119,7 +119,7 @@ def report_detail_hx_view(request, id=None):
         total_team_pay = 0
         total_total_pay = 0
         print(obj)
-        for event in events.iterator():
+        for event in events:
             event.payroll_report = obj
             event.save()
             if event.worker_count == 0:
