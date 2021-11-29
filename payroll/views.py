@@ -127,8 +127,8 @@ def report_detail_hx_view(request, id=None):
             tip_details = EventTip.objects.all().filter(event=event.id)
             event.count_stage = EventStaff.objects.all().filter(event=event.id, role='s').count()
             event.count_other = EventStaff.objects.all().filter(Q(role='f') | Q(role='t'), event=event.id).count()
-            total_stage_tips = 0
-            total_floor_tips = 0 
+            total_stage_tips = Decimal(0.0)
+            total_floor_tips = Decimal(0.0)
             if tip_details:
                 for tip in tip_details:
                     total_stage_tips = total_stage_tips + tip.stage_amount
