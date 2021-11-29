@@ -96,28 +96,28 @@ def report_detail_hx_view(request, id=None):
         obj = PayReport.objects.get(id=id)
         events = Event.objects.filter(date__range=(obj.start_date, obj.end_date)).order_by('date', 'time').annotate(worker_count=Count('eventstaff')).prefetch_related()
         staff_count = EventStaff.objects.all().filter(event__payroll_report=obj).order_by('user').distinct('user').count()
-        payroll_gross = 0
+        payroll_gross = Decimal(0.0)
         events_without_workers = 0
         total_stage_hours = 0
         total_floor_hours = 0
         total_team_hours = 0
         total_total_hours = 0
-        total_stage_hourly_pay = 0
-        total_floor_hourly_pay = 0
-        total_team_hourly_pay = 0
-        total_total_hourly_pay = 0
-        total_stage_tip_pay = 0
-        total_floor_tip_pay = 0
-        total_team_tip_pay = 0
-        total_total_tip_pay = 0
+        total_stage_hourly_pay = Decimal(0.0)
+        total_floor_hourly_pay = Decimal(0.0)
+        total_team_hourly_pay = Decimal(0.0)
+        total_total_hourly_pay = Decimal(0.0)
+        total_stage_tip_pay = Decimal(0.0)
+        total_floor_tip_pay = Decimal(0.0)
+        total_team_tip_pay = Decimal(0.0)
+        total_total_tip_pay = Decimal(0.0)
         total_stage_commission_pay = Decimal(0.0)
         total_floor_commission_pay = Decimal(0.0)
         total_team_commission_pay = Decimal(0.0)
         total_total_commission_pay = Decimal(0.0)
-        total_stage_pay = 0
-        total_floor_pay = 0
-        total_team_pay = 0
-        total_total_pay = 0
+        total_stage_pay = Decimal(0.0)
+        total_floor_pay = Decimal(0.0)
+        total_team_pay = Decimal(0.0)
+        total_total_pay = Decimal(0.0)
         print(obj)
         for event in events:
             event.payroll_report = obj
