@@ -118,7 +118,7 @@ def report_detail_hx_view(request, id=None):
         total_floor_pay = 0
         total_team_pay = 0
         total_total_pay = 0
-        for event in events:
+        for event in events.iterator():
             event.payroll_report = obj
             event.save()
             if event.worker_count == 0:
@@ -247,14 +247,8 @@ def report_detail_hx_view(request, id=None):
         obj.payroll_gross = total_total_pay
         obj.save()
 
-    except Exception as e:
-        print('%s (%s)' % (e.message, type(e)))
-        # msg = '%s' % (e.message)
-        msg = 'This is not working'
+    except:
         obj = None
-        return HttpResponse(msg)
-    # except:
-    #     obj = None
     if obj is None:
         return HttpResponse('not found')
     context = {
