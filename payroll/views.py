@@ -410,47 +410,47 @@ def report_staff_detail_hx_view(request, id=None, user=None):
         raise Http404
     try:
         obj = PayReport.objects.get(id=id)
-        events = Event.objects.all().filter(payroll_report=obj).order_by('date', 'time')
+        events = Event.objects.all().filter(payroll_report=obj).order_by('date', 'time').prefetch_related()
         event_staff = EventStaff.objects.all().filter(event__payroll_report=obj, user=request.user.id)
         total_stage_hours = 0
         total_floor_hours = 0
         total_team_hours = 0
         total_total_hours = 0
-        total_stage_hourly_pay = 0
-        total_floor_hourly_pay = 0
-        total_team_hourly_pay = 0
-        total_total_hourly_pay = 0
-        total_stage_tip_pay = 0
-        total_floor_tip_pay = 0
-        total_team_tip_pay = 0
-        total_total_tip_pay = 0
-        total_stage_commission_pay = 0
-        total_floor_commission_pay = 0
-        total_team_commission_pay = 0
-        total_total_commission_pay = 0
-        total_stage_pay = 0
-        total_floor_pay = 0
-        total_team_pay = 0
-        total_total_pay = 0
+        total_stage_hourly_pay = Decimal(0.0)
+        total_floor_hourly_pay = Decimal(0.0)
+        total_team_hourly_pay = Decimal(0.0)
+        total_total_hourly_pay = Decimal(0.0)
+        total_stage_tip_pay = Decimal(0.0)
+        total_floor_tip_pay = Decimal(0.0)
+        total_team_tip_pay = Decimal(0.0)
+        total_total_tip_pay = Decimal(0.0)
+        total_stage_commission_pay = Decimal(0.0)
+        total_floor_commission_pay = Decimal(0.0)
+        total_team_commission_pay = Decimal(0.0)
+        total_total_commission_pay = Decimal(0.0)
+        total_stage_pay = Decimal(0.0)
+        total_floor_pay = Decimal(0.0)
+        total_team_pay = Decimal(0.0)
+        total_total_pay = Decimal(0.0)
         for staff in event_staff:
             if staff.role == 's':
                 total_stage_hours = total_stage_hours + staff.hours
                 total_stage_hourly_pay = total_stage_hourly_pay + staff.hourly_pay
                 total_stage_tip_pay = total_stage_tip_pay + staff.tip_pay
                 total_stage_commission_pay = total_stage_commission_pay + staff.commission_pay
-                total_stage_pay = total_stage_pay + total_stage_hourly_pay + total_stage_commission_pay + total_stage_tip_pay
+                total_stage_pay = total_stage_hourly_pay + total_stage_commission_pay + total_stage_tip_pay
             elif staff.role == 'f':
                 total_floor_hours = total_floor_hours + staff.hours
                 total_floor_hourly_pay = total_floor_hourly_pay + staff.hourly_pay
                 total_floor_tip_pay = total_floor_tip_pay + staff.tip_pay
                 total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
-                total_floor_pay = total_floor_pay + total_floor_hourly_pay + total_floor_commission_pay + total_floor_tip_pay
+                total_floor_pay = total_floor_hourly_pay + total_floor_commission_pay + total_floor_tip_pay
             elif staff.role == 't':
                 total_team_hours = total_team_hours + staff.hours
                 total_team_hourly_pay = total_team_hourly_pay + staff.hourly_pay
                 total_team_tip_pay = total_team_tip_pay + staff.tip_pay
                 total_team_commission_pay = total_team_commission_pay + staff.commission_pay
-                total_team_pay = total_team_pay + total_team_hourly_pay + total_team_commission_pay + total_team_tip_pay
+                total_team_pay = total_team_hourly_pay + total_team_commission_pay + total_team_tip_pay
         total_total_hours = total_stage_hours + total_floor_hours + total_team_hours
         total_total_hourly_pay = total_stage_hourly_pay + total_floor_hourly_pay + total_team_hourly_pay
         total_total_tip_pay = total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay
@@ -521,22 +521,22 @@ def report_staff_summary_hx_view(request, id=None):
             staff['total_floor_hours'] = 0
             staff['total_team_hours'] = 0
             staff['total_total_hours'] = 0
-            staff['total_stage_hourly_pay'] = 0
-            staff['total_floor_hourly_pay'] = 0
-            staff['total_team_hourly_pay'] = 0
-            staff['total_total_hourly_pay'] = 0
-            staff['total_stage_tip_pay'] = 0
-            staff['total_floor_tip_pay'] = 0
-            staff['total_team_tip_pay'] = 0
-            staff['total_total_tip_pay'] = 0
-            staff['total_stage_commission_pay'] = 0
-            staff['total_floor_commission_pay'] = 0
-            staff['total_team_commission_pay'] = 0
-            staff['total_total_commission_pay'] = 0
-            staff['total_stage_pay'] = 0
-            staff['total_floor_pay'] = 0
-            staff['total_team_pay'] = 0
-            staff['total_total_pay'] = 0
+            staff['total_stage_hourly_pay'] = Decimal(0.0)
+            staff['total_floor_hourly_pay'] = Decimal(0.0)
+            staff['total_team_hourly_pay'] = Decimal(0.0)
+            staff['total_total_hourly_pay'] = Decimal(0.0)
+            staff['total_stage_tip_pay'] = Decimal(0.0)
+            staff['total_floor_tip_pay'] = Decimal(0.0)
+            staff['total_team_tip_pay'] = Decimal(0.0)
+            staff['total_total_tip_pay'] = Decimal(0.0)
+            staff['total_stage_commission_pay'] = Decimal(0.0)
+            staff['total_floor_commission_pay'] = Decimal(0.0)
+            staff['total_team_commission_pay'] = Decimal(0.0)
+            staff['total_total_commission_pay'] = Decimal(0.0)
+            staff['total_stage_pay'] = Decimal(0.0)
+            staff['total_floor_pay'] = Decimal(0.0)
+            staff['total_team_pay'] = Decimal(0.0)
+            staff['total_total_pay'] = Decimal(0.0)
             event_staff = EventStaff.objects.filter(event__payroll_report=obj, user=staff['user']).order_by('user')
             for item in event_staff:
                 if item.role == 's':
