@@ -55,5 +55,3 @@ def github_pull(request):
         os.system("cd //home/ubuntu/funartstudios/ && git pull" )
         return HttpResponse('It Works')
     return HttpResponse('Hi')
-
- 
