@@ -94,6 +94,7 @@ SESSION_EXPIRE_SECONDS = 180 # 3 minute
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True # after last activity
 # SESSION_EXPIRE_AFTER_LAST_ACTIVITY_GRACE_PERIOD = 60 # group by minute
 SESSION_TIMEOUT_REDIRECT = '/'
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
