@@ -45,3 +45,12 @@ def about_view(request, *args, **kwargs):
     }
     return render(request, 'about-view.html', context)
 
+import os
+
+def github_pull(request):
+    if request.method == "POST":
+        if 'payload' in request.form:
+            os.system("cd //home/ubuntu/funartstudios/ && git reset –hard HEAD && git pull" )
+        return HttpResponse('Hi')
+    return HttpResponse('Hello')
+

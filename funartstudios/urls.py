@@ -17,10 +17,11 @@ from django.contrib import admin
 from django.urls import include, path
 from search.views import search_view
 
-from .views import home_view, about_view
+from .views import home_view, about_view, github_pull
 
 urlpatterns = [
     path('', home_view, name='home'), # index / root / home
+    path('githubpull/', github_pull, name='github'),
     path('about/', about_view), 
     path('account/', include('accounts.urls')),
     path('articles/', include('articles.urls')),
