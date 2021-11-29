@@ -249,12 +249,13 @@ def report_detail_hx_view(request, id=None):
 
     except Exception as e:
         print('%s (%s)' % (e.message, type(e)))
-        msg = e.message
+        msg = '%s' % (e.message)
         obj = None
+        return HttpResponse(msg)
     # except:
     #     obj = None
     if obj is None:
-        return HttpResponse(msg)
+        return HttpResponse('not found')
     context = {
         "object": obj,
         "events": events,
