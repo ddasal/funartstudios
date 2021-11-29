@@ -251,7 +251,7 @@ def report_detail_hx_view(request, id=None):
     except Exception as e:
         import sys
         obj = None
-        msg = e + "on line {}".format(sys.exc_info()[-1].tb_lineno)
+        msg = "error on line {}".format(sys.exc_info()[-1].tb_lineno)
     if obj is None:
         return HttpResponse(msg)
     context = {
