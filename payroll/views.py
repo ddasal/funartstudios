@@ -255,7 +255,7 @@ def report_detail_hx_view(request, id=None):
     except:
         obj = None
     if obj is None:
-        return HttpResponse(msg)
+        return HttpResponse('Not found')
     context = {
         "object": obj,
         "events": events,
