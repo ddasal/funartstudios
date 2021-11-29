@@ -197,47 +197,44 @@ def report_detail_hx_view(request, id=None):
                             total_team_hourly_pay = total_team_hourly_pay + staff.hourly_pay
                         staff.tip_pay = tip_each
                         staff.save()
-            try:
-                kit_sales = EventCustomer.objects.filter(event=event.id, type='h')
-                if kit_sales:
-                    kit_count = 0
-                    for kit in kit_sales:
-                        kit_count = kit_count + kit.quantity
-                    if kit_count > 0:
-                        event.count_staff = int(event.count_other) + int(event.count_stage)
-                        update_commission = EventStaff.objects.filter(event=event.id)
-                        if event.count_staff == 1:
-                            for staff in update_commission:
-                                staff.commission_pay = Decimal(5.00) * kit_count
-                                staff.save()
-                                if staff.role == 's':
-                                    total_stage_commission_pay = total_stage_commission_pay + staff.commission_pay
-                                elif staff.role == 'f':
-                                    total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
-                                elif staff.role == 't':
-                                    total_team_commission_pay = total_team_commission_pay + staff.commission_pay
-                        if event.count_staff == 2:
-                            for staff in update_commission:
-                                staff.commission_pay = Decimal(3.00) * kit_count
-                                staff.save()                        
-                                if staff.role == 's':
-                                    total_stage_commission_pay = total_stage_commission_pay + staff.commission_pay
-                                elif staff.role == 'f':
-                                    total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
-                                elif staff.role == 't':
-                                    total_team_commission_pay = total_team_commission_pay + staff.commission_pay
-                        if event.count_staff > 2:
-                            for staff in update_commission:
-                                staff.commission_pay = Decimal(2.00) * kit_count
-                                staff.save()     
-                                if staff.role == 's':
-                                    total_stage_commission_pay = total_stage_commission_pay + staff.commission_pay
-                                elif staff.role == 'f':
-                                    total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
-                                elif staff.role == 't':
-                                    total_team_commission_pay = total_team_commission_pay + staff.commission_pay
-            except:
-                kit_count is None
+            # kit_sales = EventCustomer.objects.filter(event=event.id, type='h')
+            # if kit_sales:
+            #     kit_count = 0
+            #     for kit in kit_sales:
+            #         kit_count = kit_count + kit.quantity
+            #     if kit_count > 0:
+            #         event.count_staff = int(event.count_other) + int(event.count_stage)
+            #         update_commission = EventStaff.objects.filter(event=event.id)
+            #         if event.count_staff == 1:
+            #             for staff in update_commission:
+            #                 staff.commission_pay = Decimal(5.00) * kit_count
+            #                 staff.save()
+            #                 if staff.role == 's':
+            #                     total_stage_commission_pay = total_stage_commission_pay + staff.commission_pay
+            #                 elif staff.role == 'f':
+            #                     total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
+            #                 elif staff.role == 't':
+            #                     total_team_commission_pay = total_team_commission_pay + staff.commission_pay
+            #         if event.count_staff == 2:
+            #             for staff in update_commission:
+            #                 staff.commission_pay = Decimal(3.00) * kit_count
+            #                 staff.save()                        
+            #                 if staff.role == 's':
+            #                     total_stage_commission_pay = total_stage_commission_pay + staff.commission_pay
+            #                 elif staff.role == 'f':
+            #                     total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
+            #                 elif staff.role == 't':
+            #                     total_team_commission_pay = total_team_commission_pay + staff.commission_pay
+            #         if event.count_staff > 2:
+            #             for staff in update_commission:
+            #                 staff.commission_pay = Decimal(2.00) * kit_count
+            #                 staff.save()     
+            #                 if staff.role == 's':
+            #                     total_stage_commission_pay = total_stage_commission_pay + staff.commission_pay
+            #                 elif staff.role == 'f':
+            #                     total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
+            #                 elif staff.role == 't':
+            #                     total_team_commission_pay = total_team_commission_pay + staff.commission_pay
         total_total_hours = total_stage_hours + total_floor_hours + total_team_hours
         total_total_hourly_pay = total_stage_hourly_pay + total_floor_hourly_pay + total_team_hourly_pay
         total_total_tip_pay = total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay
