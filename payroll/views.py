@@ -118,6 +118,7 @@ def report_detail_hx_view(request, id=None):
         total_floor_pay = 0
         total_team_pay = 0
         total_total_pay = 0
+        print(obj)
         for event in events.iterator():
             event.payroll_report = obj
             event.save()
