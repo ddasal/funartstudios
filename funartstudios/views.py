@@ -57,3 +57,4 @@ def github_pull(request):
         return HttpResponse('It Works')
     return HttpResponse('Hi')
 
+ 
