@@ -3,7 +3,6 @@ from django.db.models.deletion import CASCADE, SET_NULL
 from django.urls import reverse
 from django.db.models import Q
 from django.utils import timezone
-# from events.models import EventCustomer, EventStaff
 from events.utils import slugify_instance_title
 from django.db.models.signals import pre_save, post_save
 from django.conf import settings
@@ -69,7 +68,6 @@ class Product(models.Model):
 
     def get_pi_list(self):
         temp_pi_list = PurchaseItem.objects.filter(product=self.id)
-        print(temp_pi_list)
         return temp_pi_list
 
     def save(self, *args, **kwargs):
