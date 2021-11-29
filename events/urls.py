@@ -21,7 +21,7 @@ app_name='events'  # events:list
 urlpatterns = [
     path("", event_list_view, name='list'),
     path("create/", event_create_view, name='create'),
-    path('import/', EventCustomerUpload.as_view(), name='import'),
+    # path('import/', EventCustomerUpload.as_view(), name='import'),
 
     path("hx/<slug:parent_slug>/customer/<int:id>", event_customer_update_hx_view, name='hx-eventcustomer-update'),
     path("hx/<slug:parent_slug>/customer/", event_customer_update_hx_view, name='hx-customer-create'),
