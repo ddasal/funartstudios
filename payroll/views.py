@@ -136,13 +136,12 @@ def report_detail_hx_view(request, id=None):
             event.total_total_tips = total_stage_tips + total_floor_tips
             if event.count_other == 0:
                 if event.count_stage == 1:
-                    update_tip = EventStaff.objects.get(event=event.id)
-                    if update_tip.role == 's':
-                        total_stage_hours = total_stage_hours + update_tip.hours
-                        total_stage_hourly_pay = total_stage_hourly_pay + update_tip.hourly_pay
-                    update_tip.tip_pay = event.total_total_tips
-                    total_stage_tip_pay = total_stage_tip_pay + update_tip.tip_pay
-                    update_tip.save()
+                    update_tip_stage = EventStaff.objects.get(event=event.id, role='s')
+                    total_stage_hours = total_stage_hours + update_tip_stage.hours
+                    total_stage_hourly_pay = total_stage_hourly_pay + update_tip_stage.hourly_pay
+                    update_tip_stage.tip_pay = event.total_total_tips
+                    total_stage_tip_pay = total_stage_tip_pay + update_tip_stage.tip_pay
+                    update_tip_stage.save()
                 elif event.count_stage > 1:
                     tip_each = event.total_total_tips / event.count_stage
                     update_tip = EventStaff.objects.filter(event=event.id)
