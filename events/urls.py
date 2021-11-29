@@ -12,7 +12,8 @@ from .views import (
     event_customer_update_hx_view,
     event_tip_update_hx_view,
     event_tip_delete_view,
-    StaffUpload
+    StaffUpload,
+    EventCustomerUpload
 )
 
 app_name='events'  # events:list
@@ -20,6 +21,7 @@ app_name='events'  # events:list
 urlpatterns = [
     path("", event_list_view, name='list'),
     path("create/", event_create_view, name='create'),
+    path('import/', EventCustomerUpload.as_view(), name='import'),
 
     path("hx/<slug:parent_slug>/customer/<int:id>", event_customer_update_hx_view, name='hx-eventcustomer-update'),
     path("hx/<slug:parent_slug>/customer/", event_customer_update_hx_view, name='hx-customer-create'),
@@ -29,7 +31,7 @@ urlpatterns = [
     path("hx/<slug:parent_slug>/tip/", event_tip_update_hx_view, name='hx-tip-create'),
     path("hx/<slug:slug>/", event_detail_hx_view, name='hx-detail'),
     # path('importstaff/', StaffUpload.as_view(), name='importstaff'),
-    
+     
     path("<slug:parent_slug>/customer/<int:id>/delete/", event_customer_delete_view, name='eventcustomer-delete'),
     path("<slug:parent_slug>/staff/<int:id>/delete/", event_staff_delete_view, name='eventstaff-delete'),
     path("<slug:parent_slug>/tip/<int:id>/delete/", event_tip_delete_view, name='eventtip-delete'),

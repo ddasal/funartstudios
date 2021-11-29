@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %} 
+    Event Customer Upload
+{% endblock title %} 
+
+{% block content %}
+<div class="row">
+    <div class='col-12 col-md-12'>
+        <h3>Upload Event Customers
+          <small>
+            <a class="btn btn-outline-secondary" href="{% url 'events:list' %}">Back</a>
+          </small></h3>
+    </div>
+    <div class="col-12 col-md-12">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="eventfile">
+        <button type="submit">Upload</button>
+      </form>
+    </div>
+{% endblock %}

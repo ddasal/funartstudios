@@ -401,3 +401,41 @@ class StaffUpload(View):
             returnmsg = {"status_code": 500}
        
         return JsonResponse(returnmsg)
+
+
+from decimal import Decimal
+
+# @permission_required('square.add_square')
+class EventCustomerUpload(View):
+    def get(self, request):
+        template_name = 'events/import-eventcustomers.html'
+        return render(request, template_name)
+
+    def post(self, request):
+        user = request.user #get the current login user details
+        paramFile = io.TextIOWrapper(request.FILES['eventfile'].file)
+        portfolio1 = csv.DictReader(paramFile)
+        list_of_dict = list(portfolio1)
+        objs = [
+            EventCustomer(
+                type='h',
+                quantity=row['surface_qty'],
+                event_id=row['event_id'],
+                per_customer_qty='1',
+                product_id=row['surface_id'],
+                price=row['surface_price'],
+                status='c',
+            )
+            for row in list_of_dict
+        ]
+        try:
+            msg = EventCustomer.objects.bulk_create(objs, ignore_conflicts=True)
+            print('imported successfully')
+            returnmsg = {"status_code: 200"}
+            success_url = reverse('events:list')
+        except Exception as e:
+            print('Error While Importing Data: ',e)
+            returnmsg = {"status_code: 500"}
+            success_url = reverse('events:list')
+       
+        return HttpResponse(returnmsg)
