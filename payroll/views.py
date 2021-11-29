@@ -249,7 +249,8 @@ def report_detail_hx_view(request, id=None):
 
     except Exception as e:
         print('%s (%s)' % (e.message, type(e)))
-        msg = '%s' % (e.message)
+        # msg = '%s' % (e.message)
+        msg = 'This is not working'
         obj = None
         return HttpResponse(msg)
     # except:
