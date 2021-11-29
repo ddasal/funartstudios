@@ -17,6 +17,9 @@
                     <th>Home Phone</th>
                     <th>Email</th>
                     <th class="table-warning">Emergency Contact(s) Info</th>
+                    {% if perms.accounts.change_userprofile %} 
+                    <th>Last Login</th>
+                    {% endif %} 
                 </tr>
             </thead>
             <tbody>
@@ -40,6 +43,10 @@
                             {{ x.emergency_contact_name_2 }} at {{ x.emergency_contact_number_2 }} or  {{ x.emergency_contact_email_2 }}<br />
                         {% endif %}
                     </td>
+                    {% if perms.accounts.change_userprofile %} 
+                    <td>{{ x.user.last_login | date:"D, n/j/y" }}<br />{{ x.user.last_login | date:"g:i a" }}</td>
+                    {% endif %} 
+
             </tr>
             {% endfor %}
             </tbody>
@@ -73,6 +80,11 @@
             <small>
                 Here is a link for new users to register:<br /><a target="_blank" href="{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url 'account:register' %}">{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url 'account:register' %}</a>
             </small>
+        </p>
+        <p>
+            <b>Current Logged In Users:</b><br />
+            {% load lib1 %} 
+            {% render_logged_in_user_list %}
         </p>
         {% endif %} 
 
