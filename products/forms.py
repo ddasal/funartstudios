@@ -39,7 +39,7 @@ class PurchaseOrderForm(forms.ModelForm):
 
     class Meta:
         model = PurchaseOrder
-        fields = ['supplier', 'date', 'user']
+        fields = ['supplier', 'date']
         widgets = {'date': DateInput()}
 
     def __init__(self, *args, **kwargs):
