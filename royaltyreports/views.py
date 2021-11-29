@@ -91,8 +91,8 @@ def report_detail_hx_view(request, id=None):
         raise Http404
     try:
         obj = RoyaltyReport.objects.get(id=id)
-        events = Event.objects.filter(Q(type='s') | Q(type='p') | Q(type='w') | Q(type='t'), date__range=(obj.start_date, obj.end_date)).order_by('date', 'time')
-        kits = Event.objects.filter(Q(type='s') | Q(type='p') | Q(type='w') | Q(type='t') | Q(type='r'), date__range=(obj.start_date, obj.end_date)).order_by('date', 'time')
+        events = Event.objects.filter(Q(type='s') | Q(type='p') | Q(type='w') | Q(type='t'), date__range=(obj.start_date, obj.end_date)).order_by('date', 'time').prefetch_related()
+        kits = Event.objects.filter(Q(type='s') | Q(type='p') | Q(type='w') | Q(type='t') | Q(type='r'), date__range=(obj.start_date, obj.end_date)).order_by('date', 'time').prefetch_related()
         sqaure_info = Square.objects.filter(date__range=(obj.start_date, obj.end_date)).exclude(Q(description__icontains='Twist at Home Kit') | Q(description__icontains='Event'))
         square_last_entry_date = Square.objects.latest('date', 'time')
         report_adjusted_gross_revenue = 0
