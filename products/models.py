@@ -106,6 +106,7 @@ def product_post_save(sender, instance, created, *args, **kwargs):
 post_save.connect(product_post_save, sender=Product)
 
 class Suppliers(models.TextChoices):
+    ARTBOARDSDIRECT = 'b', 'Art Boards Direct'
     ARTDISTRIBUTORS = 'a', 'Art Supply Distributors'
     DIVERSEWOOD = 'd', 'Diverse Woodworking'
     HOBBYLOBBY = 'h', 'Hobby Lobby'
