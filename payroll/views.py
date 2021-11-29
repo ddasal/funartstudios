@@ -118,21 +118,16 @@ def report_detail_hx_view(request, id=None):
         total_team_pay = 0
         total_total_pay = 0
         for event in events:
-            print(event.id)
             event.payroll_report = obj
             event.save()
             if event.worker_count == 0:
-                print('no workers')
                 events_without_workers = events_without_workers + 1
             tip_details = EventTip.objects.all().filter(event=event.id)
             event.count_stage = EventStaff.objects.all().filter(event=event.id, role='s').count()
-            print(event.count_stage)
             event.count_other = EventStaff.objects.all().filter(Q(role='f') | Q(role='t'), event=event.id).count()
-            print(event.count_other)
             total_stage_tips = 0
-            total_floor_tips = 0
+            total_floor_tips = 0 
             if tip_details:
-                print('tips exist 1')
                 for tip in tip_details:
                     total_stage_tips = total_stage_tips + tip.stage_amount
                     total_floor_tips = total_floor_tips + tip.floor_amount
@@ -140,9 +135,7 @@ def report_detail_hx_view(request, id=None):
             event.total_floor_tips = total_floor_tips
             event.total_total_tips = total_stage_tips + total_floor_tips
             if event.count_other == 0:
-                print('A count other is 0')
                 if event.count_stage == 1:
-                    print('A stage count is 1')
                     update_tip = EventStaff.objects.get(event=event.id)
                     if update_tip.role == 's':
                         total_stage_hours = total_stage_hours + update_tip.hours
@@ -151,7 +144,6 @@ def report_detail_hx_view(request, id=None):
                     total_stage_tip_pay = total_stage_tip_pay + update_tip.tip_pay
                     update_tip.save()
                 elif event.count_stage > 1:
-                    print('A stage count is > 1')
                     tip_each = event.total_total_tips / event.count_stage
                     update_tip = EventStaff.objects.filter(event=event.id)
                     for staff in update_tip:
@@ -162,21 +154,16 @@ def report_detail_hx_view(request, id=None):
                             total_stage_tip_pay = total_stage_tip_pay + staff.tip_pay
                             staff.save()
                 elif event.count_stage == 0:
-                    print('A stage count is 0')
                     total_stage_tip_pay = total_stage_tip_pay + event.total_total_tips
             if event.count_other > 0:
-                print('B other count is > 0')
                 if event.count_stage == 1:
-                    print('B stage count is 1')
-                    update_tip = EventStaff.objects.get(event=event.id, role='s')
-                    total_stage_hours = total_stage_hours + update_tip.hours
-                    total_stage_hourly_pay = total_stage_hourly_pay + update_tip.hourly_pay
-                    if update_tip.role == 's':
-                        update_tip.tip_pay = event.total_stage_tips
-                        total_stage_tip_pay = total_stage_tip_pay + update_tip.tip_pay
-                        update_tip.save()
+                    update_tip_stage = EventStaff.objects.get(event=event.id, role='s')
+                    total_stage_hours = total_stage_hours + update_tip_stage.hours
+                    total_stage_hourly_pay = total_stage_hourly_pay + update_tip_stage.hourly_pay
+                    update_tip_stage.tip_pay = event.total_stage_tips
+                    total_stage_tip_pay = total_stage_tip_pay + update_tip_stage.tip_pay
+                    update_tip_stage.save()
                 elif event.count_stage > 1:
-                    print('B stage count is > 1')
                     tip_each = event.total_stage_tips / event.count_stage
                     update_tip = EventStaff.objects.filter(event=event.id, role='s')
                     for staff in update_tip:
@@ -187,7 +174,6 @@ def report_detail_hx_view(request, id=None):
                             total_stage_tip_pay = total_stage_tip_pay + staff.tip_pay
                             staff.save()
                 if event.count_other == 1:
-                    print('B outher count is 1')
                     update_tip = EventStaff.objects.get(Q(role='f') | Q(role='t'), event=event.id)
                     update_tip.tip_pay = event.total_floor_tips
                     if update_tip.role == 'f':
@@ -200,7 +186,6 @@ def report_detail_hx_view(request, id=None):
                         total_team_tip_pay = total_team_tip_pay + update_tip.tip_pay
                     update_tip.save()
                 elif event.count_other > 1:
-                    print('B other count is > 1')
                     tip_each = event.total_floor_tips / event.count_other
                     update_tip = EventStaff.objects.filter(Q(role='f') | Q(role='t'), event=event.id)
                     for staff in update_tip:
@@ -214,7 +199,6 @@ def report_detail_hx_view(request, id=None):
                         staff.save()
             kit_sales = EventCustomer.objects.filter(event=event.id, type='h')
             if kit_sales:
-                print('B kit sales exist')
                 kit_count = 0
                 for kit in kit_sales:
                     kit_count = kit_count + kit.quantity
@@ -222,7 +206,6 @@ def report_detail_hx_view(request, id=None):
                     event.count_staff = int(event.count_other) + int(event.count_stage)
                     update_commission = EventStaff.objects.filter(event=event.id)
                     if event.count_staff == 1:
-                        print('C staff count is 1')
                         for staff in update_commission:
                             staff.commission_pay = Decimal(5.00) * kit_count
                             staff.save()
@@ -233,7 +216,6 @@ def report_detail_hx_view(request, id=None):
                             elif staff.role == 't':
                                 total_team_commission_pay = total_team_commission_pay + staff.commission_pay
                     if event.count_staff == 2:
-                        print('C staff count is 2')
                         for staff in update_commission:
                             staff.commission_pay = Decimal(3.00) * kit_count
                             staff.save()                        
@@ -244,7 +226,6 @@ def report_detail_hx_view(request, id=None):
                             elif staff.role == 't':
                                 total_team_commission_pay = total_team_commission_pay + staff.commission_pay
                     if event.count_staff > 2:
-                        print('C staff count is >2')
                         for staff in update_commission:
                             staff.commission_pay = Decimal(2.00) * kit_count
                             staff.save()     
@@ -254,8 +235,6 @@ def report_detail_hx_view(request, id=None):
                                 total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
                             elif staff.role == 't':
                                 total_team_commission_pay = total_team_commission_pay + staff.commission_pay
-            print('loop')
-        print('outside of loop')
         total_total_hours = total_stage_hours + total_floor_hours + total_team_hours
         total_total_hourly_pay = total_stage_hourly_pay + total_floor_hourly_pay + total_team_hourly_pay
         total_total_tip_pay = total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay
