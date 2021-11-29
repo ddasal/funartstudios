@@ -35,7 +35,7 @@ class PurchaseOrderForm(forms.ModelForm):
     error_css_class = 'error-field'
     required_css_class = 'required-field'
 
-    user = UserFullnameChoiceField(queryset=User.objects.filter(is_active=True).exclude(first_name__exact='').order_by('first_name'))
+    # user = UserFullnameChoiceField(queryset=User.objects.filter(is_active=True).exclude(first_name__exact='').order_by('first_name'))
 
     class Meta:
         model = PurchaseOrder
