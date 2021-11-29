@@ -95,35 +95,35 @@ def report_detail_hx_view(request, id=None):
         kits = Event.objects.filter(Q(type='s') | Q(type='p') | Q(type='w') | Q(type='t') | Q(type='r'), date__range=(obj.start_date, obj.end_date)).order_by('date', 'time').prefetch_related()
         sqaure_info = Square.objects.filter(date__range=(obj.start_date, obj.end_date)).exclude(Q(description__icontains='Twist at Home Kit') | Q(description__icontains='Event'))
         square_last_entry_date = Square.objects.latest('date', 'time')
-        report_adjusted_gross_revenue = 0
-        report_gross_revenue = 0
-        report_adjustments = 0
-        report_net_revenue = 0
-        report_royalty = 0
-        report_ad_funds = 0
+        report_adjusted_gross_revenue = Decimal(0.0)
+        report_gross_revenue = Decimal(0.0)
+        report_adjustments = Decimal(0.0)
+        report_net_revenue = Decimal(0.0)
+        report_royalty = Decimal(0.0)
+        report_ad_funds = Decimal(0.0)
         report_seats = 0
         report_kits = 0
-        kit_gross_revenue = 0
-        kit_adjustments = 0
+        kit_gross_revenue = Decimal(0.0)
+        kit_adjustments = Decimal(0.0)
         report_surface_count = 0
-        report_square_sales = 0
+        report_square_sales = Decimal(0.0)
         for each in events:
             each.temp_customer_seats = 0
             temp_customer_seats = [int(each.quantity) for each in EventCustomer.objects.filter(event=each.id, type='r')]
             each.temp_customer_seats = sum(temp_customer_seats)
             report_seats = report_seats + each.temp_customer_seats
 
-            each.temp_gross_revenue = 0
+            each.temp_gross_revenue = Decimal(0.0)
             temp_gross_revenue = [Decimal(each.total_price) for each in EventCustomer.objects.filter(event=each.id, type='r')]
             each.temp_gross_revenue = sum(temp_gross_revenue)
             report_gross_revenue = report_gross_revenue + each.temp_gross_revenue
 
-            each.temp_adjustments = 0
+            each.temp_adjustments = Decimal(0.0)
             temp_adjustments = [Decimal(each.taxes) for each in EventCustomer.objects.filter(event=each.id, type='r')]
             each.temp_adjustments = sum(temp_adjustments)
             report_adjustments = report_adjustments + each.temp_adjustments
 
-            each.temp_cost_factors = 0
+            each.temp_cost_factors = Decimal(0.0)
             temp_cost_factors = [Decimal(each.cost_factor) for each in EventCustomer.objects.filter(event=each.id, type='r')]
             each.temp_cost_factors = sum(temp_cost_factors)
 
@@ -133,17 +133,17 @@ def report_detail_hx_view(request, id=None):
             each.temp_customer_seats = sum(temp_customer_seats)
             report_kits = report_kits + each.temp_customer_seats
 
-            each.temp_gross_revenue = 0
+            each.temp_gross_revenue = Decimal(0.0)
             temp_gross_revenue = [Decimal(each.total_price) for each in EventCustomer.objects.filter(event=each.id, type='h')]
             each.temp_gross_revenue = sum(temp_gross_revenue)
             kit_gross_revenue = kit_gross_revenue + each.temp_gross_revenue
 
-            each.temp_adjustments = 0
+            each.temp_adjustments = Decimal(0.0)
             temp_adjustments = [Decimal(each.taxes) for each in EventCustomer.objects.filter(event=each.id, type='h')]
             each.temp_adjustments = sum(temp_adjustments)
             kit_adjustments = kit_adjustments + each.temp_adjustments
 
-            each.temp_cost_factors = 0
+            each.temp_cost_factors = Decimal(0.0)
             temp_cost_factors = [Decimal(each.cost_factor) for each in EventCustomer.objects.filter(event=each.id, type='h')]
             each.temp_cost_factors = sum(temp_cost_factors)
 
