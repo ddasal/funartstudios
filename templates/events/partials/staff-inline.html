@@ -2,7 +2,7 @@
     <table class="table table-sm table-striped">
         <thead>
             <tr>
-                <td><b>{{ object.user.first_name }} as {{ object.get_role_display }}</b></td>
+                <td><b>{{ object.user.first_name }} - {{ object.get_role_display }} ({{object.hours }}hrs)</b></td>
                 <td style="text-align: right;">
                     {% if perms.events.change_eventstaff %} 
                         {% if object.status == 'p' %}

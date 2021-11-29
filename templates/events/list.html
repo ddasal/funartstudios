@@ -31,7 +31,7 @@
             <tr>
                 {% if x.title %}
                     <td><small>{{ x.date | date:"D, n/j/y" }} at {{ x.time | date:"g:i a" }}</small></td>
-                    <td><a href="{% url 'events:detail' slug=x.slug %}">{{ x.title }} ({{ x.length }} hrs)</a></td>
+                    <td><a href="{% url 'events:detail' slug=x.slug %}">{{ x.title }} ({{ x.length }}hrs)</a></td>
                     <td>
                         {% for customer in x.get_eventcustomer_children %}
                             <small><b>{{ customer.quantity }} x {{ customer.get_type_display }}</b><br />
@@ -40,12 +40,17 @@
                     </td>
                     <td>
                         {% for staff in x.get_eventstaff_children %}
-                            <small>{{ staff.user.first_name }} as {{ staff.get_role_display }} for {{ staff.hours }} hrs</small><br />
+                            <small><b>{{ staff.user.first_name }} - {{ staff.get_role_display }} ({{ staff.hours }}hrs)</b>
+                                {% if staff.prepaint_qty > 0 %} <br />&ThickSpace;-Pre-painted: {{ staff.prepaint_qty }} x {{ staff.prepaint_product }} {% endif %}
+                                {% if staff.event_qty > 0 %} <br />&ThickSpace;-Event: {{ staff.event_qty }} x {{ staff.event_product }} {% endif %}
+                            </small><br />
                         {% endfor %}
-                            {% if x.get_eventtip_children.count > 0 %}
-                            <small>{{ x.get_eventtip_children.count }} tip(s)</small>
+                            {% if x.get_eventtip_children.count == 1 %}
+                            <small><i>Recevied {{ x.get_eventtip_children.count }} tip</i></small>
                             {% endif %}
-                    </td>
+                            {% if x.get_eventtip_children.count > 1 %}
+                            <small><i>Recevied {{ x.get_eventtip_children.count }} tips</i></small>
+                            {% endif %}                    </td>
                     {% endif %}
             </tr>
             {% endfor %}
