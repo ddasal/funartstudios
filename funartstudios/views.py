@@ -6,11 +6,18 @@ from django.http.response import Http404
 from django.shortcuts import render
 from django.utils import timezone
 from articles.models import Article, Comment
-from events.models import Event
+from events.models import Event 
+from django.db.models import Q
 
 @login_required
-def home_view(request, *args, **kwargs):
-    qs = Article.objects.filter(publish__lte=timezone.now()).order_by('-publish')
+def home_view(request, *args, **kwargs): 
+    if request.method == "POST":
+        query = request.POST.get('q')
+        lookups = Q(title__icontains=query) | Q(content__icontains=query)  
+        qs = Article.objects.filter(lookups, publish__lte=timezone.now()).order_by('-publish').distinct()
+    else:
+        qs = Article.objects.filter(publish__lte=timezone.now()).order_by('-publish')
+        query = ''
     page = request.GET.get('page', 1)
     for each in qs:
         comments = Comment.objects.filter(article=each.id).count()
@@ -26,7 +33,8 @@ def home_view(request, *args, **kwargs):
 
     context = {
         "articles": articles,
-        "article_count": article_count
+        "article_count": article_count,
+        "query": query
     }
     return render(request, 'home-view.html', context)
 
