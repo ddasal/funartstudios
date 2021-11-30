@@ -32,11 +32,11 @@
                         <th scope="col">Event / Date</th>
                         <th scope="col">Length</th>
                         <th scope="col">Hours</th>
-                        <th scope="col">Rate</th>
-                        <th scope="col"><i>Subtotal</i></th>
-                        <th scope="col">Prepaint</th>
-                        <th scope="col">Tips</th>
-                        <th scope="col">Commsissions</th>
+                        <th scope="col" style="text-align: right;">Rate</th>
+                        <th scope="col" style="text-align: right;"><i>Subtotal</i></th>
+                        <th scope="col" style="text-align: right;">Prepaint</th>
+                        <th scope="col" style="text-align: right;">Tips</th>
+                        <th scope="col" style="text-align: right;">Commsissions</th>
                         <th scope="col" class="table-success" style="text-align: right;">Total</th>
                     </tr>
                 </thead>
@@ -52,26 +52,26 @@
                                     {{ staff.hours|floatformat:'2' }}
                                 {% endif %}
                             </td>
-                            <td>
+                            <td style="text-align: right;">
                                 {% if staff.rate %}
                                     ${{ staff.rate|floatformat:'2' }}
                                 {% endif %} 
                             </td>
-                            <td>{% if staff.hourly_pay %} 
+                            <td style="text-align: right;">{% if staff.hourly_pay %} 
                                 <i>${{ staff.hourly_pay|floatformat:'2' }}</i>
                                 {% endif %} 
                             </td>
-                            <td>
+                            <td style="text-align: right;">
                                 {% if staff.prepaint_pay %}
                                     ${{ staff.prepaint_pay|floatformat:'2' }}
                                 {% endif %}
                             </td>
-                            <td>
+                            <td style="text-align: right;">
                                 {% if staff.tip_pay %}
                                     ${{ staff.tip_pay|floatformat:'2' }}
                                 {% endif %}
                             </td>
-                            <td>
+                            <td style="text-align: right;">
                                 {% if staff.commission_pay %}
                                     ${{ staff.commission_pay|floatformat:'2' }}
                                 {% endif %}
