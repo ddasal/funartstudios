@@ -327,3 +327,14 @@ class EventCustomer(models.Model):
             self.total_price = self.subtotal_price
         super().save(*args, **kwargs)
     
+# import django_filters
+
+# class EventFilter(django_filters.FilterSet):
+#     # title = django_filters.CharFilter(lookup_expr='icontains')
+#     # start_date__gt = django_filters.DateFilter(field_name='date', lookup_expr='date__gt')
+#     # end_date__lt = django_filters.DateFilter(field_name='date', lookup_expr='date__lt')
+#     date = django_filters.DateFromToRangeFilter(widget=django_filters.widgets.RangeWidget(attrs={'placeholder': 'YYYY-MM-DD'}))
+
+#     class Meta:
+#         model = Event
+#         fields = ['date']

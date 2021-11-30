@@ -4,7 +4,8 @@ from django.http import HttpResponse
 from django.http.response import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
-
+from django.utils import timezone
+from django.db.models import Q
 from .forms import EventForm, EventStaffForm, EventCustomerForm, EventTipForm
 from.models import Event, EventCustomer, EventStaff, EventTip
 from royaltyreports.models import RoyaltyReport
@@ -13,7 +14,25 @@ from royaltyreports.models import RoyaltyReport
 
 @permission_required('events.view_event')
 def event_list_view(request):
-    qs = Event.objects.filter(active=True).order_by('-date', '-time')
+    
+    if request.method == "POST":
+        query = request.POST.get('q')
+        date_min = request.POST.get('date_min')
+        date_max = request.POST.get('date_max')
+        lookups = Q(title__icontains=query) | Q(eventstaff__user__first_name__icontains=query)  | Q(eventstaff__user__last_name__icontains=query) | Q(eventstaff__prepaint_product__name__icontains=query) | Q(eventstaff__event_product__name__icontains=query) | Q(eventcustomer__product__name__icontains=query)
+        qs = Event.objects.filter(lookups, date__range=[date_min, date_max]).order_by('-date', '-time').distinct()
+
+    else:
+        from datetime import datetime, timedelta
+        N_DAYS_AGO = 10
+        N_DAYS_FUTURE = 10
+        today = datetime.now()    
+        n_days_ago = today - timedelta(days=N_DAYS_AGO)
+        n_days_future = today + timedelta(days=N_DAYS_FUTURE)
+        date_min = n_days_ago.strftime("%Y-%m-%d")
+        date_max = n_days_future.strftime("%Y-%m-%d")
+        query = ''
+        qs = Event.objects.filter(active=True, date__range=[date_min, date_max]).order_by('-date', '-time')
     page = request.GET.get('page', 1)
 
     paginator = Paginator(qs, 10)
@@ -29,6 +48,9 @@ def event_list_view(request):
     context = {
         "events": events,
         "event_count": event_count,
+        "date_min": date_min,
+        "date_max": date_max,
+        "q": query
     }
     return render(request, "events/list.html", context)
 
