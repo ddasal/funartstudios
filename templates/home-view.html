@@ -11,12 +11,12 @@
   </div>
   <div class="col-12 col-md-6" style="text-align: right;">
       {% if perms.articles.add_article %} 
-      <a class="btn btn-outline-success" href="{% url 'articles:create' %}">Create article</a>  
+        <a class="btn btn-outline-success" href="{% url 'articles:create' %}">Create article</a>  
       {% endif %} 
   </div>
 </div>
 <p></p>
-  <div class="row">
+<div class="row">
   {% if perms.articles.view_article %} 
     {% for x in articles %}
     <div class="col-12 col-md-3 card">
@@ -28,35 +28,33 @@
       </div>
     </div>
     {% endfor %}
-  </div>
-  <div class="row">
-  <div class ="col-12 col-md-10" style="margin-top: 15px;">
-    
-    {% if articles.has_other_pages %}
-    <ul class="pagination pagination ">
-        {% if articles.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{ articles.previous_page_number }}">Previous</a></li>
-        {% else %}
-        <li class="page-item disabled"><a class="page-link">Previous</a></li>
-        {% endif %}
-        {% for i in articles.paginator.page_range %}
-        {% if articles.number == i %}
-            <li class="page-item active"><a class="page-link">{{ i }}</a></li>
-        {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-        {% endif %}
-        {% endfor %}
-        {% if articles.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ articles.next_page_number }}">Next</a></li>
-        {% else %}
-        <li class="page-item disabled"><a class="page-link">Next</a></li>
-        {% endif %}
-    </ul>
-    {% endif %}
-    Total Articles Count: {{ article_count }}
-  </div>
-
-  </div>
+</div>
+<div class="row">
+    <div class ="col-12 col-md-10" style="margin-top: 15px;">
+      
+      {% if articles.has_other_pages %}
+      <ul class="pagination pagination ">
+          {% if articles.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ articles.previous_page_number }}">Previous</a></li>
+          {% else %}
+          <li class="page-item disabled"><a class="page-link">Previous</a></li>
+          {% endif %}
+          {% for i in articles.paginator.page_range %}
+          {% if articles.number == i %}
+              <li class="page-item active"><a class="page-link">{{ i }}</a></li>
+          {% else %}
+              <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+          {% endif %}
+          {% endfor %}
+          {% if articles.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ articles.next_page_number }}">Next</a></li>
+          {% else %}
+          <li class="page-item disabled"><a class="page-link">Next</a></li>
+          {% endif %}
+      </ul>
+      {% endif %}
+      Total Articles Count: {{ article_count }}
+    </div>
 </div>
 {% else %} 
 <h3>Welcome {{ request.user.first_name }}</h3>
