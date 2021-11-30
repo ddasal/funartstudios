@@ -10,11 +10,6 @@
     <h3>News Articles</h3>
   </div>
   <div class="col-12 col-md-8" style="text-align: right;">
-    <form action='.' method='POST'>
-      {% csrf_token %}
-      <input type="text" value="{{ query }}" name="q" placeholder="news search">
-      <button class="btn btn-outline-success" type="submit">Search</button>&ThickSpace;
-
       {% if perms.articles.add_article %} 
       <a class="btn btn-outline-success" href="{% url 'articles:create' %}">Create article</a>  
       {% endif %} 
