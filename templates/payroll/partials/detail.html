@@ -61,8 +61,7 @@
             <table class="table table-sm table-striped">
                 <thead>
                     <tr>
-                        <th>Staff</th>
-                        <th>Role</th>
+                        <th>Staff / Role</th>
                         <th>Event / Date</th>
                         <th>Length</th>
                         <th>Hours</th>
@@ -78,8 +77,7 @@
                 {% for event in events %}
                     {% for staff in event.get_eventstaff_children %}
                         <tr>
-                            <td>{{ staff.user.first_name }} {{ staff.user.last_name }}</td>
-                            <td>{{ staff.get_role_display }}</td>
+                            <td><b>{{ staff.user.first_name }} {{ staff.user.last_name }}</b><br />as {{ staff.get_role_display }}</td>
                             <td><a href="{% url 'events:detail' slug=staff.event.slug %}" target="_blank">{{ staff.event.name }}</a><br />
                                  on {{ staff.event.date }} at {{ staff.event.time }}</td>
                             <td>{{ staff.event.length }}</td>
