@@ -422,7 +422,7 @@ class EventStaffUpload(View):
             role=row['role'],
             hours=row['hours'],
             event_id=row['event_id'],
-            user_id=row['user_id'],
+            user_id=row['new_user_id'],
             # event_qty=row['event_qty'],
             # prepaint_qty=row['prepaint_qty'],
             # event_product_id=row['event_product'],
