@@ -423,10 +423,10 @@ class EventStaffUpload(View):
             hours=row['hours'],
             event_id=row['event_id'],
             user_id=row['user_id'],
-            # event_qty=row['event_qty'],
-            # prepaint_qty=row['prepaint_qty'],
-            # event_product_id=row['event_product'],
-            # prepaint_product_id=row['prepaint_product'],
+            event_qty=row['event_qty'],
+            prepaint_qty=row['prepaint_qty'],
+            event_product_id=row['event_product'],
+            prepaint_product_id=row['prepaint_product'],
          )
          for row in list_of_dict
      ]
