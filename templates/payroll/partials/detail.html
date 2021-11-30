@@ -130,7 +130,7 @@
                     <th>Stage</th>
                     <th>Floor</th>
                     <th>Team</th>
-                    <th>Totals</th>
+                    <th style="text-align: right;">Totals</th>
                 </thead>
                 <tbody>
                     <tr>
@@ -138,28 +138,28 @@
                         <td><i>{{ total_stage_hours|floatformat:'2' }}</i></td>
                         <td><i>{{ total_floor_hours|floatformat:'2' }}</i></td>
                         <td><i>{{ total_team_hours|floatformat:'2' }}</i></td>
-                        <th><i>{{ total_total_hours|floatformat:'2' }}</i></th>
+                        <th style="text-align: right;"><i>{{ total_total_hours|floatformat:'2' }}</i></th>
                     </tr>
                     <tr>
                         <th>Hourly Pay</th>
                         <td>${{ total_stage_hourly_pay|floatformat:'2' }}</td>
                         <td>${{ total_floor_hourly_pay|floatformat:'2' }}</td>
                         <td>${{ total_team_hourly_pay|floatformat:'2' }}</td>
-                        <th>${{ total_total_hourly_pay|floatformat:'2' }}</th>
+                        <th style="text-align: right;">${{ total_total_hourly_pay|floatformat:'2' }}</th>
                     </tr>
                     <tr>
                         <th>Tips</th>
                         <td>${{ total_stage_tip_pay|floatformat:'2' }}</td>
                         <td>${{ total_floor_tip_pay|floatformat:'2' }}</td>
                         <td>${{ total_team_tip_pay|floatformat:'2' }}</td>
-                        <th>${{ total_total_tip_pay|floatformat:'2' }}</th>
+                        <th style="text-align: right;">${{ total_total_tip_pay|floatformat:'2' }}</th>
                     </tr>
                     <tr>
                         <th>Prepaints & Commissions</th>
                         <td>${{ total_stage_commission_pay|floatformat:'2' }}</td>
                         <td>${{ total_floor_commission_pay|floatformat:'2' }}</td>
                         <td>${{ total_team_commission_pay|floatformat:'2' }}</td>
-                        <th>${{ total_total_commission_pay|floatformat:'2' }}</th>
+                        <th style="text-align: right;">${{ total_total_commission_pay|floatformat:'2' }}</th>
                     </tr>      
                 </tbody>
                 <tfoot>
@@ -168,7 +168,7 @@
                         <th>${{ total_stage_pay|floatformat:'2' }}</th>
                         <th>${{ total_floor_pay|floatformat:'2' }}</th>
                         <th>${{ total_team_pay|floatformat:'2' }}</th>
-                        <th>${{ total_total_pay|floatformat:'2' }}</th>
+                        <th style="text-align: right;">${{ total_total_pay|floatformat:'2' }}</th>
                     </tr>
                 </tfoot>
             </table>
