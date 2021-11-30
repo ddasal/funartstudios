@@ -155,7 +155,7 @@ class EventStaff(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=SET_NULL)
     role = models.CharField(max_length=1, choices=EventStaffRole.choices, default=EventStaffRole.STAGE)
-    hours = models.DecimalField(decimal_places=2, max_digits=4, null=False, blank=False, default=0)
+    hours = models.DecimalField(decimal_places=2, max_digits=4, null=False, blank=False, default=0.00)
     rate = models.DecimalField(decimal_places=2, max_digits=4, default=0.00, null=False, blank=False)
     prepaint_pay = models.DecimalField(decimal_places=2, max_digits=5, default=0.00, null=False, blank=False)
     hourly_pay = models.DecimalField(decimal_places=2, max_digits=5, default=0.00, null=False, blank=False)
@@ -166,6 +166,7 @@ class EventStaff(models.Model):
     prepaint_qty = models.IntegerField(default=0, null=True, blank=True)
     event_product = models.ForeignKey(Product, on_delete=CASCADE, null=True, blank=True, related_name='event_product', default=1)
     event_qty = models.IntegerField(default=0, null=True, blank=True)
+    typical_hours = models.DecimalField(decimal_places=2, max_digits=4, null=False, blank=False, default=0.00)
     status = models.CharField(max_length=1, choices=PayStatus.choices, default=PayStatus.PENDING)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -218,6 +219,8 @@ class EventStaff(models.Model):
                 self.rate = pay_rate[0][1]
             elif self.role == 't':
                 self.rate = pay_rate[0][2]
+        event_length = Event.objects.get(id=self.event.id)
+        self.typical_hours = Decimal(event_length.length) + Decimal(1.5)
         self.hourly_pay = Decimal(self.rate) * Decimal(self.hours)
         self.total_pay = Decimal(self.hourly_pay) + Decimal(self.prepaint_pay) + Decimal(self.tip_pay) + Decimal(self.commission_pay)
         super().save(*args, **kwargs)
