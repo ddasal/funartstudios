@@ -64,8 +64,9 @@
                         <th>Staff Member</th>
                         <th>Role</th>
                         <th>Event / Date</th>
-                        <th>Rate</th>
+                        <th>Length</th>
                         <th>Hours</th>
+                        <th>Rate</th>
                         <th><i>Subtotal</i></th>
                         <th>Prepaint</th>
                         <th>Tips</th>
@@ -80,14 +81,15 @@
                             <td>{{ staff.user.first_name }} {{ staff.user.last_name }}</td>
                             <td>{{ staff.get_role_display }}</td>
                             <td><a href="{% url 'events:detail' slug=staff.event.slug %}" target="_blank">{{ staff.event.name }}</a> on {{ staff.event.date }} at {{ staff.event.time }}</td>
+                            <td>{{ staff.event.length }}</td>
                             <td>
                                 {% if staff.rate %}
-                                    ${{ staff.rate|floatformat:'2' }}
+                                    {{ staff.hours|floatformat:'2' }}
                                 {% endif %}
                             </td>
                             <td>
                                 {% if staff.rate %}
-                                    {{ staff.hours|floatformat:'2' }}
+                                    ${{ staff.rate|floatformat:'2' }}
                                 {% endif %} 
                             </td>
                             <td>{% if staff.hourly_pay %} 
