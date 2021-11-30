@@ -9,30 +9,21 @@ from django.db.models import Q
 from .forms import EventForm, EventStaffForm, EventCustomerForm, EventTipForm
 from.models import Event, EventCustomer, EventStaff, EventTip
 from royaltyreports.models import RoyaltyReport
+from datetime import datetime, timedelta
 
 # Create your views here.
 
 @permission_required('events.view_event')
 def event_list_view(request):
-    
-    if request.method == "POST":
-        query = request.POST.get('q')
-        date_min = request.POST.get('date_min')
-        date_max = request.POST.get('date_max')
-        lookups = Q(title__icontains=query) | Q(eventstaff__user__first_name__icontains=query)  | Q(eventstaff__user__last_name__icontains=query) | Q(eventstaff__prepaint_product__name__icontains=query) | Q(eventstaff__event_product__name__icontains=query) | Q(eventcustomer__product__name__icontains=query)
-        qs = Event.objects.filter(lookups, date__range=[date_min, date_max]).order_by('-date', '-time').distinct()
-
-    else:
-        from datetime import datetime, timedelta
-        N_DAYS_AGO = 10
-        N_DAYS_FUTURE = 10
-        today = datetime.now()    
-        n_days_ago = today - timedelta(days=N_DAYS_AGO)
-        n_days_future = today + timedelta(days=N_DAYS_FUTURE)
-        date_min = n_days_ago.strftime("%Y-%m-%d")
-        date_max = n_days_future.strftime("%Y-%m-%d")
-        query = ''
-        qs = Event.objects.filter(active=True, date__range=[date_min, date_max]).order_by('-date', '-time')
+    N_DAYS_AGO = 10
+    N_DAYS_FUTURE = 5
+    today = datetime.now()    
+    n_days_ago = today - timedelta(days=N_DAYS_AGO)
+    n_days_future = today + timedelta(days=N_DAYS_FUTURE)
+    date_min = '2020-03-31' #n_days_ago.strftime("%Y-%m-%d")
+    date_max = n_days_future.strftime("%Y-%m-%d")
+    query = ''
+    qs = Event.objects.filter(active=True, date__range=[date_min, date_max]).order_by('-date', '-time')
     page = request.GET.get('page', 1)
 
     paginator = Paginator(qs, 10)
@@ -54,6 +45,35 @@ def event_list_view(request):
     }
     return render(request, "events/list.html", context)
 
+
+@permission_required('events.view_event')
+def event_search_view(request):
+    query = request.GET.get('q')
+    date_min = request.GET.get('date_min')
+    date_max = request.GET.get('date_max')
+    lookups = Q(title__icontains=query) | Q(eventstaff__user__first_name__icontains=query)  | Q(eventstaff__user__last_name__icontains=query) | Q(eventstaff__prepaint_product__name__icontains=query) | Q(eventstaff__event_product__name__icontains=query) | Q(eventcustomer__product__name__icontains=query)
+    qs = Event.objects.filter(lookups, date__range=[date_min, date_max]).order_by('-date', '-time').distinct()
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(qs, 10)
+
+    event_count = paginator.count
+    try:
+        events = paginator.page(page)
+    except PageNotAnInteger:
+        events = paginator.page(1)
+    except EmptyPage:
+        events = paginator.page(paginator.num_pages)
+
+    context = {
+        "events": events,
+        "event_count": event_count,
+        "date_min": date_min,
+        "date_max": date_max,
+        "q": query
+    }
+    return render(request, "events/search.html", context)
+
 @permission_required('events.view_event')
 def event_detail_view(request, slug=None):
     hx_url = reverse("events:hx-detail", kwargs={"slug": slug})
@@ -63,6 +83,9 @@ def event_detail_view(request, slug=None):
         "event_obj": event_obj
     }
     return render(request, "events/detail.html", context)
+
+
+
 
 
 

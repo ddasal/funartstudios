@@ -13,13 +13,15 @@ from .views import (
     event_tip_update_hx_view,
     event_tip_delete_view,
     EventCustomerUpload,
-    EventStaffUpload
+    EventStaffUpload,
+    event_search_view
 )
 
 app_name='events'  # events:list
 
 urlpatterns = [
     path("", event_list_view, name='list'),
+    path("search/", event_search_view, name='search'),
     path("create/", event_create_view, name='create'),
     # path('import/', EventCustomerUpload.as_view(), name='import'),
 
