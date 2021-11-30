@@ -80,7 +80,8 @@
                         <tr>
                             <td>{{ staff.user.first_name }} {{ staff.user.last_name }}</td>
                             <td>{{ staff.get_role_display }}</td>
-                            <td><a href="{% url 'events:detail' slug=staff.event.slug %}" target="_blank">{{ staff.event.name }}</a> on {{ staff.event.date }} at {{ staff.event.time }}</td>
+                            <td><a href="{% url 'events:detail' slug=staff.event.slug %}" target="_blank">{{ staff.event.name }}</a><br />
+                                 on {{ staff.event.date }} at {{ staff.event.time }}</td>
                             <td>{{ staff.event.length }}</td>
                             <td {% if staff.typical_hours < staff.hours %} class="table-warning"{% endif %}>
                                 {% if staff.rate %}
