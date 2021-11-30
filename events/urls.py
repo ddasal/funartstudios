@@ -12,8 +12,8 @@ from .views import (
     event_customer_update_hx_view,
     event_tip_update_hx_view,
     event_tip_delete_view,
-    StaffUpload,
-    EventCustomerUpload
+    EventCustomerUpload,
+    EventStaffUpload
 )
 
 app_name='events'  # events:list
@@ -30,7 +30,7 @@ urlpatterns = [
     path("hx/<slug:parent_slug>/tip/<int:id>", event_tip_update_hx_view, name='hx-eventtip-update'),
     path("hx/<slug:parent_slug>/tip/", event_tip_update_hx_view, name='hx-tip-create'),
     path("hx/<slug:slug>/", event_detail_hx_view, name='hx-detail'),
-    # path('importstaff/', StaffUpload.as_view(), name='importstaff'),
+    path('importstaff/', EventStaffUpload.as_view(), name='importstaff'),
      
     path("<slug:parent_slug>/customer/<int:id>/delete/", event_customer_delete_view, name='eventcustomer-delete'),
     path("<slug:parent_slug>/staff/<int:id>/delete/", event_staff_delete_view, name='eventstaff-delete'),

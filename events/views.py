@@ -362,8 +362,8 @@ from django.views import View
 from .models import EventStaff
 import io,csv
 
-@login_required
-class StaffUpload(View):
+# @login_required
+class EventStaffUpload(View):
     def get(self, request):
         template_name = 'events/import-staff.html'
         return render(request, template_name)
@@ -376,19 +376,12 @@ class StaffUpload(View):
             EventStaff(
             role=row['role'],
             hours=row['hours'],
-            timestamp=row['timestamp'],
-            updated=row['updated'],
             event_id=row['event_id'],
-            user_id=row['user_id'],
+            user_id=row['new_user_id'],
             event_qty=row['event_qty'],
-            prepaint_qty=row['prepaint_qty'],
-            rate=row['rate'],
-            total_pay=row['total_pay'],
-            hourly_pay=row['hourly_pay'],
-            prepaint_pay=row['prepaint_pay'],
-            status=row['status'],
-            commission_pay=row['commission_pay'],
-            tip_pay=row['tip_pay'],           
+            # prepaint_qty=row['prepaint_qty'],
+            event_product_id=row['event_product'],
+            # prepaint_product_id=row['prepaint_product'],
          )
          for row in list_of_dict
      ]
