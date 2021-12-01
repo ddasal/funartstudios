@@ -220,7 +220,7 @@ def event_create_view(request):
         if royalty_date_check:
             return HttpResponse("Unable to create event. Check that your date isn't conflicting with a closed Pay Period or Royalty Report.")
         else:
-            obj.user = request.user
+            obj.created_by = request.user
             obj.save()
             if request.htmx:
                 headers = {
@@ -245,6 +245,8 @@ def event_update_view(request, slug=None):
         "new_tip_url": new_tip_url
     }
     if form.is_valid():
+        obj.updated_by = request.user
+        obj.save()
         form.save()
         context['message'] = 'Event data saved.'
     if request.htmx:

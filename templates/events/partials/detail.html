@@ -15,7 +15,8 @@
             {% endif %}
         </h2> 
         <p><span class="lead">{{ object.get_length_display }} hr(s) {{ object.get_type_display }} on <b>{{ object.date }}</b> at {{ object.time }} </span><br />
-            Last updated on : {{ object.updated }}<br /></p>
+            {% if object.created_by %}Created by: {{ object.created_by.first_name }} {{ object.created_by.last_name }}<br />{% endif %}
+            Last updated on : {{ object.updated }}{% if object.updated_by %} by {{ object.updated_by.first_name }} {{ object.updated_by.last_name }} {% endif %} <br /></p>
         
         <p>Effective Tax Rate: {{ object.tax_rate_percentage }}%<br />
         Royalty Report ID: {{ object.royalty_report.id }}<br />

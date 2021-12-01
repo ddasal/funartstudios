@@ -71,6 +71,8 @@ class Event(models.Model):
     slug = models.SlugField(null=True, blank=True, unique=True)
     tax_rate = models.DecimalField(decimal_places=3, max_digits=4, null=False, blank=False, default=0.000)
     timestamp = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, on_delete=SET_NULL, null=True, blank=True, related_name='created')
+    updated_by = models.ForeignKey(User, on_delete=SET_NULL, null=True, blank=True, related_name='updated')
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
     status = models.CharField(max_length=1, choices=EventStatus.choices, default=EventStatus.PENDING)
