@@ -96,7 +96,7 @@ def article_detail_hx_view(request, slug=None):
         "new_comment_url": new_comment_url
     }
     return render(request, "articles/partials/detail.html", context)
-
+ 
 @permission_required('articles.change_article')
 def article_update_view(request, slug=None):
     obj = get_object_or_404(Article, slug=slug)
