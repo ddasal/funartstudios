@@ -9,7 +9,7 @@
             </small>
             {% endif %}
         </h3> 
-        <p><small>By: {{ object.user.first_name }} {{ object.user.last_name }} on {{ object.publish }}</small></p>
+        <p><small>By: {{ object.user.first_name }} {{ object.user.last_name }} on {{ object.publish }} views: {{ object.page_views }}</small></p>
         
         <p>{{ object.content|safe|linebreaks }}</p>
     </div>

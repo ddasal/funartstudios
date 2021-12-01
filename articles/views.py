@@ -77,7 +77,10 @@ def article_detail_hx_view(request, slug=None):
     try:
         obj = Article.objects.get(slug=slug)
         new_comment_url = reverse("articles:hx-comment-create", kwargs={"parent_slug": obj.slug})
-
+        view_count = obj.page_views + int(1)
+        print(view_count)
+        obj.page_views = view_count
+        obj.save()
     except:
         obj = None
     if obj is None:

@@ -30,6 +30,7 @@ class Article(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    page_views = models.IntegerField(default=0, null=False, blank=False)
     publish = models.DateTimeField(blank=True, default=timezone.now, null=False)
 
     objects = ArticleManager()
