@@ -82,11 +82,8 @@ def article_detail_hx_view(request, slug=None):
         if obj.seen_by is None:
             obj.seen_by = requester
         elif requester not in obj.seen_by:
-            print(obj.seen_by)
             add_requester = obj.seen_by + ', ' + requester
             obj.seen_by = add_requester
-        elif requester in obj.seen_by:
-            print(obj.seen_by)
 
         obj.page_views = view_count
         obj.save()
