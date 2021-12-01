@@ -40,7 +40,7 @@
                     <td><small><b><a href="{% url 'events:detail' slug=x.slug %}">{{ x.title }} ({{ x.length }}hrs)</a></b></small></td>
                     <td>
                         {% for customer in x.get_eventcustomer_children %}
-                            <small><b>{{ customer.quantity }} x {{ customer.get_type_display }} at ${{ customer.price }}</b><br />
+                            <small><b>{{ customer.quantity }} x {{ customer.get_type_display }} (${{ customer.price }}/ea)</b><br />
                                 &ThickSpace; of {{ customer.per_customer_qty }} x {{ customer.product }} each</small><br />
                         {% endfor %}  
                     </td>
