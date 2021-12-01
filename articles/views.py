@@ -78,7 +78,16 @@ def article_detail_hx_view(request, slug=None):
         obj = Article.objects.get(slug=slug)
         new_comment_url = reverse("articles:hx-comment-create", kwargs={"parent_slug": obj.slug})
         view_count = obj.page_views + int(1)
-        print(view_count)
+        requester = request.user.first_name + ' ' + request.user.last_name
+        if obj.seen_by is None:
+            obj.seen_by = requester
+        elif requester not in obj.seen_by:
+            print(obj.seen_by)
+            add_requester = obj.seen_by + ', ' + requester
+            obj.seen_by = add_requester
+        elif requester in obj.seen_by:
+            print(obj.seen_by)
+
         obj.page_views = view_count
         obj.save()
     except:

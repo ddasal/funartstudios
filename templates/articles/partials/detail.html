@@ -12,6 +12,9 @@
         <p><small>By: {{ object.user.first_name }} {{ object.user.last_name }} on {{ object.publish }} views: {{ object.page_views }}</small></p>
         
         <p>{{ object.content|safe|linebreaks }}</p>
+        {% if perms.articles.add_article %} 
+        <small>Seen by: {{ object.seen_by }}</small>
+        {% endif %}
     </div>
     <div id="comments" style="margin: 10px;">
         <div id="comment-list">
