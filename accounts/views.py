@@ -26,6 +26,10 @@ def login_view(request):
 
 @login_required
 def logout_view(request):
+    # added to shortcut logging out
+    logout(request)
+    return redirect('/account/login/')
+    #making the if request invalid, but leaving for now
     if request.method == "POST":
         logout(request)
         return redirect('/account/login/')
