@@ -14,7 +14,6 @@
                 <tr>
                     <th>Name</th>
                     <th>Mobile Phone</th>
-                    <th>Home Phone</th>
                     <th>Email</th>
                     <th class="table-warning">Emergency Contact(s) Info</th>
                     {% if perms.accounts.change_userprofile %} 
@@ -33,14 +32,13 @@
                         {% endif %}
                     </td>
                     <td>{{ x.phone_mobile }}</td>
-                    <td>{{ x.phone_home }}</td>             
                     <td>{{ x.user.email }}</td>
                     <td class="table-warning">
                         {% if x.emergency_contact_name_1 %}
-                            {{ x.emergency_contact_name_1 }} at {{ x.emergency_contact_number_1 }} or  {{ x.emergency_contact_email_1 }}<br />
+                            {{ x.emergency_contact_name_1 }} at {{ x.emergency_contact_number_1 }} {% if x.emergency_contact_email_1 %}or {{ x.emergency_contact_email_1 }}{% endif %}<br />
                         {% endif %}
                         {% if x.emergency_contact_name_2 %}
-                            {{ x.emergency_contact_name_2 }} at {{ x.emergency_contact_number_2 }} or  {{ x.emergency_contact_email_2 }}<br />
+                            {{ x.emergency_contact_name_2 }} at {{ x.emergency_contact_number_2 }} {% if x.emergency_contact_email_2 %}or {{ x.emergency_contact_email_2 }}{% endif %}<br />
                         {% endif %}
                     </td>
                     {% if perms.accounts.change_userprofile %} 
