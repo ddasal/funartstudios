@@ -258,7 +258,7 @@ class EventTip(models.Model):
         self.stage_amount = Decimal(self.tip_amount) * (Decimal(1) - Decimal(self.credit_fee)) * Decimal(self.stage_split)
         self.floor_amount = Decimal(self.tip_amount) * (Decimal(1) - Decimal(self.credit_fee)) * Decimal(self.floor_split)
         super().save(*args, **kwargs)
-
+ 
 
 class EventCustomerType(models.TextChoices):
     HOMEKIT = 'h', 'Twist at Home Kit(s)'
