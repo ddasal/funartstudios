@@ -33,7 +33,6 @@ def square_list_view(request):
     return render(request, "square/list.html", context)
 
 from datetime import datetime
-from decimal import Decimal
 
 # @permission_required('square.add_square')
 class SquareUpload(View):

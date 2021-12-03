@@ -10,6 +10,7 @@ from payroll.models import PayReport
 
 from products.models import Product, PurchaseItem
 from royaltyreports.models import RoyaltyReport
+from taxreports.models import TaxReport
 from .utils import slugify_instance_title
 from django.db.models.signals import pre_save, post_save
 from accounts.models import UserProfile, UserPay
@@ -79,6 +80,7 @@ class Event(models.Model):
     payroll_status = models.CharField(max_length=1, choices=EventStatus.choices, default=EventStatus.PENDING)
     royalty_report = models.ForeignKey(RoyaltyReport, on_delete=SET_NULL, null=True, blank=True)
     payroll_report = models.ForeignKey(PayReport, on_delete=SET_NULL, null=True, blank=True)
+    tax_report = models.ForeignKey(TaxReport, on_delete=SET_NULL, null=True, blank=True)
 
     objects = EventManager()
 
@@ -280,10 +282,11 @@ class EventCustomer(models.Model):
     per_customer_qty = models.IntegerField(default=1, null=False, blank=False)
     total_customer_qty = models.IntegerField(default=0, null=False, blank=False)
     subtotal_price = models.DecimalField(decimal_places=2, max_digits=6, default=0.0, null=False, blank=False)
-    cost_factor = models.DecimalField(decimal_places=2, max_digits=5, default=0.0, null=True, blank=True)
+    cost_factor = models.DecimalField(decimal_places=2, max_digits=6, default=0.0, null=True, blank=True)
     taxes = models.DecimalField(decimal_places=2, max_digits=5, default=0.0, null=False, blank=False)
     total_price = models.DecimalField(decimal_places=2, max_digits=6, default=0.0, null=False, blank=False)
     status = models.CharField(max_length=1, choices=CustomerStatus.choices, default=CustomerStatus.PENDING)
+    date = models.DateField(null=False, blank=False, default=timezone.now)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -310,12 +313,15 @@ class EventCustomer(models.Model):
     def save(self, *args, **kwargs):
         self.total_customer_qty = self.per_customer_qty * self.quantity
         self.subtotal_price = self.quantity * self.price
+        self.date = self.event.date
         if self.type == 'h':
             self.taxes = self.subtotal_price * self.event.tax_rate
             self.total_price = self.subtotal_price + self.taxes
+            self.cost_factor = self.quantity * self.price
         elif self.type == 'p':
             self.taxes = self.subtotal_price * self.event.tax_rate
             self.total_price = self.subtotal_price + self.taxes
+            self.cost_factor = self.quantity * self.price
         elif self.type == 'r':
             try:
                 cost_factor = list(PurchaseItem.objects.values_list('price_each').filter(product=self.product, date__lte=self.event.date).order_by('-date').first())

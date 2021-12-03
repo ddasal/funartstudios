@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'products',
     'royaltyreports',
     'search',
-    'square'
+    'square',
+    'taxreports'
 ]
 
 MIDDLEWARE = [

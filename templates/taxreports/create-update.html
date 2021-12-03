@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %} 
+{% if object.id %}
+    Report: {{ object.start_date }}
+{% else %}
+    Create Tax Report
+{% endif %} 
+{% endblock title %} 
+
+{% block content %}
+
+<style>
+    .staff-form {
+        border-bottom: 1px solid black;
+    }
+    .hidden {
+        display: none;
+    }
+</style>
+
+
+
+<div class="row">
+    <div class='col-md-6 mx-auto'>
+        {% if not object.id %}
+            <h3>Create Tax Report</h3>
+        {% else %}
+            <h3>Report Details
+                <small>
+                    {% if perms.taxreports.change_report %}
+                    <a class="btn btn-outline-secondary" href="{{ object.get_absolute_url }}">Return</a>
+                    {% endif %} 
+                </small>    
+            </h3>
+        {% endif %}
+
+    {% include 'taxreports/partials/forms.html' %}
+    </div>
+</div>
+
+
+{% endblock %} 

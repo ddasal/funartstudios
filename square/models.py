@@ -1,6 +1,12 @@
 from django.db import models
-
+from decimal import Decimal
 # Create your models here.
+
+class TransactionStatus(models.TextChoices):
+    PENDING = 'p', 'Pending'
+    ABANDONDED = 'a', 'Abandoned'
+    COMPLETED = 'c', 'Completed'
+
 
 class Square(models.Model):
     date = models.DateField(null=False, blank=False)
@@ -39,4 +45,12 @@ class Square(models.Model):
     customer_name = models.CharField(max_length=50)
     customer_reference_id = models.CharField(max_length=50)
     device_nickname = models.CharField(max_length=50)
+    taxable_sales = models.DecimalField(decimal_places=2, max_digits=7, null=True, blank=True, default=0.0)
+    status = models.CharField(max_length=1, choices=TransactionStatus.choices, default=TransactionStatus.PENDING)
+
+    # def save(self, *args, **kwargs):
+    #     if self.tax > 0:
+    #         self.taxable_sales = Decimal(self.tax) / Decimal(0.81)
+    #     super().save(*args, **kwargs)
+
     

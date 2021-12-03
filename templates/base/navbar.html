@@ -51,6 +51,9 @@
                 {% if perms.square.view_square %}
                 <a class="dropdown-item" href="{% url 'square:list' %}">Square Transactions</a>
                 {% endif %}
+                {% if perms.taxreports.view_taxreport %}
+                <a class="dropdown-item" href="{% url 'taxes:list' %}">Tax Reports</a>
+                {% endif %}
               </li>
             </ul>
           {% endif %} 

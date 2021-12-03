@@ -28,8 +28,9 @@ urlpatterns = [
     path('events/', include('events.urls')),
     path('payroll/', include('payroll.urls')),
     path('products/', include('products.urls')),
+    path('royalty/', include('royaltyreports.urls')),
     path('search/', search_view, name='search'),
     path('square/', include('square.urls')),
-    path('royalty/', include('royaltyreports.urls')),
+    path('taxes/', include('taxreports.urls')),
     path('admin/', admin.site.urls),
 ]
