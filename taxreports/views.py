@@ -14,6 +14,7 @@ import io,csv
 from django.views import View
 from django.db.models.functions import TruncMonth
 from itertools import groupby
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
 
@@ -251,7 +252,8 @@ def report_hx_mark_pending(request, id=None):
         return redirect(success_url)
 
 
-class SquareUpload(View):
+class SquareUpload(LoginRequiredMixin, View):
+    login_url = '/account/login/'
     def get(self, request):
         template_name = 'taxreports/import-square.html'
         return render(request, template_name)

@@ -7,6 +7,7 @@ from django.urls.base import reverse
 from django.views import View
 from .models import Square
 import io,csv
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # Create your views here.
@@ -35,7 +36,9 @@ def square_list_view(request):
 from datetime import datetime
 
 # @permission_required('square.add_square')
-class SquareUpload(View):
+class SquareUpload(LoginRequiredMixin, View):
+    login_url = '/account/login/'
+
     def get(self, request):
         template_name = 'square/import-square.html'
         return render(request, template_name)
