@@ -199,13 +199,13 @@ def article_hx_send_email_to_team(request, slug=None):
             email_to_list = []
             for staff in team_email_list:
                 email_to_list.append(staff['email'])
-            # send_mail(
-            #     'FAS Article: ' + obj.title,
-            #     obj.content,
-            #     'studio239@paintingwithatwist.com',
-            #     email_to_list,
-            #     fail_silently=False,
-            # )
+            send_mail(
+                'FAS Article: ' + obj.title,
+                obj.content,
+                'studio239@paintingwithatwist.com',
+                email_to_list,
+                fail_silently=False,
+            )
             obj.email_status = 's'
             obj.save()
             print(email_to_list)
