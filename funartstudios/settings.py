@@ -158,13 +158,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'America/Chicago'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 TIME_INPUT_FORMATS = [
@@ -192,22 +188,28 @@ DATETIME_INPUT_FORMATS = [
 ]
 
 TIME_FORMAT = '%H:%M'
-
 DATETIME_FORMAT = 'm/d/y I:M p'
-
 SHORT_DATETIME_FORMAT = 'm/d/Y P'
+
+EMAIL_HOST = os.environ.get('DJANGO_EMAIL_HOST')
+EMAIL_PORT = os.environ.get('DJANGO_EMAIL_PORT')
+EMAIL_HOST_USER = os.environ.get('DJANGO_EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = os.environ.get('DJANGO_EMAIL_USE_TLS')
+# EMAIL_USE_SSL = os.environ.get('DJANGO_EMAIL_USE_SSL')
+EMAIL_USE_LOCALTIME = os.environ.get('DJANGO_EMAIL_USE_LOCALTIME')
+EMAIL_SUBJECT_PREFIX = os.environ.get('DJANGO_EMAIL_SUBJECT_PREFIX')
+
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
-
 STATIC_ROOT = BASE_DIR / "staticfiles-cdn"
-
 MEDIA_ROOT = BASE_DIR / "staticfiles-cdn" / "uploads"
 
 from .cdn.conf import * # noqa
