@@ -178,23 +178,6 @@ def report_detail_hx_view(request, id=None):
         staff_prepaint_surfaces_used_qs = EventStaff.objects.filter(event__date__range=(obj.start_date, obj.end_date)).aggregate(Sum('prepaint_qty'))
         report_surface_count = customer_surfaces_used_qs.get('total_customer_qty__sum') + staff_event_surfaces_used_qs.get('event_qty__sum') + staff_prepaint_surfaces_used_qs.get('prepaint_qty__sum')
 
-        for item in event_qs:
-            item.temp_customer_used = 0
-            temp_customer_each = [int(item.total_customer_qty) for item in EventCustomer.objects.filter(event=item.id)]
-            item.temp_customer_used = sum(temp_customer_each)
-
-            item.temp_prepaint_used = 0
-            temp_prepaint_each = [int(item.prepaint_qty) for item in EventStaff.objects.filter(event=item.id)]
-            item.temp_prepaint_used = sum(temp_prepaint_each)
-
-            item.temp_event_used = 0
-            temp_event_each = [int(item.event_qty) for item in EventStaff.objects.filter(event=item.id)]
-            item.temp_event_used = sum(temp_event_each)
-
-
-            inventory_total = inventory_total - item.temp_customer_used - item.temp_prepaint_used - item.temp_event_used
-
-
         for sq in sqaure_info:
             report_square_sales = report_square_sales + sq.gross_sales
 
