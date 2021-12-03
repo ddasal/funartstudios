@@ -203,6 +203,8 @@ class EventStaff(models.Model):
             pay_rate = list(UserPay.objects.values_list('stage', 'floor', 'team', 'prepaint_single', 'prepaint_double').filter(user__user_id=self.user.id, start_date__lte=self.event.date, end_date__gte=self.event.date))
             if self.role == 's':
                 self.rate = pay_rate[0][0]
+                if self.prepaint_qty == 0:
+                    self.prepaint_pay = Decimal(0.0)
                 if self.prepaint_qty == 1:
                     self.prepaint_pay = pay_rate[0][3]
                 elif self.prepaint_qty >= 2:
@@ -215,6 +217,8 @@ class EventStaff(models.Model):
             pay_rate = Decimal(0.00)
             if self.role == 's':
                 self.rate = pay_rate[0][0]
+                if self.prepaint_qty == 0:
+                    self.prepaint_pay = Decimal(0.0)
                 if self.prepaint_qty == 1:
                     self.prepaint_pay = pay_rate[0][3]
                 elif self.prepaint_qty >= 2:
