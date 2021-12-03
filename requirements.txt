@@ -6,3 +6,4 @@ django-htmx
 django-storages
 boto3
 django-session-timeout
+Pillow
