@@ -5,6 +5,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls.base import reverse
 from .models import Article, ArticleManager, Comment
 from .forms import ArticleForm, CommentForm
+from django.core.mail import send_mail
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -177,3 +179,35 @@ def article_comment_update_hx_view(request, parent_slug=None, id=None):
     
     return render(request, "articles/partials/comment-form.html", context)
 
+
+@permission_required('articles.change_article')
+def article_hx_send_email_to_team(request, slug=None):
+    # if not request.htmx:
+    #     raise Http404
+    try:
+        obj = Article.objects.get(slug=slug)
+    except:
+        obj = None
+
+    if obj is None:
+        return HttpResponse("Not found.")
+    else:
+        if obj.email_status == 's':
+            return HttpResponse("Already sent to the team.")
+        else:
+            team_email_list = list(User.objects.filter(is_active=True).values('email'))
+            email_to_list = []
+            for staff in team_email_list:
+                email_to_list.append(staff['email'])
+            send_mail(
+                'FAS Article: ' + obj.title,
+                obj.content,
+                'studio239@paintingwithatwist.com',
+                email_to_list,
+                fail_silently=False,
+            )
+            obj.email_status = 's'
+            obj.save()
+            print(email_to_list)
+            success_url = reverse('home')
+            return redirect(success_url)

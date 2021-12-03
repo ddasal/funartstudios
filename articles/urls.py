@@ -9,7 +9,8 @@ from .views import (
     article_detail_hx_view,
     article_update_view,
     article_comment_update_hx_view,
-    article_comment_delete_view
+    article_comment_delete_view,
+    article_hx_send_email_to_team
 )
 
 app_name='articles' # articles:list 
@@ -22,6 +23,7 @@ urlpatterns = [
     path("hx/<slug:slug>/", article_detail_hx_view, name='hx-detail'),
 
     path("hx/<slug:parent_slug>/comment/<int:id>", article_comment_update_hx_view, name='hx-comment-update'),
+    path("hx/<slug:slug>/send/", article_hx_send_email_to_team, name='hx-send-email'),    
     path("hx/<slug:parent_slug>/comment/", article_comment_update_hx_view, name='hx-comment-create'),
     path("<slug:parent_slug>/comment/<int:id>/delete/", article_comment_delete_view, name='comment-delete'),
 

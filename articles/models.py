@@ -23,6 +23,10 @@ class ArticleManager(models.Manager):
     def search(self, query=None):
         return self.get_queryset().search(query=query)
 
+class EmailStatus(models.TextChoices):
+    NOTSENT = 'n', 'Not Sent'
+    SENT = 's', 'Sent'
+
 class Article(models.Model):
     user = models.ForeignKey(User, blank=True, null=True, on_delete=SET_NULL)
     title = models.CharField(max_length=50)
@@ -33,6 +37,7 @@ class Article(models.Model):
     page_views = models.IntegerField(default=0, null=False, blank=False)
     seen_by = models.TextField(null=True, blank=True)
     publish = models.DateTimeField(blank=True, default=timezone.now, null=False)
+    email_status = models.CharField(max_length=1, choices=EmailStatus.choices, default=EmailStatus.NOTSENT)
 
     objects = ArticleManager()
 

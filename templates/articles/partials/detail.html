@@ -5,6 +5,11 @@
             <small>
                 {% if perms.articles.change_article %}
                 <a class="btn btn-outline-primary" href="{{ object.get_edit_url }}">Edit</a> 
+                    {% if object.email_status == 'n' %}
+                    <a class="btn btn-outline-primary" href="{% url 'articles:hx-send-email' slug=object.slug %}">Send Article to Team</a>
+                    {% elif object.email_status == 's' %}
+                    <a class="btn btn-outline-primary" href="">Already Sent</a>
+                    {% endif %} 
                 {% endif %} 
             </small>
             {% endif %}

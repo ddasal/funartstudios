@@ -127,20 +127,8 @@ def report_detail_hx_view(request, id=None):
                 k: sum(x.taxes for x in g) 
                 for k, g in groupby(event_taxes, key=lambda i: i.date.month)
             }
-            # print(month_totals.keys())
-            # print(month_totals.values())
-            # mo_sales_tax = []
-            # for month, total in month_totals.items():
-            #     mo_sales_tax.append([month][total])
-            # print(mo_sales_tax)
-            # event_taxes_monthly = EventCustomer.objects.filter(event__date__range=(obj.start_date, obj.end_date)).order_by('event__date').prefetch_related().annotate(month=TruncMonth('event__date')).values('month').annotate(taxes=Sum(('taxes')))
         except Exception as e:
             print(e)
-
-        # print(event_taxes_monthly)
-
-        # for item in event_taxes_monthly:
-        #     print(item)
 
         obj.eventcustomer_cost_factors = report_eventcustomer_cost_factors
         obj.eventcustomer_taxes = report_eventcustomer_taxes
