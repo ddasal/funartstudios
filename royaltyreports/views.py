@@ -8,7 +8,7 @@ from django.urls import reverse
 from events.models import Event, EventCustomer, EventStaff
 from products.models import Product, PurchaseItem, PurchaseOrder
 from royaltyreports.forms import ReportForm
-from django.db.models import Q
+from django.db.models import Q, Sum
 from royaltyreports.models import RoyaltyReport
 from square.models import Square
 from decimal import Decimal
@@ -126,7 +126,7 @@ def report_detail_hx_view(request, id=None):
             each.temp_cost_factors = Decimal(0.0)
             temp_cost_factors = [Decimal(each.cost_factor) for each in EventCustomer.objects.filter(event=each.id, type='r')]
             each.temp_cost_factors = sum(temp_cost_factors)
-
+            
         for each in kits:
             each.temp_customer_seats = 0
             temp_customer_seats = [int(each.quantity) for each in EventCustomer.objects.filter(event=each.id, type='h')]
@@ -172,7 +172,28 @@ def report_detail_hx_view(request, id=None):
 
 
             inventory_total = inventory_total - item.temp_customer_used - item.temp_prepaint_used - item.temp_event_used
-            report_surface_count = report_surface_count + item.temp_customer_used + item.temp_prepaint_used + item.temp_event_used
+
+        customer_surfaces_used_qs = EventCustomer.objects.filter(event__date__range=(obj.start_date, obj.end_date)).aggregate(Sum('total_customer_qty'))
+        staff_event_surfaces_used_qs = EventStaff.objects.filter(event__date__range=(obj.start_date, obj.end_date)).aggregate(Sum('event_qty'))
+        staff_prepaint_surfaces_used_qs = EventStaff.objects.filter(event__date__range=(obj.start_date, obj.end_date)).aggregate(Sum('prepaint_qty'))
+        report_surface_count = customer_surfaces_used_qs.get('total_customer_qty__sum') + staff_event_surfaces_used_qs.get('event_qty__sum') + staff_prepaint_surfaces_used_qs.get('prepaint_qty__sum')
+
+        for item in event_qs:
+            item.temp_customer_used = 0
+            temp_customer_each = [int(item.total_customer_qty) for item in EventCustomer.objects.filter(event=item.id)]
+            item.temp_customer_used = sum(temp_customer_each)
+
+            item.temp_prepaint_used = 0
+            temp_prepaint_each = [int(item.prepaint_qty) for item in EventStaff.objects.filter(event=item.id)]
+            item.temp_prepaint_used = sum(temp_prepaint_each)
+
+            item.temp_event_used = 0
+            temp_event_each = [int(item.event_qty) for item in EventStaff.objects.filter(event=item.id)]
+            item.temp_event_used = sum(temp_event_each)
+
+
+            inventory_total = inventory_total - item.temp_customer_used - item.temp_prepaint_used - item.temp_event_used
+
 
         for sq in sqaure_info:
             report_square_sales = report_square_sales + sq.gross_sales
