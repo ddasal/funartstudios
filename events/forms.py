@@ -4,7 +4,7 @@ from django.utils.encoding import smart_text
 from django import forms
 
 from products.models import Product
-from .models import Event, EventCustomer, EventStaff, EventTip
+from .models import Event, EventCustomer, EventStaff, EventTip, EventImages
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -96,3 +96,8 @@ class EventTipForm(forms.ModelForm):
             self.fields[str(field)].widget.attrs.update(
                 new_data
             )
+
+class EventImageForm(forms.ModelForm):
+    class Meta:
+        model = EventImages
+        fields = ['title', 'upload']

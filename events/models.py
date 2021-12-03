@@ -7,6 +7,8 @@ from django.db.models.fields import DecimalField
 from django.urls import reverse
 from django.utils import timezone
 from payroll.models import PayReport
+import uuid
+import pathlib
 
 from products.models import Product, PurchaseItem
 from royaltyreports.models import RoyaltyReport
@@ -113,8 +115,14 @@ class Event(models.Model):
     def get_eventcustomer_children(self):
         return self.eventcustomer_set.all()
 
+    def get_eventimage_children(self):
+        return self.eventimages_set.all()
+
     def get_eventtip_children(self):
         return self.eventtip_set.all()
+
+    def get_image_upload_url(self):
+        return reverse("events:event-image-upload", kwargs={"parent_slug": self.slug})
 
     def save(self, *args, **kwargs):
         effective_tax_rate = list(EventTax.objects.values_list('tax_rate').filter(start_date__lte=self.date, end_date__gte=self.date))
@@ -339,3 +347,27 @@ class EventCustomer(models.Model):
             self.total_price = self.subtotal_price
         super().save(*args, **kwargs)
     
+def revent_image_upload_handler(instance, filename):
+    fpath = pathlib.Path(filename)
+    new_fname = str(uuid.uuid1()) # uuid1 -> uuid + timestamps
+    return f"events/{new_fname}{fpath.suffix}"
+
+
+class EventImages(models.Model):
+    event = models.ForeignKey(Event, on_delete=CASCADE)
+    title = models.CharField(max_length=50, null=False, blank=False)
+    upload = models.ImageField(upload_to=revent_image_upload_handler, height_field=None, width_field=None, max_length=100)
+
+    def get_delete_url(self):
+        kwargs = {
+            "parent_slug": self.event.slug,
+            "id": self.id
+        }
+        return reverse("events:eventimage-delete", kwargs=kwargs)
+
+    def get_htmx_edit_url(self):
+        kwargs = {
+            "parent_slug": self.event.slug,
+            "id": self.id
+        }
+        return reverse("events:hx-eventimage-update", kwargs=kwargs)

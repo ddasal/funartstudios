@@ -1,15 +1,17 @@
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator, EmptyPage,PageNotAnInteger
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.http.response import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 from django.db.models import Q
-from .forms import EventForm, EventStaffForm, EventCustomerForm, EventTipForm
-from.models import Event, EventCustomer, EventStaff, EventTip
+from .forms import EventForm, EventImageForm, EventStaffForm, EventCustomerForm, EventTipForm
+from .models import Event, EventCustomer, EventImages, EventStaff, EventTip
 from royaltyreports.models import RoyaltyReport
 from datetime import datetime, timedelta
+from django.views import View
+import io,csv
 
 # Create your views here.
 
@@ -194,6 +196,7 @@ def event_detail_hx_view(request, slug=None):
         new_staff_url = reverse("events:hx-staff-create", kwargs={"parent_slug": obj.slug})
         new_customer_url = reverse("events:hx-customer-create", kwargs={"parent_slug": obj.slug})
         new_tip_url = reverse("events:hx-tip-create", kwargs={"parent_slug": obj.slug})
+        new_image_url = reverse("events:hx-image-create", kwargs={"parent_slug": obj.slug})
     except:
         obj = None
     if obj is None:
@@ -202,7 +205,8 @@ def event_detail_hx_view(request, slug=None):
         "object": obj,
         "new_staff_url": new_staff_url,
         "new_customer_url": new_customer_url,
-        "new_tip_url": new_tip_url
+        "new_tip_url": new_tip_url,
+        "new_image_url": new_image_url
     }
     return render(request, "events/partials/detail.html", context)
  
@@ -237,12 +241,14 @@ def event_update_view(request, slug=None):
     new_staff_url = reverse("events:hx-staff-create", kwargs={"parent_slug": obj.slug})
     new_customer_url = reverse("events:hx-customer-create", kwargs={"parent_slug": obj.slug})
     new_tip_url = reverse("events:hx-tip-create", kwargs={"parent_slug": obj.slug})
+    new_image_url = reverse("events:hx-image-create", kwargs={"parent_slug": obj.slug})
     context = {
         "form": form,
         "object": obj,
         "new_staff_url": new_staff_url,
         "new_customer_url": new_customer_url,
-        "new_tip_url": new_tip_url
+        "new_tip_url": new_tip_url,
+        "new_image_url": new_image_url
     }
     if form.is_valid():
         obj.updated_by = request.user
@@ -402,12 +408,6 @@ def event_tip_delete_view(request, parent_slug=None, id=None):
 
 
 
-from django.shortcuts import render
-from django.http import HttpResponse,JsonResponse
-from datetime import datetime
-from django.views import View
-from .models import EventStaff
-import io,csv
 
 # @login_required
 class EventStaffUpload(View):
@@ -479,3 +479,96 @@ class EventCustomerUpload(View):
             success_url = reverse('events:list')
        
         return HttpResponse(returnmsg)
+
+
+
+@permission_required('events.change_eventimages')
+def event_image_update_hx_view(request, parent_slug=None, id=None):
+    if not request.htmx:
+        raise Http404
+    try:
+        parent_obj = Event.objects.get(slug=parent_slug)
+    except:
+        parent_obj = None
+    if parent_obj is None:
+        return HttpResponse("Not found.")
+
+    instance = None
+    if id is not None:
+        try:
+            instance = EventImages.objects.get(event=parent_obj, id=id)
+        except:
+            instance = None
+    form = EventImageForm(request.POST or None, request.FILES or None, instance=instance)
+    url = reverse("events:hx-image-create", kwargs={"parent_slug": parent_obj.slug})
+    if instance:
+        url = instance.get_htmx_edit_url()        
+    
+    context = {
+        "url": url,
+        "form": form,
+        "object": instance
+    }
+    if form.is_valid():
+        new_obj = form.save(commit=False)
+        if instance is None:
+            new_obj.event = parent_obj
+        new_obj.save()
+        context['object'] = new_obj
+        return render(request, "events/partials/image-inline.html", context)
+    
+    return render(request, "events/partials/image-form.html", context)
+
+
+
+
+# @permission_required('events.add_eventimage')
+# def event_image_update_hx_view(request, parent_slug=None):
+#     template_name = "events/upload-image.html"
+#     if request.htmx:
+#         template_name = "events/partials/image-form.html"
+#     try:
+#         parent_obj = Event.objects.get(slug=parent_slug)
+#     except:
+#         parent_obj = None
+#     if parent_obj is None:
+#         raise Http404
+#     form = EventImageForm(request.POST or None, request.FILES or None)
+#     if form.is_valid():
+#         obj = form.save(commit=False)
+#         obj.event = parent_obj
+#         obj.save()
+#         success_url = parent_obj.get_absolute_url()
+#         if request.htmx:
+#             headers = {
+#                 'HX-Redirect': success_url
+#             }
+#             return HttpResponse("Success", headers=headers)
+#         return redirect(success_url)
+
+#     return render(request, template_name, {"form":form})
+
+@permission_required('events.delete_eventimages')
+def event_image_delete_view(request, parent_slug=None, id=None):
+    try:
+        obj = EventImages.objects.get(event__slug=parent_slug, id=id)
+    except:
+        obj = None
+    if obj is None:
+        if request.htmx:
+            return HttpResponse('Not found')
+        raise Http404
+    if request.method == "POST":
+        title = obj.title
+        obj.delete()
+        success_url = reverse('events:detail', kwargs={"slug": parent_slug})
+        if request.htmx:
+            return render(request, "events/partials/image-inline-delete-response.html", {"title": title})
+        return redirect(success_url)
+
+    context = {
+        "object": obj
+    }
+    return render(request, "events/delete.html", context)
+
+

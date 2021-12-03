@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.db import models
 
-from events.models import Event, EventCustomer, EventStaff, EventTax, EventTip
+from events.models import Event, EventCustomer, EventImages, EventStaff, EventTax, EventTip
 
 # Register your models here.
 
@@ -15,13 +15,17 @@ class EventTipInline(admin.TabularInline):
     extra = 0
     readonly_fields = ['floor_split', 'stage_amount', 'floor_amount', 'timestamp', 'updated']
 
+class EventImageInline(admin.TabularInline):
+    model = EventImages
+    extra = 0
+
 class EventStaffInline(admin.TabularInline):
     model = EventStaff
     extra = 0
     readonly_fields = ['rate', 'prepaint_pay', 'hourly_pay', 'total_pay', 'timestamp', 'updated']
 
 class EventAdmin(admin.ModelAdmin):
-    inlines = [EventCustomerInline, EventStaffInline, EventTipInline]
+    inlines = [EventCustomerInline, EventStaffInline, EventTipInline, EventImageInline]
     list_display = ['title', 'date', 'time', 'updated']
     search_fields = ['title']
     readonly_fields = ['tax_rate', 'timestamp', 'updated', 'payroll_report', 'royalty_report']
