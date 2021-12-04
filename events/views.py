@@ -195,15 +195,15 @@ def event_detail_hx_view(request, slug=None):
         raise Http404
     try:
         obj = Event.objects.get(slug=slug)
-        revenue = EventCustomer.objects.filter(event_id=obj.id).aggregate(Sum('total_price'))
-        taxes = EventCustomer.objects.filter(event_id=obj.id).aggregate(Sum('taxes'))
-        labor = EventStaff.objects.filter(event_id=obj.id).aggregate(Sum('total_pay'))
-        customer_product_costs = EventCustomer.objects.filter(event_id=obj.id).aggregate(Sum('cost_factor'))
-        staff_product_costs = EventStaff.objects.filter(event_id=obj.id).aggregate(Sum('cost_factor'))
-        royalty_fees = Decimal(revenue['total_price__sum']) * Decimal(0.08)
-        loaded_labor = Decimal(labor['total_pay__sum']) * Decimal(1.075)
-        gp = Decimal(revenue['total_price__sum']) - Decimal(loaded_labor) - Decimal(customer_product_costs['cost_factor__sum']) - Decimal(staff_product_costs['cost_factor__sum']) - Decimal(royalty_fees) - Decimal(taxes['taxes__sum'])
-        formatted_gp = round(gp, 2)
+        # revenue = EventCustomer.objects.filter(event_id=obj.id).aggregate(Sum('total_price'))
+        # taxes = EventCustomer.objects.filter(event_id=obj.id).aggregate(Sum('taxes'))
+        # labor = EventStaff.objects.filter(event_id=obj.id).aggregate(Sum('total_pay'))
+        # customer_product_costs = EventCustomer.objects.filter(event_id=obj.id).aggregate(Sum('cost_factor'))
+        # staff_product_costs = EventStaff.objects.filter(event_id=obj.id).aggregate(Sum('cost_factor'))
+        # royalty_fees = Decimal(revenue['total_price__sum']) * Decimal(0.08)
+        # loaded_labor = Decimal(labor['total_pay__sum']) * Decimal(1.075)
+        # gp = Decimal(revenue['total_price__sum']) - Decimal(loaded_labor) - Decimal(customer_product_costs['cost_factor__sum']) - Decimal(staff_product_costs['cost_factor__sum']) - Decimal(royalty_fees) - Decimal(taxes['taxes__sum'])
+        # formatted_gp = round(gp, 2)
         new_staff_url = reverse("events:hx-staff-create", kwargs={"parent_slug": obj.slug})
         new_customer_url = reverse("events:hx-customer-create", kwargs={"parent_slug": obj.slug})
         new_tip_url = reverse("events:hx-tip-create", kwargs={"parent_slug": obj.slug})
@@ -218,7 +218,7 @@ def event_detail_hx_view(request, slug=None):
         "new_customer_url": new_customer_url,
         "new_tip_url": new_tip_url,
         "new_image_url": new_image_url,
-        "gp": formatted_gp
+        # "gp": formatted_gp
     }
     return render(request, "events/partials/detail.html", context)
  
