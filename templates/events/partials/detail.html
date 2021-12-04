@@ -49,7 +49,7 @@
                 {% endfor %} 
             </div>
             {% if object.status == 'p' %}
-                {% if perms.events.add_eventimage %}
+                {% if perms.events.add_eventimages %}
                     {% if new_image_url %}
                         <button class="btn btn-outline-success" hx-get="{{ new_image_url }}" hx-trigger="click" hx-target="#image-list" hx-swap="beforeend">Add Image</button>
                     {% endif %} 
