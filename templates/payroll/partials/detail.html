@@ -16,7 +16,7 @@
                 Pay Period: {{ object.start_date }} - {{ object.end_date }}
             </span><br />
             Last updated on : {{ object.updated }}<br />
-            <span class="d-print-none">Payroll Gross Amount: ${{ object.payroll_gross|intcomma|floatformat:'2' }}<br />
+            <span class="d-print-none">Payroll Gross Amount: ${{ object.payroll_gross|intcomma }}<br />
             Total Staff Members in Pay Report: {{ object.staff_count }}</span>
 
         </p>
