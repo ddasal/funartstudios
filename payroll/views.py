@@ -1,4 +1,5 @@
 import decimal
+from datetime import timedelta
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator, EmptyPage,PageNotAnInteger
@@ -302,7 +303,12 @@ def report_detail_hx_view(request, id=None):
 
 @permission_required('payroll.add_report')
 def report_create_view(request):
-    form = ReportForm(request.POST or None)
+    last_report = PayReport.objects.all().order_by('-end_date').first()
+    new_start = last_report.end_date + timedelta(days=1)
+    new_end = new_start + timedelta(days=13)
+    new_payday = new_end + timedelta(days=5)
+    initial_form_data = {'start_date': new_start, 'end_date': new_end, 'pay_date': new_payday}
+    form = ReportForm(request.POST or None, initial=initial_form_data)
     context = {
         "form": form
     }

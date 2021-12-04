@@ -12,6 +12,7 @@ from django.db.models import Q, Sum
 from royaltyreports.models import RoyaltyReport
 from square.models import Square
 from decimal import Decimal
+from datetime import timedelta
 
 # Create your views here.
 
@@ -224,7 +225,11 @@ def report_detail_hx_view(request, id=None):
 
 @permission_required('royaltyreports.add_report')
 def report_create_view(request):
-    form = ReportForm(request.POST or None)
+    last_report = RoyaltyReport.objects.all().order_by('-end_date').first()
+    new_start = last_report.end_date + timedelta(days=1)
+    new_end = new_start + timedelta(days=6)
+    initial_form_data = {'start_date': new_start, 'end_date': new_end}
+    form = ReportForm(request.POST or None, initial=initial_form_data)
     context = {
         "form": form
     }
