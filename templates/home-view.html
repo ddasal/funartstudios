@@ -10,6 +10,7 @@
     <h3>News Articles</h3>
   </div>
   <div class="col-12 col-md-8" style="text-align: right;">
+      {% if next_event %}Our Next Event is: <a href="{% url 'events:detail' slug=next_event.slug %}">{{ next_event.title }}</a> on {{ next_event.date | date:"l, M jS" }} at {{ next_event.time }} {% else %} No upcoming Events {% endif %}
       {% if perms.articles.add_article %} 
       <a class="btn btn-outline-success" href="{% url 'articles:create' %}">Create article</a>  
       {% endif %} 
