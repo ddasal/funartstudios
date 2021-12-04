@@ -20,7 +20,15 @@
         
         <p>Effective Tax Rate: {{ object.tax_rate_percentage }}%<br />
         Royalty Report ID: {{ object.royalty_report.id }}<br />
-        Event ID: {{ object.id }}</p>
+        Event ID: {{ object.id }}<br />
+        {% if perms.payroll.view_report %}
+            {% if gp < 0 %}
+                <mark>Event GP: ${{ gp }}</mark>
+            {% else %}
+                Event GP: ${{ gp }}
+            {% endif %} 
+            <a class="btn btn-sm btn-outline-primary" href="{{ object.get_absolute_url }}">Refresh</a>
+        {% endif %}</p>
     </div>
 
 

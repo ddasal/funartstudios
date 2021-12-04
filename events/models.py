@@ -179,6 +179,7 @@ class EventStaff(models.Model):
     event_product = models.ForeignKey(Product, on_delete=CASCADE, null=True, blank=True, related_name='event_product', default=1)
     event_qty = models.IntegerField(default=0, null=True, blank=True)
     typical_hours = models.DecimalField(decimal_places=2, max_digits=4, null=False, blank=False, default=0.00)
+    cost_factor = models.DecimalField(decimal_places=2, max_digits=6, default=0.0, null=True, blank=True)
     status = models.CharField(max_length=1, choices=PayStatus.choices, default=PayStatus.PENDING)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -235,6 +236,20 @@ class EventStaff(models.Model):
                 self.rate = pay_rate[0][1]
             elif self.role == 't':
                 self.rate = pay_rate[0][2]
+
+        prepaint_cost_factor = Decimal(0.0)
+        event_cost_factor = Decimal(0.0)
+
+        if self.prepaint_qty > 0:
+            temp_prepaint_cost = list(PurchaseItem.objects.values_list('price_each').filter(product=self.prepaint_product, date__lte=self.event.date).order_by('-date').first())
+            prepaint_cost_factor = Decimal(temp_prepaint_cost[0]) * self.prepaint_qty
+
+        if self.event_qty > 0:
+            temp_event_cost = list(PurchaseItem.objects.values_list('price_each').filter(product=self.event_product, date__lte=self.event.date).order_by('-date').first())
+            event_cost_factor = Decimal(temp_event_cost[0]) * self.event_qty
+
+        self.cost_factor = Decimal(prepaint_cost_factor) + Decimal(event_cost_factor)
+
         event_length = Event.objects.get(id=self.event.id)
         self.typical_hours = Decimal(event_length.length) + Decimal(1.5)
         self.hourly_pay = Decimal(self.rate) * Decimal(self.hours)
@@ -337,11 +352,11 @@ class EventCustomer(models.Model):
         elif self.type == 'r':
             try:
                 cost_factor = list(PurchaseItem.objects.values_list('price_each').filter(product=self.product, date__lte=self.event.date).order_by('-date').first())
-                self.cost_factor = cost_factor[0] * self.quantity
+                self.cost_factor = cost_factor[0] * self.total_customer_qty
                 self.taxes = self.cost_factor * self.event.tax_rate
             except:
                 cost_factor = Decimal(1.99)
-                self.cost_factor = cost_factor * self.quantity
+                self.cost_factor = cost_factor * self.total_customer_qty
                 self.taxes = self.cost_factor * self.event.tax_rate
 
             self.total_price = self.subtotal_price

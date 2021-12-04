@@ -6,14 +6,14 @@
                 <td style="text-align: right;">
                     {% if perms.events.change_eventcustomer %} 
                         {% if object.status == 'p' %}
-                            <button class="btn btn-outline-primary" hx-trigger='click' hx-get='{{ object.get_htmx_edit_url }}' hx-target='#customer-{{object.id}}'>Edit</button>
+                            <button class="btn btn-sm btn-outline-primary" hx-trigger='click' hx-get='{{ object.get_htmx_edit_url }}' hx-target='#customer-{{object.id}}'>Edit</button>
                         {% endif %}
                     {% endif %}
                     {% if perms.events.delete_eventcustomer %}
                         {% if object.status == 'p' %}
-                            <a class="btn btn-outline-danger" hx-confirm='Remove {{object.quantity }} x {{object.get_type_display }} from event?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#customer-{{object.id}}' hx-swap='outerHTML'>Remove</a>
+                            <a class="btn btn-sm btn-outline-danger" hx-confirm='Remove {{object.quantity }} x {{object.get_type_display }} from event?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#customer-{{object.id}}' hx-swap='outerHTML'>Remove</a>
                         {% elif object.status == 'c' %}
-                            <a class="btn btn-outline-secondary" hx-trigger='click'>Royalty Sent</a>
+                            <a class="btn btn-sm btn-outline-secondary" hx-trigger='click'>Royalty Sent</a>
                         {% endif %}
                     {% endif %} 
                 </td>

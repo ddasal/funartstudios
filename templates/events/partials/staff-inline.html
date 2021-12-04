@@ -6,16 +6,16 @@
                 <td style="text-align: right;">
                     {% if perms.events.change_eventstaff %} 
                         {% if object.status == 'p' %}
-                            <button class="btn btn-outline-primary" hx-trigger='click' hx-get='{{ object.get_htmx_edit_url }}' hx-target='#staff-{{object.id}}'>Edit</button>
+                            <button class="btn btn-sm btn-outline-primary" hx-trigger='click' hx-get='{{ object.get_htmx_edit_url }}' hx-target='#staff-{{object.id}}'>Edit</button>
                         {% endif %}    
                     {% endif %}
                     {% if perms.events.delete_eventstaff %}
                         {% if object.status == 'p' %}
-                            <a class="btn btn-outline-danger" hx-confirm='Remove {{object.user.first_name }} {{object.user.last_name}} from event?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#staff-{{object.id}}' hx-swap='outerHTML'>Remove</a>
+                            <a class="btn btn-sm btn-outline-danger" hx-confirm='Remove {{object.user.first_name }} {{object.user.last_name}} from event?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#staff-{{object.id}}' hx-swap='outerHTML'>Remove</a>
                         {% elif  object.status == 'a' %} 
-                            <a class="btn btn-outline-warning" hx-trigger='click'>Approved</a>
+                            <a class="btn btn-sm btn-outline-warning" hx-trigger='click'>Approved</a>
                         {% elif object.status == 'c' %}
-                        <a class="btn btn-outline-secondary" hx-trigger='click'>Payroll Sent</a>
+                        <a class="btn btn-sm btn-outline-secondary" hx-trigger='click'>Payroll Sent</a>
                         {% endif %}
                     {% endif %} 
                 </td>

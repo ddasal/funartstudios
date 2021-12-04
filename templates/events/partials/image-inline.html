@@ -5,7 +5,7 @@
                 <td><b>{{ object.title }} - <a download="{{ object.title }}" href="{{object.upload.url }}">Download</a></b></td>
                 <td style="text-align: right;">
                     {% if perms.events.delete_eventimage %}
-                            <a class="btn btn-outline-danger" hx-confirm='Remove {{object.title }} image from event?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#image-{{object.id}}' hx-swap='outerHTML'>Remove</a>
+                            <a class="btn btn-sm btn-outline-danger" hx-confirm='Remove {{object.title }} image from event?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#image-{{object.id}}' hx-swap='outerHTML'>Remove</a>
                     {% endif %} 
                 </td>
             </tr>
