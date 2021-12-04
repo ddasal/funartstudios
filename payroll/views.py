@@ -10,6 +10,7 @@ from django.urls import reverse
 from events.models import Event, EventCustomer, EventStaff, EventTip
 from products.models import Product, PurchaseItem, PurchaseOrder
 from payroll.forms import ReportForm
+from square.models import Square
 from django.db.models import Q
 # from .forms import EventForm, EventStaffForm, EventCustomerForm
 from payroll.models import PayReport
@@ -95,6 +96,14 @@ def report_detail_hx_view(request, id=None):
         raise Http404
     try:
         obj = PayReport.objects.get(id=id)
+        square = Square.objects.filter(date__range=(obj.start_date, obj.end_date), tip__gt=0).order_by('date', 'time')
+        square_tip_total = 0
+        square_tip_total_reduced = 0
+        for each in square:
+            each.tip_reduced = round(each.tip * Decimal(.97), 2)
+            square_tip_total = round(Decimal(square_tip_total) + Decimal(each.tip), 2)
+        square_tip_total_reduced = round(Decimal(square_tip_total) * Decimal(0.97), 2)
+        square_last_entry_date = Square.objects.latest('date', 'time')
         events = Event.objects.filter(date__range=(obj.start_date, obj.end_date)).order_by('date', 'time').annotate(worker_count=Count('eventstaff')).prefetch_related()
         staff_count = EventStaff.objects.all().filter(event__payroll_report=obj).order_by('user').distinct('user').count()
         payroll_gross = Decimal(0.0)
@@ -252,7 +261,7 @@ def report_detail_hx_view(request, id=None):
         print(total_stage_commission_pay)
         total_total_hours = total_stage_hours + total_floor_hours + total_team_hours
         total_total_hourly_pay = total_stage_hourly_pay + total_floor_hourly_pay + total_team_hourly_pay
-        total_total_tip_pay = total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay
+        total_total_tip_pay = round(total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay, 2)
         total_total_commission_pay = total_stage_commission_pay + total_floor_commission_pay + total_team_commission_pay
         total_stage_pay = total_stage_hourly_pay + total_stage_tip_pay + total_stage_commission_pay
         total_floor_pay = total_floor_hourly_pay + total_floor_tip_pay + total_floor_commission_pay
@@ -262,10 +271,11 @@ def report_detail_hx_view(request, id=None):
         obj.payroll_gross = total_total_pay
         obj.save()
 
-    # except Exception as e:
-    #     import sys
-    #     obj = None
-    #     msg = "error on line {}".format(sys.exc_info()[-1].tb_lineno)
+        if square_tip_total_reduced == total_total_tip_pay:
+            sq_matches = True
+        else:
+            sq_matches = False
+
     except:
         obj = None
     if obj is None:
@@ -295,7 +305,12 @@ def report_detail_hx_view(request, id=None):
         "total_stage_pay": total_stage_pay,
         "total_floor_pay": total_floor_pay,
         "total_team_pay": total_team_pay,
-        "total_total_pay": total_total_pay
+        "total_total_pay": total_total_pay,
+        "square": square,
+        "square_last_entry_date": square_last_entry_date,
+        "square_tip_total_reduced": square_tip_total_reduced,
+        "square_tip_total": square_tip_total,
+        "sq_matches": sq_matches
     }
     return render(request, "payroll/partials/detail.html", context)
  

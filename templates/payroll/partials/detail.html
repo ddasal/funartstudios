@@ -1,7 +1,7 @@
 {% load humanize %}
 <div class="row">
-    <div class="col-12 col-7-auto">
-        <h2>Payroll Report Pay Date: {{object.pay_date}}
+    <div class="col-12 col-md-7">
+        <h2>Payroll Pay Date: {{object.pay_date}}
             {% if object.get_edit_url %}
             <small class=".d-print-none">
                 <a class="btn btn-outline-secondary d-print-none" href="{% url 'payroll:list' %}">Back</a>
@@ -30,19 +30,27 @@
                 {% endif %}
             {% endif %} 
         </p>
+        <p><b><a href="{% url 'square:import' %}">Import</a> Square transactions prior to submitting report</b><br />
+            <small>{% if square_last_entry_date.date < object.end_date %}
+                <mark> Most Recent Imported Transaction Date:<br />{{ square_last_entry_date.date | date:"D, n/j/y" }} at {{ square_last_entry_date.time | date:"g:i a" }}</small></mark>
+                {% else %} 
+                Most Recent Imported Transaction Date:<br />{{ square_last_entry_date.date | date:"D, n/j/y" }} at {{ square_last_entry_date.time | date:"g:i a" }}</small>
+                {% endif %}
+        </p>
     </div>
     <div class="col-12 col-md-5 d-print-none">
         {% if events_without_workers > 0 %}
         <table class="table table-sm table-warning">
             <thead>
                 <th>Events in Pay Period w/o Staffing</th>
-            </thead>
+                <th style="text-align: right;"><a class="btn btn-sm btn-outline-primary" href="{{ object.get_absolute_url }}">Refresh</a>
+                </thead>
             <tbody>
                 {% for event in events %}
                     {% if event.worker_count == 0 %}
                     <tr>
-                        <td>
-                            <a href="{% url 'events:detail' slug=event.slug %}" target="_blank">{{ event.name }}</a> on {{ event.date}} at {{ event.time }}</li>
+                        <td colspan="2">
+                            <a href="{% url 'events:detail' slug=event.slug %}" target="_blank">{{ event.name }}</a> on {{ event.date}} at {{ event.time }}
                         </td>
                     </tr>
                     {% endif %} 
@@ -50,6 +58,34 @@
             </tbody>
         </table>
         {% endif %}
+        {% if square %}
+        <table class="table table-sm">
+            <thead>
+                <th>Square Tips: ${{ square_tip_total_reduced }} ({{ square_tip_total }} w/o fees)
+                    {% if sq_matches is False %}
+                    <br /><span style="background-color: red; color: white;">Square Doesn't Match Report: ${{total_total_tip_pay}}</span>
+                    {% else %}
+                    <br /><small><a style="color: green;">Square Tips Match Report: ${{total_total_tip_pay}}</a> </small>
+                    {% endif %}
+                </th>
+                <th style="text-align: right;"><a class="btn btn-sm btn-outline-primary" href="{{ object.get_absolute_url }}">Refresh</a>
+                </th>
+            </thead>
+            <tbody>
+                {% for sq in square %}
+                    <tr>
+                        <td>
+                            ${{ sq.tip_reduced|intcomma }} (<span id="tip-{{sq.id}}">{{ sq.tip|intcomma }}</span>)</a> on {{ sq.date}} at {{ sq.time }}<br />by {{ sq.staff_name }}
+                        </td>
+                        <td style="text-align: right;">
+                            <button onclick="copyToClipboard('#tip-{{sq.id}}')">Copy</button>
+                        </td>
+                    </tr>
+                {% endfor %} 
+            </tbody>
+        </table>
+        {% endif %}
+    
     </div>
 
 </div>
@@ -151,7 +187,7 @@
                         <td style="text-align: right;">${{ total_stage_tip_pay|floatformat:'2' }}</td>
                         <td style="text-align: right;">${{ total_floor_tip_pay|floatformat:'2' }}</td>
                         <td style="text-align: right;">${{ total_team_tip_pay|floatformat:'2' }}</td>
-                        <th style="text-align: right;">${{ total_total_tip_pay|floatformat:'2' }}</th>
+                        <th style="text-align: right;">${{ total_total_tip_pay }}</th>
                     </tr>
                     <tr>
                         <th>Prepaints & Commissions</th>
