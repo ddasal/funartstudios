@@ -11,6 +11,9 @@ from django.db.models import Q
 
 @login_required
 def home_view(request, *args, **kwargs): 
+    # next_event = Event.objects.filter(date__gte=timezone.now)
+    now = timezone.now()
+    print(now)
     if request.method == "POST":
         query = request.POST.get('q')
         lookups = Q(title__icontains=query) | Q(content__icontains=query)  
