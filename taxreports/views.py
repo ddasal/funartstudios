@@ -18,7 +18,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
 
-@permission_required('taxreports.view_report')
+@permission_required('taxreports.view_taxreport') 
 def report_list_view(request):
     qs = TaxReport.objects.all().order_by('-start_date')
     page = request.GET.get('page', 1)
@@ -37,7 +37,7 @@ def report_list_view(request):
     }
     return render(request, "taxreports/list.html", context)
 
-@permission_required('taxreports.view_report')
+@permission_required('taxreports.view_taxreport')
 def report_detail_view(request, id=None):
     hx_url = reverse("taxes:hx-detail", kwargs={"id": id})
     report_obj = TaxReport.objects.get(id=id)
@@ -48,7 +48,7 @@ def report_detail_view(request, id=None):
     return render(request, "taxreports/detail.html", context)
 
 
-@permission_required('taxreports.delete_report')
+@permission_required('taxreports.delete_taxreport')
 def report_delete_view(request, id=None):
     try:
         obj = TaxReport.objects.get(id=id)
@@ -88,7 +88,7 @@ def report_delete_view(request, id=None):
     return render(request, "taxreports/delete.html", context)
 
 
-@permission_required('taxreports.view_report')
+@permission_required('taxreports.view_taxreport')
 def report_detail_hx_view(request, id=None):
     if not request.htmx:
         raise Http404
@@ -154,7 +154,7 @@ def report_detail_hx_view(request, id=None):
  
 
 
-@permission_required('royaltyreports.add_report')
+@permission_required('royaltyreports.add_taxreport')
 def report_create_view(request):
     form = ReportForm(request.POST or None)
     context = {
@@ -172,7 +172,7 @@ def report_create_view(request):
         return redirect(obj.get_absolute_url())
     return render(request, "taxreports/create-update.html", context) 
 
-@permission_required('taxreports.change_report')
+@permission_required('taxreports.change_taxreport')
 def report_update_view(request, id=None):
     obj = get_object_or_404(TaxReport, id=id)
     form = ReportForm(request.POST or None, instance=obj)
@@ -188,7 +188,7 @@ def report_update_view(request, id=None):
     return render(request, "taxreports/create-update.html", context) 
 
 
-@permission_required('taxreports.change_report')
+@permission_required('taxreports.change_taxreport')
 def report_hx_mark_complete(request, id=None):
     # if not request.htmx:
     #     raise Http404
@@ -214,7 +214,7 @@ def report_hx_mark_complete(request, id=None):
         return redirect(success_url)
 
 
-@permission_required('taxreports.change_report')
+@permission_required('taxreports.change_taxreport')
 def report_hx_mark_pending(request, id=None):
     try:
         parent_obj = TaxReport.objects.get(id=id)
