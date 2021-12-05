@@ -25,6 +25,12 @@
                     <th style="text-align: right;"><i>{{ staff_member.total_total_hours|floatformat:'2' }}</i></th>
                 </tr>
                 <tr>
+                    <th>Rate</th>
+                    <td style="text-align: right;">{% if staff_member.rate_stage %}${{ staff_member.rate_stage|floatformat:'2' }}/hr{% endif %}</td>
+                    <td style="text-align: right;">{% if staff_member.rate_floor %}${{ staff_member.rate_floor|floatformat:'2' }}/hr{% endif %}</td>
+                    <td style="text-align: right;">{% if staff_member.rate_team %}${{ staff_member.rate_team|floatformat:'2' }}/hr{% endif %}</td>
+                    <th style="text-align: right;"></th>
+                <tr>
                     <th>Hourly Pay</th>
                     <td style="text-align: right;">${{ staff_member.total_stage_hourly_pay|floatformat:'2' }}</td>
                     <td style="text-align: right;">${{ staff_member.total_floor_hourly_pay|floatformat:'2' }}</td>

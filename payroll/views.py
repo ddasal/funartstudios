@@ -574,18 +574,21 @@ def report_staff_summary_hx_view(request, id=None):
             event_staff = EventStaff.objects.filter(event__payroll_report=obj, user=staff['user']).order_by('user')
             for item in event_staff:
                 if item.role == 's':
+                    staff['rate_stage'] = item.rate
                     staff['total_stage_hours'] = staff['total_stage_hours'] + item.hours
                     staff['total_stage_hourly_pay'] = staff['total_stage_hourly_pay'] + item.hourly_pay
                     staff['total_stage_tip_pay'] = staff['total_stage_tip_pay'] + item.tip_pay
                     staff['total_stage_commission_pay'] = staff['total_stage_commission_pay'] + item.commission_pay + item.prepaint_pay
                     staff['total_stage_pay'] = staff['total_stage_hourly_pay'] + staff['total_stage_commission_pay'] + staff['total_stage_tip_pay']
                 elif item.role == 'f':
+                    staff['rate_floor'] = item.rate
                     staff['total_floor_hours'] = staff['total_floor_hours'] + item.hours
                     staff['total_floor_hourly_pay'] = staff['total_floor_hourly_pay'] + item.hourly_pay
                     staff['total_floor_tip_pay'] = staff['total_floor_tip_pay'] + item.tip_pay
                     staff['total_floor_commission_pay'] = staff['total_floor_commission_pay'] + item.commission_pay + item.prepaint_pay
                     staff['total_floor_pay'] = staff['total_floor_hourly_pay'] + staff['total_floor_commission_pay'] + staff['total_floor_tip_pay']
                 elif item.role == 't':
+                    staff['rate_team'] = item.rate
                     staff['total_team_hours'] = staff['total_team_hours'] + item.hours
                     staff['total_team_hourly_pay'] = staff['total_team_hourly_pay'] + item.hourly_pay
                     staff['total_team_tip_pay'] = staff['total_team_tip_pay'] + item.tip_pay
