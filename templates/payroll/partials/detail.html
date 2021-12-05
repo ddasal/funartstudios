@@ -1,7 +1,7 @@
 {% load humanize %}
 <div class="row">
     <div class="col-12 col-md-7">
-        <h2>Payroll Pay Date: {{object.pay_date}}
+        <h2>Payroll Date: {{object.pay_date}}
             {% if object.get_edit_url %}
             <small class=".d-print-none">
                 <a class="btn btn-outline-secondary d-print-none" href="{% url 'payroll:list' %}">Back</a>
@@ -15,7 +15,7 @@
             <span class="lead">
                 Pay Period: {{ object.start_date }} - {{ object.end_date }}
             </span><br />
-            Last updated on : {{ object.updated }}<br />
+            <span class="d-print-none">Last updated on : {{ object.updated }}<br /></span>
             <span class="d-print-none">Payroll Gross Amount: ${{ total_total_pay|floatformat:'2' }}<br />
             Total Staff Members in Pay Report: {{ object.staff_count }}</span>
 
@@ -30,7 +30,7 @@
                 {% endif %}
             {% endif %} 
         </p>
-        <p><b><a href="{% url 'square:import' %}">Import</a> Square transactions prior to submitting report</b><br />
+        <p class="d-print-none"><b><a href="{% url 'square:import' %}">Import</a> Square transactions prior to submitting report</b><br />
             <small>{% if square_last_entry_date.date < object.end_date %}
                 <mark> Most Recent Imported Transaction Date:<br />{{ square_last_entry_date.date | date:"D, n/j/y" }} at {{ square_last_entry_date.time | date:"g:i a" }}</small></mark>
                 {% else %} 
@@ -59,7 +59,7 @@
         </table>
         {% endif %}
         {% if square %}
-        <table class="table table-sm">
+        <table class="table table-sm .d-print-none">
             <thead>
                 <th>Square Tips: ${{ square_tip_total_reduced }} ({{ square_tip_total }} w/o fees)
                     {% if sq_matches is False %}
