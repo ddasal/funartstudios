@@ -19,12 +19,12 @@ from decimal import Decimal
 
 @permission_required('events.view_event')
 def event_list_view(request):
-    N_DAYS_AGO = 5
+    N_DAYS_AGO = 30
     N_DAYS_FUTURE = 2
     today = datetime.now()    
     n_days_ago = today - timedelta(days=N_DAYS_AGO)
     n_days_future = today + timedelta(days=N_DAYS_FUTURE)
-    date_min = '2020-03-31' #n_days_ago.strftime("%Y-%m-%d")
+    date_min = n_days_ago.strftime("%Y-%m-%d") # '2020-03-31'
     date_max = n_days_future.strftime("%Y-%m-%d")
     query = ''
     qs = Event.objects.filter(active=True, date__range=[date_min, date_max]).order_by('-date', '-time')
