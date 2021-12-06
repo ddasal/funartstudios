@@ -18,6 +18,7 @@ class ProductType(models.TextChoices):
     WOODBOARD = 'm', 'Wood Board (MDF)'
     WOODPLANK = 'p', 'Wood Plank'
     OTHER = 'o', 'Other'
+    RETAIL = 'r', 'Retail'
 
 
 class ProductQuerySet(models.QuerySet):

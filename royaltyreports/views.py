@@ -149,7 +149,7 @@ def report_detail_hx_view(request, id=None):
             each.temp_cost_factors = sum(temp_cost_factors)
 
 
-        pi_qs = PurchaseItem.objects.filter(date__lte=obj.end_date)
+        pi_qs = PurchaseItem.objects.filter(date__lte=obj.end_date).exclude(product__type='r')
         inventory_total = 0
         for each in pi_qs:
             each.temp_received_quantity = 0
@@ -160,7 +160,7 @@ def report_detail_hx_view(request, id=None):
         
         for item in event_qs:
             item.temp_customer_used = 0
-            temp_customer_each = [int(item.total_customer_qty) for item in EventCustomer.objects.filter(event=item.id)]
+            temp_customer_each = [int(item.total_customer_qty) for item in EventCustomer.objects.filter(event=item.id).exclude(product__type='r')]
             item.temp_customer_used = sum(temp_customer_each)
 
             item.temp_prepaint_used = 0
@@ -174,7 +174,7 @@ def report_detail_hx_view(request, id=None):
 
             inventory_total = inventory_total - item.temp_customer_used - item.temp_prepaint_used - item.temp_event_used
 
-        customer_surfaces_used_qs = EventCustomer.objects.filter(event__date__range=(obj.start_date, obj.end_date)).aggregate(Sum('total_customer_qty'))
+        customer_surfaces_used_qs = EventCustomer.objects.filter(event__date__range=(obj.start_date, obj.end_date)).exclude(product__type='r').aggregate(Sum('total_customer_qty'))
         staff_event_surfaces_used_qs = EventStaff.objects.filter(event__date__range=(obj.start_date, obj.end_date)).aggregate(Sum('event_qty'))
         staff_prepaint_surfaces_used_qs = EventStaff.objects.filter(event__date__range=(obj.start_date, obj.end_date)).aggregate(Sum('prepaint_qty'))
         report_surface_count = customer_surfaces_used_qs.get('total_customer_qty__sum') + staff_event_surfaces_used_qs.get('event_qty__sum') + staff_prepaint_surfaces_used_qs.get('prepaint_qty__sum')
