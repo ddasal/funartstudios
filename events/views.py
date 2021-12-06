@@ -19,8 +19,8 @@ from decimal import Decimal
 
 @permission_required('events.view_event')
 def event_list_view(request):
-    N_DAYS_AGO = 10
-    N_DAYS_FUTURE = 5
+    N_DAYS_AGO = 5
+    N_DAYS_FUTURE = 2
     today = datetime.now()    
     n_days_ago = today - timedelta(days=N_DAYS_AGO)
     n_days_future = today + timedelta(days=N_DAYS_FUTURE)
