@@ -29,7 +29,7 @@ print(DEBUG)
 
 ALLOWED_HOSTS = []
 if not DEBUG:
-    ALLOWED_HOSTS += [os.environ.get('DJANGO_ALLOWED_HOST')]
+    ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOST').split(' ')
 print(ALLOWED_HOSTS)
 
 
