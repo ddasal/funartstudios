@@ -211,16 +211,18 @@ def event_detail_hx_view(request, slug=None):
                 loaded_labor = Decimal(0.0)
             else:
                 loaded_labor = Decimal(labor['total_pay__sum']) * Decimal(1.075)
-            customer_product_costs = EventCustomer.objects.filter(event_id=obj.id).aggregate(Sum('cost_factor'))
+            customer_product_costs_only = EventCustomer.objects.filter(event_id=obj.id).aggregate(Sum('product_cost')) 
+            if customer_product_costs_only['product_cost__sum'] is None:
+                customer_product_costs_only['product_cost__sum'] = Decimal(0.0)
+            customer_product_costs = EventCustomer.objects.filter(event_id=obj.id).aggregate(Sum('cost_factor')) 
             if customer_product_costs['cost_factor__sum'] is None:
                 customer_product_costs['cost_factor__sum'] = Decimal(0.0)
             staff_product_costs = EventStaff.objects.filter(event_id=obj.id).aggregate(Sum('cost_factor'))
             if staff_product_costs['cost_factor__sum'] is None:
                 staff_product_costs['cost_factor__sum'] = Decimal(0.0)
             
-            gp = Decimal(revenue['total_price__sum']) - Decimal(loaded_labor) - Decimal(customer_product_costs['cost_factor__sum']) - Decimal(staff_product_costs['cost_factor__sum']) - Decimal(royalty_fees) - Decimal(taxes['taxes__sum'])
+            gp = Decimal(revenue['total_price__sum']) - Decimal(loaded_labor) - Decimal(customer_product_costs_only['product_cost__sum']) - Decimal(staff_product_costs['cost_factor__sum']) - Decimal(royalty_fees) - Decimal(taxes['taxes__sum'])
             formatted_gp = round(gp, 2)
-            print(formatted_gp)
         except Exception as e:
             print(e)
             formatted_gp = Decimal(0.0)

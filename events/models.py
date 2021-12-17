@@ -310,6 +310,7 @@ class EventCustomer(models.Model):
     total_customer_qty = models.IntegerField(default=0, null=False, blank=False)
     subtotal_price = models.DecimalField(decimal_places=2, max_digits=6, default=0.0, null=False, blank=False)
     cost_factor = models.DecimalField(decimal_places=2, max_digits=6, default=0.0, null=True, blank=True)
+    product_cost = models.DecimalField(decimal_places=2, max_digits=6, default=0.0, null=True, blank=True)
     taxes = models.DecimalField(decimal_places=2, max_digits=5, default=0.0, null=False, blank=False)
     total_price = models.DecimalField(decimal_places=2, max_digits=6, default=0.0, null=False, blank=False)
     status = models.CharField(max_length=1, choices=CustomerStatus.choices, default=CustomerStatus.PENDING)
@@ -345,14 +346,29 @@ class EventCustomer(models.Model):
             self.taxes = self.subtotal_price * self.event.tax_rate
             self.total_price = self.subtotal_price + self.taxes
             self.cost_factor = self.quantity * self.price
+            try:
+                product_cost = list(PurchaseItem.objects.values_list('price_each').filter(product=self.product, date__lte=self.event.date).order_by('-date').first())
+                self.product_cost = product_cost[0] * self.total_customer_qty
+            except:
+                product_cost = Decimal(1.99)
+                self.product_cost = product_cost * self.total_customer_qty
+
         elif self.type == 'p':
             self.taxes = self.subtotal_price * self.event.tax_rate
             self.total_price = self.subtotal_price + self.taxes
             self.cost_factor = self.quantity * self.price
+            try:
+                product_cost = list(PurchaseItem.objects.values_list('price_each').filter(product=self.product, date__lte=self.event.date).order_by('-date').first())
+                self.product_cost = product_cost[0] * self.total_customer_qty
+            except:
+                product_cost = Decimal(1.99)
+                self.product_cost = product_cost * self.total_customer_qty
+
         elif self.type == 'r':
             try:
                 cost_factor = list(PurchaseItem.objects.values_list('price_each').filter(product=self.product, date__lte=self.event.date).order_by('-date').first())
                 self.cost_factor = cost_factor[0] * self.total_customer_qty
+                self.product_cost = self.cost_factor
                 self.taxes = self.cost_factor * self.event.tax_rate
             except:
                 cost_factor = Decimal(1.99)
