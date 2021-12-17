@@ -555,33 +555,6 @@ def event_image_update_hx_view(request, parent_slug=None, id=None):
 
 
 
-
-# @permission_required('events.add_eventimage')
-# def event_image_update_hx_view(request, parent_slug=None):
-#     template_name = "events/upload-image.html"
-#     if request.htmx:
-#         template_name = "events/partials/image-form.html"
-#     try:
-#         parent_obj = Event.objects.get(slug=parent_slug)
-#     except:
-#         parent_obj = None
-#     if parent_obj is None:
-#         raise Http404
-#     form = EventImageForm(request.POST or None, request.FILES or None)
-#     if form.is_valid():
-#         obj = form.save(commit=False)
-#         obj.event = parent_obj
-#         obj.save()
-#         success_url = parent_obj.get_absolute_url()
-#         if request.htmx:
-#             headers = {
-#                 'HX-Redirect': success_url
-#             }
-#             return HttpResponse("Success", headers=headers)
-#         return redirect(success_url)
-
-#     return render(request, template_name, {"form":form})
-
 @permission_required('events.delete_eventimages')
 def event_image_delete_view(request, parent_slug=None, id=None):
     try:
