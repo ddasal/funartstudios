@@ -100,7 +100,7 @@ def report_detail_hx_view(request, id=None):
         square_tip_total = 0
         square_tip_total_reduced = 0
         for each in square:
-            each.tip_reduced = round(each.tip * Decimal(.97), 2)
+            each.tip_reduced = round(Decimal(each.tip) * Decimal(.97), 2)
             square_tip_total = round(Decimal(square_tip_total) + Decimal(each.tip), 2)
         square_tip_total_reduced = round(Decimal(square_tip_total) * Decimal(0.97), 2)
         square_last_entry_date = Square.objects.latest('date', 'time')
