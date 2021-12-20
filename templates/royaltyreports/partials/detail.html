@@ -99,7 +99,7 @@
                 </tfoot>                 
             </table>
             <p>
-                <b>Inventory Count:</b> <span id="inventory">{{ inventory_total|intcomma }}</span>
+                <b>Inventory Count:</b> <span id="inventory">{{ inventory_total }}</span>
                 <button onclick="copyToClipboard('#inventory')">Copy</button>
             </p>
             <p><b>Total Kits Sold:</b> {{ report_kits }} for ${{ kit_gross_revenue }} in revenue. <small>(${{ kit_adjustments}} in taxes.)</small><br />
