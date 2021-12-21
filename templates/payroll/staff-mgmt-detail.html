@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %} 
+    Staff Payroll Report: {{ report_obj.pay_date }}
+{% endblock title %} 
+
+{% block content %}
+
+<div hx-get="{{ hx_url }}" hx-trigger='revealed'>
+    <div class="htmx-indicator">Loading...</div>
+</div>
+
+{% endblock content %} 

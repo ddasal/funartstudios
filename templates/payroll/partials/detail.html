@@ -113,7 +113,7 @@
                 {% for event in events %}
                     {% for staff in event.get_eventstaff_children %}
                         <tr>
-                            <td><b>{{ staff.user.first_name }} {{ staff.user.last_name }}</b><br />as {{ staff.get_role_display }}</td>
+                            <td><b><a href="{% url 'payroll:staff-mgmt-detail' id=object.id staff_id=staff.user.id %}">{{ staff.user.first_name }} {{ staff.user.last_name }}</a></b><br />as {{ staff.get_role_display }}</td>
                             <td><a href="{% url 'events:detail' slug=staff.event.slug %}" target="_blank">{{ staff.event.name }}</a><br />
                                  on {{ staff.event.date }} at {{ staff.event.time }}</td>
                             <td>{{ staff.event.length }}</td>

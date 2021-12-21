@@ -1,0 +1,141 @@
+{% load humanize %}
+<div class="row">
+    <div class="col-12 col-7-auto">
+        <h2>{{ report_staff }} - Report Pay Date: {{object.pay_date}}
+            {% if object.get_edit_url %}
+            <small class="d-print-none">
+                <a class="btn btn-outline-secondary d-print-none" href="{% url 'payroll:staff-list' %}">Back</a>
+            </small>
+            {% endif %}
+        </h2> 
+        <p>
+            <span class="lead">
+                <b><mark>{{ object.get_status_display }}</mark></b> - Pay Period: {{ object.start_date }} - {{ object.end_date }}
+            </span><br />
+            Last updated on : {{ object.updated }}<br />
+            <span>Pay Period Gross Amount: ${{ total_total_pay|intcomma|floatformat:'2' }}<br />
+            <small>This report is for informational purposes only and is not a commitment to pay. Taxes and deductions still apply.
+            </small></span>
+
+        </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 col-md-12">
+        <h3>Time Entries:</h3>
+        <div id="event-list">
+            <table class="table table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Role</th>
+                        <th scope="col">Event / Date</th>
+                        <th scope="col">Length</th>
+                        <th scope="col">Hours</th>
+                        <th scope="col" style="text-align: right;">Rate</th>
+                        <th scope="col" style="text-align: right;"><i>Subtotal</i></th>
+                        <th scope="col" style="text-align: right;">Prepaint</th>
+                        <th scope="col" style="text-align: right;">Tips</th>
+                        <th scope="col" style="text-align: right;">Commsissions</th>
+                        <th scope="col" class="table-success" style="text-align: right;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for staff in event_staff %}
+                        <tr>
+                            <td>{{ staff.get_role_display }}</td>
+                            <td><a href="{% url 'events:detail' slug=staff.event.slug %}" target="_blank">{{ staff.event.name }}</a><br />
+                                on {{ staff.event.date }} at {{ staff.event.time }}</td>
+                            <td>{{ staff.event.length }}</td>
+                            <td {% if staff.typical_hours < staff.hours %} class="table-warning"{% endif %}>
+                                {% if staff.rate %}
+                                    {{ staff.hours|floatformat:'2' }}
+                                {% endif %}
+                            </td>
+                            <td style="text-align: right;">
+                                {% if staff.rate %}
+                                    ${{ staff.rate|floatformat:'2' }}
+                                {% endif %} 
+                            </td>
+                            <td style="text-align: right;">{% if staff.hourly_pay %} 
+                                <i>${{ staff.hourly_pay|floatformat:'2' }}</i>
+                                {% endif %} 
+                            </td>
+                            <td style="text-align: right;">
+                                {% if staff.prepaint_pay %}
+                                    ${{ staff.prepaint_pay|floatformat:'2' }}
+                                {% endif %}
+                            </td>
+                            <td style="text-align: right;">
+                                {% if staff.tip_pay %}
+                                    ${{ staff.tip_pay|floatformat:'2' }}
+                                {% endif %}
+                            </td>
+                            <td style="text-align: right;">
+                                {% if staff.commission_pay %}
+                                    ${{ staff.commission_pay|floatformat:'2' }}
+                                {% endif %}
+                            </td>
+                            <td class="table-success" style="text-align: right;">
+                                {% if staff.total_pay %} 
+                                    <b>${{ staff.total_pay|floatformat:'2' }}</b>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %} 
+                </tbody>
+            </table>
+        </div>
+        <h3>Summary:</h3>
+        <div id="summary" class="col-12 col-md-10">
+            <table class="table table-sm table-striped">
+                <thead>
+                    <th></th>
+                    <th style="text-align: right;">Stage</th>
+                    <th style="text-align: right;">Floor</th>
+                    <th style="text-align: right;">Team</th>
+                    <th style="text-align: right;">Totals</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th><i>Hours</i></th>
+                        <td style="text-align: right;"><i>{{ total_stage_hours|floatformat:'2' }}</i></td>
+                        <td style="text-align: right;"><i>{{ total_floor_hours|floatformat:'2' }}</i></td>
+                        <td style="text-align: right;"><i>{{ total_team_hours|floatformat:'2' }}</i></td>
+                        <th style="text-align: right;"><i>{{ total_total_hours|floatformat:'2' }}</i></th>
+                    </tr>
+                    <tr>
+                        <th>Hourly Pay</th>
+                        <td style="text-align: right;">${{ total_stage_hourly_pay|floatformat:'2' }}</td>
+                        <td style="text-align: right;">${{ total_floor_hourly_pay|floatformat:'2' }}</td>
+                        <td style="text-align: right;">${{ total_team_hourly_pay|floatformat:'2' }}</td>
+                        <th style="text-align: right;">${{ total_total_hourly_pay|floatformat:'2' }}</th>
+                    </tr>
+                    <tr>
+                        <th>Tips</th>
+                        <td style="text-align: right;">${{ total_stage_tip_pay|floatformat:'2' }}</td>
+                        <td style="text-align: right;">${{ total_floor_tip_pay|floatformat:'2' }}</td>
+                        <td style="text-align: right;">${{ total_team_tip_pay|floatformat:'2' }}</td>
+                        <th style="text-align: right;">${{ total_total_tip_pay|floatformat:'2' }}</th>
+                    </tr>
+                    <tr>
+                        <th>Commissions</th>
+                        <td style="text-align: right;">${{ total_stage_commission_pay|floatformat:'2' }}</td>
+                        <td style="text-align: right;">${{ total_floor_commission_pay|floatformat:'2' }}</td>
+                        <td style="text-align: right;">${{ total_team_commission_pay|floatformat:'2' }}</td>
+                        <th style="text-align: right;">${{ total_total_commission_pay|floatformat:'2' }}</th>
+                    </tr>
+                </tbody>               
+                <tfoot>
+                    <tr>
+                        <th>Subtotals</th>
+                        <th style="text-align: right;">${{ total_stage_pay|floatformat:'2' }}</th>
+                        <th style="text-align: right;">${{ total_floor_pay|floatformat:'2' }}</th>
+                        <th style="text-align: right;">${{ total_team_pay|floatformat:'2' }}</th>
+                        <th style="text-align: right;">${{ total_total_pay|floatformat:'2' }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

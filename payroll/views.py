@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.http.response import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
-from events.models import Event, EventCustomer, EventStaff, EventTip
+from events.models import Event, EventCustomer, EventStaff, EventTip, UserProfile
 from products.models import Product, PurchaseItem, PurchaseOrder
 from payroll.forms import ReportForm
 from square.models import Square
@@ -540,6 +540,103 @@ def report_staff_list_view(request):
         "report_count": report_count
     }
     return render(request, "payroll/staff-list.html", context)
+
+
+@permission_required('payroll.change_report')
+def report_staff_mgmt_detail_view(request, id=None, staff_id=None):
+    hx_url = reverse("payroll:hx-staff-mgmt-detail", kwargs={"id": id, "staff_id": staff_id})
+    report_obj = PayReport.objects.get(id=id)
+    context = {
+        "hx_url": hx_url,
+        "report_obj": report_obj
+    }
+    return render(request, "payroll/staff-detail.html", context)
+
+@permission_required('payroll.change_report')
+def report_staff_detail_mgmt_hx_view(request, id=None, staff_id=None):
+    # if not request.htmx:
+    #     raise Http404
+    try:
+        obj = PayReport.objects.get(id=id)
+        events = Event.objects.all().filter(payroll_report=obj).order_by('date', 'time').prefetch_related()
+        event_staff = EventStaff.objects.all().filter(event__payroll_report=obj, user=staff_id)
+        report_staff = UserProfile.objects.get(user_id=staff_id)
+        total_stage_hours = 0
+        total_floor_hours = 0
+        total_team_hours = 0
+        total_total_hours = 0
+        total_stage_hourly_pay = Decimal(0.0)
+        total_floor_hourly_pay = Decimal(0.0)
+        total_team_hourly_pay = Decimal(0.0)
+        total_total_hourly_pay = Decimal(0.0)
+        total_stage_tip_pay = Decimal(0.0)
+        total_floor_tip_pay = Decimal(0.0)
+        total_team_tip_pay = Decimal(0.0)
+        total_total_tip_pay = Decimal(0.0)
+        total_stage_commission_pay = Decimal(0.0)
+        total_floor_commission_pay = Decimal(0.0)
+        total_team_commission_pay = Decimal(0.0)
+        total_total_commission_pay = Decimal(0.0)
+        total_stage_pay = Decimal(0.0)
+        total_floor_pay = Decimal(0.0)
+        total_team_pay = Decimal(0.0)
+        total_total_pay = Decimal(0.0)
+        for staff in event_staff:
+            if staff.role == 's':
+                total_stage_hours = total_stage_hours + staff.hours
+                total_stage_hourly_pay = total_stage_hourly_pay + staff.hourly_pay
+                total_stage_tip_pay = total_stage_tip_pay + staff.tip_pay
+                total_stage_commission_pay = total_stage_commission_pay + staff.commission_pay + staff.prepaint_pay
+                total_stage_pay = total_stage_hourly_pay + total_stage_commission_pay + total_stage_tip_pay
+            elif staff.role == 'f':
+                total_floor_hours = total_floor_hours + staff.hours
+                total_floor_hourly_pay = total_floor_hourly_pay + staff.hourly_pay
+                total_floor_tip_pay = total_floor_tip_pay + staff.tip_pay
+                total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay + staff.prepaint_pay
+                total_floor_pay = total_floor_hourly_pay + total_floor_commission_pay + total_floor_tip_pay
+            elif staff.role == 't':
+                total_team_hours = total_team_hours + staff.hours
+                total_team_hourly_pay = total_team_hourly_pay + staff.hourly_pay
+                total_team_tip_pay = total_team_tip_pay + staff.tip_pay
+                total_team_commission_pay = total_team_commission_pay + staff.commission_pay + staff.prepaint_pay
+                total_team_pay = total_team_hourly_pay + total_team_commission_pay + total_team_tip_pay
+        total_total_hours = total_stage_hours + total_floor_hours + total_team_hours
+        total_total_hourly_pay = total_stage_hourly_pay + total_floor_hourly_pay + total_team_hourly_pay
+        total_total_tip_pay = total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay
+        total_total_commission_pay = total_stage_commission_pay + total_floor_commission_pay + total_team_commission_pay
+        total_total_pay = total_stage_pay + total_floor_pay + total_team_pay
+
+    except:
+        obj = None
+    if obj is None:
+        return HttpResponse("Not found.")
+    context = {
+        "object": obj,
+        "event_staff": event_staff,
+        "report_staff": report_staff,
+        "total_stage_hours": total_stage_hours,
+        "total_floor_hours": total_floor_hours,
+        "total_team_hours": total_team_hours,
+        "total_total_hours": total_total_hours,
+        "total_stage_hourly_pay": total_stage_hourly_pay,
+        "total_floor_hourly_pay": total_floor_hourly_pay,
+        "total_team_hourly_pay": total_team_hourly_pay,
+        "total_total_hourly_pay": total_total_hourly_pay,
+        "total_stage_tip_pay": total_stage_tip_pay,
+        "total_floor_tip_pay": total_floor_tip_pay,
+        "total_team_tip_pay": total_team_tip_pay,
+        "total_total_tip_pay": total_total_tip_pay,
+        "total_stage_commission_pay": total_stage_commission_pay,
+        "total_floor_commission_pay": total_floor_commission_pay,
+        "total_team_commission_pay": total_team_commission_pay,
+        "total_total_commission_pay": total_total_commission_pay,
+        "total_stage_pay": total_stage_pay,
+        "total_floor_pay": total_floor_pay,
+        "total_team_pay": total_team_pay,
+        "total_total_pay": total_total_pay
+    }
+    return render(request, "payroll/partials/staff-mgmt-detail.html", context)
+
 
 
 @permission_required('payroll.change_report')
