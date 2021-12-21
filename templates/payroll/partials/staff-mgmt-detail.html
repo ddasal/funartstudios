@@ -4,7 +4,7 @@
         <h2>{{ report_staff }} - Report Pay Date: {{object.pay_date}}
             {% if object.get_edit_url %}
             <small class="d-print-none">
-                <a class="btn btn-outline-secondary d-print-none" href="{% url 'payroll:staff-list' %}">Back</a>
+                <a class="btn btn-outline-secondary d-print-none" href="{% url 'payroll:detail' id=object.id %}">Back</a>
             </small>
             {% endif %}
         </h2> 
