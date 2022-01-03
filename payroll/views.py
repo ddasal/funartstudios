@@ -445,7 +445,7 @@ def report_staff_detail_hx_view(request, id=None, user=None):
     try:
         obj = PayReport.objects.get(id=id)
         events = Event.objects.all().filter(payroll_report=obj).order_by('date', 'time').prefetch_related()
-        event_staff = EventStaff.objects.all().filter(event__payroll_report=obj, user=request.user.id)
+        event_staff = EventStaff.objects.all().filter(event__payroll_report=obj, user=request.user.id).order_by('date')
         total_stage_hours = 0
         total_floor_hours = 0
         total_team_hours = 0
