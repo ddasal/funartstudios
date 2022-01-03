@@ -181,6 +181,7 @@ class EventStaff(models.Model):
     typical_hours = models.DecimalField(decimal_places=2, max_digits=4, null=False, blank=False, default=0.00)
     cost_factor = models.DecimalField(decimal_places=2, max_digits=6, default=0.0, null=True, blank=True)
     status = models.CharField(max_length=1, choices=PayStatus.choices, default=PayStatus.PENDING)
+    date = models.DateField(null=True, blank=True, auto_now=False, auto_now_add=False)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -254,6 +255,7 @@ class EventStaff(models.Model):
         self.typical_hours = Decimal(event_length.length) + Decimal(1.5)
         self.hourly_pay = Decimal(self.rate) * Decimal(self.hours)
         self.total_pay = Decimal(self.hourly_pay) + Decimal(self.prepaint_pay) + Decimal(self.tip_pay) + Decimal(self.commission_pay)
+        self.date = event_length.date
         super().save(*args, **kwargs)
 
 class EventTip(models.Model):
