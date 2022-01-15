@@ -1,0 +1,32 @@
+<div id="staff-{{object.id}}">
+    <table class="table table-sm table-striped">
+        <thead>
+            <tr>
+                <td><b>{{ object.user.first_name }} - {{ object.get_role_display }} ({{object.admin_pay }})</b></td>
+                <td style="text-align: right;">
+                    {% if perms.events.change_adminpay %} 
+                        {% if object.status == 'p' %}
+                            <button class="btn btn-sm btn-outline-primary" hx-trigger='click' hx-get='{{ object.get_htmx_edit_url }}' hx-target='#staff-{{object.id}}'>Edit</button>
+                        {% endif %}    
+                    {% endif %}
+                    {% if perms.events.delete_adminpay %}
+                        {% if object.status == 'p' %}
+                            <a class="btn btn-sm btn-outline-danger" hx-confirm='Remove pay adjustment for {{object.user.first_name }} {{object.user.last_name}}?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#staff-{{object.id}}' hx-swap='outerHTML'>Remove</a>
+                        {% elif  object.status == 'a' %} 
+                            <a class="btn btn-sm btn-outline-warning" hx-trigger='click'>Approved</a>
+                        {% elif object.status == 'c' %}
+                        <a class="btn btn-sm btn-outline-secondary" hx-trigger='click'>Payroll Sent</a>
+                        {% endif %}
+                    {% endif %} 
+                </td>
+            </tr>
+        </thead>
+        <tbody class="table-striped">
+            <tr>
+                <td colspan="2">
+                    - {{ object.note }}<br />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

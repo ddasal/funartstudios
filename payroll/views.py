@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.http.response import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
-from events.models import Event, EventCustomer, EventStaff, EventTip, UserProfile
+from events.models import AdminPay, Event, EventCustomer, EventStaff, EventTip, UserProfile
 from products.models import Product, PurchaseItem, PurchaseOrder
 from payroll.forms import ReportForm
 from square.models import Square
@@ -106,6 +106,7 @@ def report_detail_hx_view(request, id=None):
         square_last_entry_date = Square.objects.latest('date', 'time')
         events = Event.objects.filter(date__range=(obj.start_date, obj.end_date)).order_by('date', 'time').annotate(worker_count=Count('eventstaff')).prefetch_related()
         staff_count = EventStaff.objects.all().filter(event__payroll_report=obj).order_by('user').distinct('user').count()
+        adminpay_count = AdminPay.objects.all().filter(event__payroll_report=obj).order_by('user').distinct('user').count()
         payroll_gross = Decimal(0.0)
         events_without_workers = 0
         total_stage_hours = 0
@@ -127,6 +128,7 @@ def report_detail_hx_view(request, id=None):
         total_stage_pay = Decimal(0.0)
         total_floor_pay = Decimal(0.0)
         total_team_pay = Decimal(0.0)
+        total_admin_pay = Decimal(0.0)
         total_total_pay = Decimal(0.0)
         for event in events:
             event.payroll_report = obj
@@ -215,6 +217,10 @@ def report_detail_hx_view(request, id=None):
                             total_team_commission_pay = total_team_commission_pay + staff.prepaint_pay
                         staff.tip_pay = tip_each
                         staff.save()
+            admin_adj_pay = AdminPay.objects.filter(event=event.id)
+            if admin_adj_pay:
+                for admin_pay in admin_adj_pay:
+                    total_admin_pay += Decimal(admin_pay.admin_pay)
             kit_sales = EventCustomer.objects.filter(event=event.id, type='h')
             if not kit_sales:
                 update_commission = EventStaff.objects.filter(event=event.id)
@@ -258,7 +264,6 @@ def report_detail_hx_view(request, id=None):
                                 total_floor_commission_pay = total_floor_commission_pay + staff.commission_pay
                             elif staff.role == 't':
                                 total_team_commission_pay = total_team_commission_pay + staff.commission_pay
-        print(total_stage_commission_pay)
         total_total_hours = total_stage_hours + total_floor_hours + total_team_hours
         total_total_hourly_pay = total_stage_hourly_pay + total_floor_hourly_pay + total_team_hourly_pay
         total_total_tip_pay = round(total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay, 2)
@@ -266,7 +271,7 @@ def report_detail_hx_view(request, id=None):
         total_stage_pay = total_stage_hourly_pay + total_stage_tip_pay + total_stage_commission_pay
         total_floor_pay = total_floor_hourly_pay + total_floor_tip_pay + total_floor_commission_pay
         total_team_pay = total_team_hourly_pay + total_team_tip_pay + total_team_commission_pay
-        total_total_pay = total_stage_pay + total_floor_pay + total_team_pay
+        total_total_pay = total_stage_pay + total_floor_pay + total_team_pay + total_admin_pay
         obj.staff_count = staff_count
         obj.payroll_gross = total_total_pay
         obj.save()
@@ -310,6 +315,7 @@ def report_detail_hx_view(request, id=None):
         "square_last_entry_date": square_last_entry_date,
         "square_tip_total_reduced": square_tip_total_reduced,
         "square_tip_total": square_tip_total,
+        "total_admin_pay": total_admin_pay,
         "sq_matches": sq_matches
     }
     return render(request, "payroll/partials/detail.html", context)
@@ -446,6 +452,10 @@ def report_staff_detail_hx_view(request, id=None, user=None):
         obj = PayReport.objects.get(id=id)
         events = Event.objects.all().filter(payroll_report=obj).order_by('date', 'time').prefetch_related()
         event_staff = EventStaff.objects.all().filter(event__payroll_report=obj, user=request.user.id).order_by('date')
+        admin_pay = AdminPay.objects.all().filter(event__payroll_report=obj, user=request.user.id).order_by('date')
+        admin_pay_include = False
+        if admin_pay:
+            admin_pay_include = True
         total_stage_hours = 0
         total_floor_hours = 0
         total_team_hours = 0
@@ -466,6 +476,9 @@ def report_staff_detail_hx_view(request, id=None, user=None):
         total_floor_pay = Decimal(0.0)
         total_team_pay = Decimal(0.0)
         total_total_pay = Decimal(0.0)
+        total_admin_pay = Decimal(0.0)
+        for item in admin_pay:
+            total_admin_pay += Decimal(item.admin_pay)
         for staff in event_staff:
             if staff.role == 's':
                 total_stage_hours = total_stage_hours + staff.hours
@@ -489,7 +502,7 @@ def report_staff_detail_hx_view(request, id=None, user=None):
         total_total_hourly_pay = total_stage_hourly_pay + total_floor_hourly_pay + total_team_hourly_pay
         total_total_tip_pay = total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay
         total_total_commission_pay = total_stage_commission_pay + total_floor_commission_pay + total_team_commission_pay
-        total_total_pay = total_stage_pay + total_floor_pay + total_team_pay
+        total_total_pay = total_stage_pay + total_floor_pay + total_team_pay + total_admin_pay
 
     except:
         obj = None
@@ -517,6 +530,8 @@ def report_staff_detail_hx_view(request, id=None, user=None):
         "total_stage_pay": total_stage_pay,
         "total_floor_pay": total_floor_pay,
         "total_team_pay": total_team_pay,
+        "total_admin_pay": total_admin_pay,
+        "admin_pay_include": admin_pay_include,
         "total_total_pay": total_total_pay
     }
     return render(request, "payroll/partials/staff-detail.html", context)
@@ -524,10 +539,11 @@ def report_staff_detail_hx_view(request, id=None, user=None):
 
 @login_required
 def report_staff_list_view(request):
-    qs = PayReport.objects.filter(event__eventstaff__user=request.user.id).order_by('-start_date').distinct()
+    qs1 = PayReport.objects.filter(Q(event__eventstaff__user=request.user.id) | Q(event__adminpay__user=request.user.id)).order_by('-start_date').distinct()
+    print(qs1)
     page = request.GET.get('page', 1)
 
-    paginator = Paginator(qs, 10)
+    paginator = Paginator(qs1, 10)
     report_count = paginator.count
     try:
         reports = paginator.page(page)
@@ -554,12 +570,14 @@ def report_staff_mgmt_detail_view(request, id=None, staff_id=None):
 
 @permission_required('payroll.change_report')
 def report_staff_detail_mgmt_hx_view(request, id=None, staff_id=None):
-    # if not request.htmx:
-    #     raise Http404
     try:
         obj = PayReport.objects.get(id=id)
         events = Event.objects.all().filter(payroll_report=obj).order_by('date', 'time').prefetch_related()
         event_staff = EventStaff.objects.all().filter(event__payroll_report=obj, user=staff_id).order_by('date')
+        admin_pay = AdminPay.objects.all().filter(event__payroll_report=obj, user=staff_id).order_by('date')
+        admin_pay_include = False
+        if admin_pay:
+            admin_pay_include = True
         report_staff = UserProfile.objects.get(user_id=staff_id)
         total_stage_hours = 0
         total_floor_hours = 0
@@ -581,6 +599,9 @@ def report_staff_detail_mgmt_hx_view(request, id=None, staff_id=None):
         total_floor_pay = Decimal(0.0)
         total_team_pay = Decimal(0.0)
         total_total_pay = Decimal(0.0)
+        total_admin_pay = Decimal(0.0)
+        for item in admin_pay:
+            total_admin_pay += Decimal(item.admin_pay)
         for staff in event_staff:
             if staff.role == 's':
                 total_stage_hours = total_stage_hours + staff.hours
@@ -604,7 +625,7 @@ def report_staff_detail_mgmt_hx_view(request, id=None, staff_id=None):
         total_total_hourly_pay = total_stage_hourly_pay + total_floor_hourly_pay + total_team_hourly_pay
         total_total_tip_pay = total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay
         total_total_commission_pay = total_stage_commission_pay + total_floor_commission_pay + total_team_commission_pay
-        total_total_pay = total_stage_pay + total_floor_pay + total_team_pay
+        total_total_pay = total_stage_pay + total_floor_pay + total_team_pay + total_admin_pay
 
     except:
         obj = None
@@ -633,6 +654,8 @@ def report_staff_detail_mgmt_hx_view(request, id=None, staff_id=None):
         "total_stage_pay": total_stage_pay,
         "total_floor_pay": total_floor_pay,
         "total_team_pay": total_team_pay,
+        "total_admin_pay": total_admin_pay,
+        "admin_pay_include": admin_pay_include,
         "total_total_pay": total_total_pay
     }
     return render(request, "payroll/partials/staff-mgmt-detail.html", context)
@@ -646,8 +669,15 @@ def report_staff_summary_hx_view(request, id=None):
     try:
         obj = PayReport.objects.get(id=id)
         eventstaff_list = EventStaff.objects.filter(event__payroll_report=obj)
-        distinct_users = eventstaff_list.values('user').distinct() #.exclude(Q(user=7) | Q(user=1))
-        for staff in distinct_users:
+        adminpay_list = AdminPay.objects.filter(event__payroll_report=obj)
+        distinct_users = list(eventstaff_list.values('user').distinct()) #.exclude(Q(user=7) | Q(user=1))
+        adminpay_users = list(adminpay_list.values('user').distinct()) #.exclude(Q(user=7) | Q(user=1))
+        combined_users = distinct_users + adminpay_users
+        res = set(val for dic in combined_users for val in dic.values())
+        unique_ids = []
+        for each in res:
+            unique_ids.append({'user': each})
+        for staff in unique_ids:
             staff['total_stage_hours'] = 0
             staff['total_floor_hours'] = 0
             staff['total_team_hours'] = 0
@@ -668,7 +698,13 @@ def report_staff_summary_hx_view(request, id=None):
             staff['total_floor_pay'] = Decimal(0.0)
             staff['total_team_pay'] = Decimal(0.0)
             staff['total_total_pay'] = Decimal(0.0)
+            staff['total_admin_pay'] = Decimal(0.0)
             event_staff = EventStaff.objects.filter(event__payroll_report=obj, user=staff['user']).order_by('user')
+            admin_pay = AdminPay.objects.filter(event__payroll_report=obj, user=staff['user']).order_by('user')
+            for item in admin_pay:
+                staff['total_admin_pay'] += Decimal(item.admin_pay)
+                staff['total_total_pay'] += staff['total_admin_pay']
+                staff['name'] = item.user.first_name + ' ' + item.user.last_name
             for item in event_staff:
                 if item.role == 's':
                     staff['rate_stage'] = item.rate
@@ -695,7 +731,7 @@ def report_staff_summary_hx_view(request, id=None):
                 staff['total_total_hourly_pay'] = staff['total_stage_hourly_pay'] + staff['total_floor_hourly_pay'] + staff['total_team_hourly_pay']
                 staff['total_total_tip_pay'] = staff['total_stage_tip_pay'] + staff['total_floor_tip_pay'] + staff['total_team_tip_pay']
                 staff['total_total_commission_pay'] = staff['total_stage_commission_pay'] + staff['total_floor_commission_pay'] + staff['total_team_commission_pay']
-                staff['total_total_pay'] = staff['total_total_hourly_pay'] + staff['total_total_tip_pay'] + staff['total_total_commission_pay']
+                staff['total_total_pay'] = staff['total_total_hourly_pay'] + staff['total_total_tip_pay'] + staff['total_total_commission_pay'] + staff['total_admin_pay']
                 staff['name'] = item.user.first_name + ' ' + item.user.last_name
     except:
         obj = None
@@ -703,6 +739,6 @@ def report_staff_summary_hx_view(request, id=None):
         return HttpResponse("Not found.")
     context = {
         "object": obj,
-        "distinct_users": distinct_users,
+        "distinct_users": unique_ids,
     }
     return render(request, "payroll/partials/perstaff-inline.html", context)

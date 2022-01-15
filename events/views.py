@@ -6,8 +6,8 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 from django.db.models import Q, Sum
-from .forms import EventForm, EventImageForm, EventStaffForm, EventCustomerForm, EventTipForm
-from .models import Event, EventCustomer, EventImages, EventStaff, EventTip
+from .forms import AdminPayForm, EventForm, EventImageForm, EventStaffForm, EventCustomerForm, EventTipForm
+from .models import AdminPay, Event, EventCustomer, EventImages, EventStaff, EventTip
 from royaltyreports.models import RoyaltyReport
 from datetime import datetime, timedelta
 from django.views import View
@@ -230,6 +230,7 @@ def event_detail_hx_view(request, slug=None):
         new_customer_url = reverse("events:hx-customer-create", kwargs={"parent_slug": obj.slug})
         new_tip_url = reverse("events:hx-tip-create", kwargs={"parent_slug": obj.slug})
         new_image_url = reverse("events:hx-image-create", kwargs={"parent_slug": obj.slug})
+        new_adminpay_url = reverse("events:hx-adminpay-create", kwargs={"parent_slug": obj.slug})
     except:
         obj = None
     if obj is None:
@@ -240,6 +241,7 @@ def event_detail_hx_view(request, slug=None):
         "new_customer_url": new_customer_url,
         "new_tip_url": new_tip_url,
         "new_image_url": new_image_url,
+        "new_adminpay_url": new_adminpay_url,
         "gp": formatted_gp
     }
     return render(request, "events/partials/detail.html", context)
@@ -276,12 +278,14 @@ def event_update_view(request, slug=None):
     new_customer_url = reverse("events:hx-customer-create", kwargs={"parent_slug": obj.slug})
     new_tip_url = reverse("events:hx-tip-create", kwargs={"parent_slug": obj.slug})
     new_image_url = reverse("events:hx-image-create", kwargs={"parent_slug": obj.slug})
+    new_adminpay_url = reverse("events:hx-adminpay-create", kwargs={"parent_slug": obj.slug})
     context = {
         "form": form,
         "object": obj,
         "new_staff_url": new_staff_url,
         "new_customer_url": new_customer_url,
         "new_tip_url": new_tip_url,
+        "new_adminpay_url": new_adminpay_url,
         "new_image_url": new_image_url
     }
     if form.is_valid():
@@ -572,6 +576,77 @@ def event_image_delete_view(request, parent_slug=None, id=None):
         if request.htmx:
             return render(request, "events/partials/image-inline-delete-response.html", {"title": title})
         return redirect(success_url)
+
+    context = {
+        "object": obj
+    }
+    return render(request, "events/delete.html", context)
+
+
+
+
+
+@permission_required('events.change_adminpay')
+def admin_pay_update_hx_view(request, parent_slug=None, id=None):
+    if not request.htmx:
+        raise Http404
+    try:
+        parent_obj = Event.objects.get(slug=parent_slug)
+    except:
+        parent_obj = None
+    if parent_obj is None:
+        return HttpResponse("Not found.")
+
+    instance = None
+    if id is not None:
+        try:
+            instance = AdminPay.objects.get(event=parent_obj, id=id)
+        except:
+            instance = None
+    form = AdminPayForm(request.POST or None, instance=instance)
+    url = reverse("events:hx-adminpay-create", kwargs={"parent_slug": parent_obj.slug})
+    if instance:
+        url = instance.get_htmx_edit_url()        
+    
+    context = {
+        "url": url,
+        "form": form,
+        "object": instance
+    }
+    if form.is_valid():
+        new_obj = form.save(commit=False)
+        if instance is None:
+            new_obj.event = parent_obj
+        new_obj.save()
+        context['object'] = new_obj
+        return render(request, "events/partials/adminpay-inline.html", context)
+    
+    return render(request, "events/partials/adminpay-form.html", context)
+
+@permission_required('events.delete_adminpay')
+def admin_pay_delete_view(request, parent_slug=None, id=None):
+    try:
+        obj = AdminPay.objects.get(event__slug=parent_slug, id=id)
+    except:
+        obj = None
+    if obj is None:
+        if request.htmx:
+            return HttpResponse('Not found')
+        raise Http404
+    if request.method == "POST":
+        if obj.status == 'p':
+            staff = obj.user
+            obj.delete()
+            success_url = reverse('events:detail', kwargs={"slug": parent_slug})
+            if request.htmx:
+                return render(request, "events/partials/adminpay-inline-delete-response.html", {"staff": staff})
+            return redirect(success_url)
+        else:
+            message = "Unable to delete."
+            success_url = reverse('events:detail', kwargs={"slug": parent_slug})
+            if request.htmx:
+                return render(request, "events/partials/adminpay-inline-delete-response.html", {"message": message})
+            return redirect(success_url)
 
     context = {
         "object": obj

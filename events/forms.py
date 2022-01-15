@@ -4,7 +4,7 @@ from django.utils.encoding import smart_text
 from django import forms
 
 from products.models import Product
-from .models import Event, EventCustomer, EventStaff, EventTip, EventImages
+from .models import AdminPay, Event, EventCustomer, EventStaff, EventTip, EventImages
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -101,3 +101,24 @@ class EventImageForm(forms.ModelForm):
     class Meta:
         model = EventImages
         fields = ['title', 'upload']
+
+
+class AdminPayForm(forms.ModelForm):
+    error_css_class = 'error-field'
+    required_css_class = 'required-field'
+
+    user = UserFullnameChoiceField(queryset=User.objects.filter(is_active=True).exclude(first_name__exact='').order_by('first_name'))
+
+    class Meta:
+        model = AdminPay
+        fields = ['user', 'admin_pay', 'note']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            new_data = {
+                "class": 'form-control form-control-sm',
+            }
+            self.fields[str(field)].widget.attrs.update(
+                new_data
+            )

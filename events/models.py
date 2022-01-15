@@ -112,6 +112,9 @@ class Event(models.Model):
     def get_eventstaff_children(self):
         return self.eventstaff_set.all()
 
+    def get_adminpay_children(self):
+        return self.adminpay_set.all()
+
     def get_eventcustomer_children(self):
         return self.eventcustomer_set.all()
 
@@ -201,12 +204,6 @@ class EventStaff(models.Model):
             "id": self.id
         }
         return reverse("events:hx-eventstaff-update", kwargs=kwargs)
-
-    # class Meta:
-    #     ordering = [('-event_qty'), ]
-
-    # def __str__(self):
-    #    return self.user
 
     def save(self, *args, **kwargs):
         try:
@@ -404,3 +401,37 @@ class EventImages(models.Model):
             "id": self.id
         }
         return reverse("events:hx-eventimage-update", kwargs=kwargs)
+
+
+
+class AdminPay(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=SET_NULL)
+    admin_pay = models.DecimalField(decimal_places=2, max_digits=5, default=0.00, null=False, blank=False)
+    status = models.CharField(max_length=1, choices=PayStatus.choices, default=PayStatus.PENDING)
+    note = models.CharField(max_length=50, null=False, blank=False, default='Add Justification Note')
+    date = models.DateField(null=True, blank=True, auto_now=False, auto_now_add=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        return self.event.get_absolute_url()
+
+    def get_delete_url(self):
+        kwargs = {
+            "parent_slug": self.event.slug,
+            "id": self.id
+        }
+        return reverse("events:adminpay-delete", kwargs=kwargs)
+
+    def get_htmx_edit_url(self):
+        kwargs = {
+            "parent_slug": self.event.slug,
+            "id": self.id
+        }
+        return reverse("events:hx-adminpay-update", kwargs=kwargs)
+
+    def save(self, *args, **kwargs):
+        event_length = Event.objects.get(id=self.event.id)
+        self.date = event_length.date
+        super().save(*args, **kwargs)

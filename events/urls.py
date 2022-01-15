@@ -16,7 +16,9 @@ from .views import (
     # EventStaffUpload,
     event_search_view,
     event_image_update_hx_view,
-    event_image_delete_view
+    event_image_delete_view,
+    admin_pay_delete_view,
+    admin_pay_update_hx_view
 )
 
 app_name='events'  # events:list
@@ -36,6 +38,8 @@ urlpatterns = [
     path("hx/<slug:parent_slug>/image/<int:id>", event_image_update_hx_view, name='hx-eventimage-update'),
     path("hx/<slug:parent_slug>/image/", event_image_update_hx_view, name='hx-image-create'),
     path("hx/<slug:slug>/", event_detail_hx_view, name='hx-detail'),
+    path("hx/<slug:parent_slug>/adminpay/<int:id>", admin_pay_update_hx_view, name='hx-adminpay-update'),
+    path("hx/<slug:parent_slug>/adminpay/", admin_pay_update_hx_view, name='hx-adminpay-create'),
     # path('importstaff/', EventStaffUpload.as_view(), name='importstaff'),
     
     # path("<slug:parent_slug>/image-upload/", event_image_upload_view, name='event-image-upload'),
@@ -46,5 +50,6 @@ urlpatterns = [
     path("<slug:slug>/delete/", event_delete_view, name='delete'),
     path("<slug:slug>/edit/", event_update_view, name='update'),
     path("<slug:slug>/", event_detail_view, name='detail'),
+    path("<slug:parent_slug>/adminpay/<int:id>/delete/", admin_pay_delete_view, name='adminpay-delete'),
 
 ]
