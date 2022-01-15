@@ -31,7 +31,7 @@ class Square(models.Model):
     fees = models.DecimalField(decimal_places=2, max_digits=7, null=True, blank=True)
     net_total = models.DecimalField(decimal_places=2, max_digits=7, null=True, blank=True)
     transaction_id = models.CharField(max_length=50, unique=True)
-    payment_id = models.CharField(max_length=50)
+    payment_id = models.TextField()
     card_brand = models.CharField(max_length=50)
     pan_suffix = models.CharField(max_length=50)
     device_name = models.CharField(max_length=50)
