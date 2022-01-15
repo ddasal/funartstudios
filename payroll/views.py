@@ -378,8 +378,12 @@ def report_hx_mark_complete(request, id=None):
             event.payroll_status = 'c'
             event.save()
             staff = EventStaff.objects.filter(event=event.id)
+            adminpay = AdminPay.objects.filter(event=event.id)
             tips = EventTip.objects.filter(event=event.id)
             for each in staff:
+                each.status = 'c'
+                each.save()
+            for each in adminpay:
                 each.status = 'c'
                 each.save()
             for each in tips:
@@ -416,8 +420,12 @@ def report_hx_mark_pending(request, id=None):
             event.payroll_status = 'p'
             event.save()
             staff = EventStaff.objects.filter(event=event.id)
+            adminpay = AdminPay.objects.filter(event=event.id)
             tips = EventTip.objects.filter(event=event.id)
             for each in staff:
+                each.status = 'p'
+                each.save()
+            for each in adminpay:
                 each.status = 'p'
                 each.save()
             for each in tips:

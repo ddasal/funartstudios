@@ -95,7 +95,7 @@
                 <p></p>
             {% endif %} 
             {% if perms.payroll.view_report %}
-                <h3>Admin Pay Adjustments</h3>
+                <h3>Management Adjustments</h3>
                 <div id="adminpay-list">
                     {% for staff in object.get_adminpay_children %}
                         {% include 'events/partials/adminpay-inline.html' with object=staff %}
