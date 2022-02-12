@@ -291,8 +291,7 @@ class EventTip(models.Model):
  
 
 class EventCustomerType(models.TextChoices):
-    HOMEKIT = 'h', 'Twist at Home Kit(s)'
-    POPINPAINT = 'p', 'Pop In and Paint(s)'
+    HOMEKIT = 'h', 'Twist at Home Kit(s) / Pop-In & Paint'
     RESERVATION = 'r', 'Event Reservation(s)'
 
 class CustomerStatus(models.TextChoices):
