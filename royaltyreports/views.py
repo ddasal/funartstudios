@@ -182,7 +182,7 @@ def report_detail_hx_view(request, id=None):
         for sq in sqaure_info:
             report_square_sales = report_square_sales + sq.gross_sales
 
-        report_adjusted_gross_revenue = Decimal(report_gross_revenue) + Decimal(kit_gross_revenue)
+        report_adjusted_gross_revenue = Decimal(report_gross_revenue) + Decimal(kit_gross_revenue) + Decimal(report_square_sales)
         report_net_revenue = Decimal(report_adjusted_gross_revenue) - Decimal(report_adjustments)
         report_royalty = Decimal(report_net_revenue) * Decimal(.06)
         report_ad_funds = Decimal(report_net_revenue) * Decimal(.02)
