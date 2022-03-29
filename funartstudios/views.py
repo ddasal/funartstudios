@@ -58,7 +58,6 @@ def about_view(request, *args, **kwargs):
 
 import os
 
-
 from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
