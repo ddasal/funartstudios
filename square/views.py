@@ -51,7 +51,7 @@ class SquareUpload(LoginRequiredMixin, View):
         objs = [
             Square(
                 date=row['Date'],
-                # date=datetime.strptime(row['Date'], '%M/%d/%y').strftime('%Y-%M-%d'),
+                # date=datetime.strptime(row['Date'], '%M/%d/%y').strftime('%Y-%M-%d'), ## old method
                 time=row['Time'],
                 time_zone=row['Time Zone'],
                 gross_sales=row['Gross Sales'].replace('$', ''),
