@@ -50,7 +50,8 @@ class SquareUpload(LoginRequiredMixin, View):
         list_of_dict = list(portfolio1)
         objs = [
             Square(
-                date=datetime.strptime(row['Date'], '%M/%d/%y').strftime('%Y-%M-%d'),
+                date=row['Date'],
+                # date=datetime.strptime(row['Date'], '%M/%d/%y').strftime('%Y-%M-%d'),
                 time=row['Time'],
                 time_zone=row['Time Zone'],
                 gross_sales=row['Gross Sales'].replace('$', ''),
