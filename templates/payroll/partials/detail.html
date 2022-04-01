@@ -61,11 +61,11 @@
         {% if square %}
         <table class="table table-sm .d-print-none">
             <thead>
-                <th>Square Tips: ${{ square_tip_total_reduced }} ({{ square_tip_total }} w/o fees)
+                <th>Square Tips: ${{ square_tip_total }} before fees
                     {% if sq_matches is False %}
-                    <br /><span style="background-color: red; color: white;">Square Doesn't Match Report: ${{total_total_tip_pay}}</span>
+                    <br /><span style="background-color: red; color: white;">Square Doesn't Match Claimed Tips: ${{total_total_tip_amount}} before fees</span>
                     {% else %}
-                    <br /><small><a style="color: green;">Square Tips Match Report: ${{total_total_tip_pay}}</a> </small>
+                    <br /><small><a style="color: green;">Square Tips Match Claimed Tips: ${{total_total_tip_amount}} before fees</a> </small>
                     {% endif %}
                 </th>
                 <th style="text-align: right;"><a class="btn btn-sm btn-outline-primary" href="{{ object.get_absolute_url }}">Refresh</a>

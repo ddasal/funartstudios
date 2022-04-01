@@ -121,6 +121,7 @@ def report_detail_hx_view(request, id=None):
         total_floor_tip_pay = Decimal(0.0)
         total_team_tip_pay = Decimal(0.0)
         total_total_tip_pay = Decimal(0.0)
+        total_total_tip_amount = Decimal(0.0)
         total_stage_commission_pay = Decimal(0.0)
         total_floor_commission_pay = Decimal(0.0)
         total_team_commission_pay = Decimal(0.0)
@@ -140,13 +141,18 @@ def report_detail_hx_view(request, id=None):
             event.count_other = EventStaff.objects.all().filter(Q(role='f') | Q(role='t'), event=event.id).count()
             total_stage_tips = Decimal(0.0)
             total_floor_tips = Decimal(0.0)
+            total_tips_amount = Decimal(0.0)
             if tip_details:
                 for tip in tip_details:
                     total_stage_tips = total_stage_tips + tip.stage_amount
                     total_floor_tips = total_floor_tips + tip.floor_amount
+                    total_tips_amount = total_tips_amount + tip.tip_amount
             event.total_stage_tips = total_stage_tips
             event.total_floor_tips = total_floor_tips
             event.total_total_tips = total_stage_tips + total_floor_tips
+            event.total_total_tip_amount = total_tips_amount
+            total_total_tip_amount = total_total_tip_amount + event.total_total_tip_amount
+            print(event.total_total_tip_amount)
             if event.count_other == 0:
                 if event.count_stage == 1:
                     update_tip_stage = EventStaff.objects.get(event=event.id, role='s')
@@ -266,7 +272,8 @@ def report_detail_hx_view(request, id=None):
                                 total_team_commission_pay = total_team_commission_pay + staff.commission_pay
         total_total_hours = total_stage_hours + total_floor_hours + total_team_hours
         total_total_hourly_pay = total_stage_hourly_pay + total_floor_hourly_pay + total_team_hourly_pay
-        total_total_tip_pay = round(total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay, 2)
+        # total_total_tip_pay = round(total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay, 2)
+        # total_total_tip_amount = total_stage_tip_pay + total_floor_tip_pay + total_team_tip_pay
         total_total_commission_pay = total_stage_commission_pay + total_floor_commission_pay + total_team_commission_pay
         total_stage_pay = total_stage_hourly_pay + total_stage_tip_pay + total_stage_commission_pay
         total_floor_pay = total_floor_hourly_pay + total_floor_tip_pay + total_floor_commission_pay
@@ -276,7 +283,12 @@ def report_detail_hx_view(request, id=None):
         obj.payroll_gross = total_total_pay
         obj.save()
 
-        if square_tip_total_reduced == total_total_tip_pay:
+        # if square_tip_total_reduced == total_total_tip_pay:
+        #     sq_matches = True
+        # else:
+        #     sq_matches = False
+        print(total_total_tip_amount)
+        if square_tip_total == total_total_tip_amount:
             sq_matches = True
         else:
             sq_matches = False
@@ -316,7 +328,8 @@ def report_detail_hx_view(request, id=None):
         "square_tip_total_reduced": square_tip_total_reduced,
         "square_tip_total": square_tip_total,
         "total_admin_pay": total_admin_pay,
-        "sq_matches": sq_matches
+        "sq_matches": sq_matches,
+        "total_total_tip_amount": total_total_tip_amount
     }
     return render(request, "payroll/partials/detail.html", context)
  
