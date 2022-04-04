@@ -1,0 +1,41 @@
+<div id="staff-{{object.id}}">
+    <table class="table table-sm table-striped">
+        <thead>
+            <tr>
+                <td><b>{{ object.user.first_name }} - {{ object.get_role_display }} ({{object.hours }}hrs)</b></td>
+                <td style="text-align: right;">
+                    {% if perms.activities.change_activitystaff %} 
+                        {% if object.status == 'p' %}
+                            <button class="btn btn-sm btn-outline-primary" hx-trigger='click' hx-get='{{ object.get_htmx_edit_url }}' hx-target='#staff-{{object.id}}'>Edit</button>
+                        {% endif %}    
+                    {% endif %}
+                    {% if perms.activities.delete_activitystaff %}
+                        {% if object.status == 'p' %}
+                            <!-- <a class="btn btn-sm btn-outline-danger" hx-confirm='Remove {{object.user.first_name }} {{object.user.last_name}} from activity?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#staff-{{object.id}}' hx-swap='outerHTML'>Remove</a> -->
+                        {% elif  object.status == 'a' %} 
+                            <a class="btn btn-sm btn-outline-warning" hx-trigger='click'>Approved</a>
+                        {% elif object.status == 'c' %}
+                        <a class="btn btn-sm btn-outline-secondary" hx-trigger='click'>Payroll Sent</a>
+                        {% endif %}
+                    {% endif %} 
+                </td>
+            </tr>
+        </thead>
+        <tbody class="table-striped">
+            {% if object.prepaint_qty > 0 %} 
+            <tr>
+                <td colspan="2">
+                    - Pre-painted on {{ object.prepaint_qty }} x {{object.prepaint_product }}<br />
+                </td>
+            </tr>
+            {% endif %} 
+            {% if object.activity_qty > 0 %}
+            <tr>
+                <td colspan="2">
+                    - Activity painted on {{ object.activity_qty }} x {{ object.activity_product }} <br />
+                </td>
+            </tr>
+            {% endif %} 
+        </tbody>
+    </table>
+</div>

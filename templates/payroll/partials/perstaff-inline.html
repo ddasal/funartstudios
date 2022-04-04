@@ -14,6 +14,7 @@
                 <th style="text-align: right;">Stage</th>
                 <th style="text-align: right;">Floor</th>
                 <th style="text-align: right;">Team</th>
+                <th style="text-align: right;">CX</th>
                 <th style="text-align: right;">Totals</th>
             </thead>
             <tbody>
@@ -22,6 +23,7 @@
                     <td style="text-align: right;"><i>{{ staff_member.total_stage_hours|floatformat:'2' }}</i></td>
                     <td style="text-align: right;"><i>{{ staff_member.total_floor_hours|floatformat:'2' }}</i></td>
                     <td style="text-align: right;"><i>{{ staff_member.total_team_hours|floatformat:'2' }}</i></td>
+                    <td style="text-align: right;"><i>{{ staff_member.total_cx_hours|floatformat:'2' }}</i></td>
                     <th style="text-align: right;"><i>{{ staff_member.total_total_hours|floatformat:'2' }}</i></th>
                 </tr>
                 <tr>
@@ -29,12 +31,14 @@
                     <td style="text-align: right;">{% if staff_member.rate_stage %}${{ staff_member.rate_stage|floatformat:'2' }}/hr{% endif %}</td>
                     <td style="text-align: right;">{% if staff_member.rate_floor %}${{ staff_member.rate_floor|floatformat:'2' }}/hr{% endif %}</td>
                     <td style="text-align: right;">{% if staff_member.rate_team %}${{ staff_member.rate_team|floatformat:'2' }}/hr{% endif %}</td>
+                    <td style="text-align: right;">{% if staff_member.rate_cx %}${{ staff_member.rate_cx|floatformat:'2' }}/hr{% endif %}</td>
                     <th style="text-align: right;"></th>
                 <tr>
                     <th>Hourly Pay</th>
                     <td style="text-align: right;">${{ staff_member.total_stage_hourly_pay|floatformat:'2' }}</td>
                     <td style="text-align: right;">${{ staff_member.total_floor_hourly_pay|floatformat:'2' }}</td>
                     <td style="text-align: right;">${{ staff_member.total_team_hourly_pay|floatformat:'2' }}</td>
+                    <td style="text-align: right;">${{ staff_member.total_cx_hourly_pay|floatformat:'2' }}</td>
                     <th style="text-align: right;">${{ staff_member.total_total_hourly_pay|floatformat:'2' }}</th>
                 </tr>
                 <tr>
@@ -42,6 +46,7 @@
                     <td style="text-align: right;">${{ staff_member.total_stage_tip_pay|floatformat:'2' }}</td>
                     <td style="text-align: right;">${{ staff_member.total_floor_tip_pay|floatformat:'2' }}</td>
                     <td style="text-align: right;">${{ staff_member.total_team_tip_pay|floatformat:'2' }}</td>
+                    <td style="text-align: right;">${{ staff_member.total_cx_tip_pay|floatformat:'2' }}</td>
                     <th style="text-align: right;">${{ staff_member.total_total_tip_pay|floatformat:'2' }}</th>
                 </tr>
                 <tr>
@@ -49,10 +54,12 @@
                     <td style="text-align: right;">${{ staff_member.total_stage_commission_pay|floatformat:'2' }}</td>
                     <td style="text-align: right;">${{ staff_member.total_floor_commission_pay|floatformat:'2' }}</td>
                     <td style="text-align: right;">${{ staff_member.total_team_commission_pay|floatformat:'2' }}</td>
+                    <td style="text-align: right;">${{ staff_member.total_cx_commission_pay|floatformat:'2' }}</td>
                     <th style="text-align: right;">${{ staff_member.total_total_commission_pay|floatformat:'2' }}</th>
                 </tr>
                 <tr>
                     <th>Management Adjustments</th>
+                    <td style="text-align: right;"> - </td>
                     <td style="text-align: right;"> - </td>
                     <td style="text-align: right;"> - </td>
                     <td style="text-align: right;"> - </td>
@@ -65,6 +72,7 @@
                     <th style="text-align: right;">${{ staff_member.total_stage_pay|floatformat:'2' }}</th>
                     <th style="text-align: right;">${{ staff_member.total_floor_pay|floatformat:'2' }}</th>
                     <th style="text-align: right;">${{ staff_member.total_team_pay|floatformat:'2' }}</th>
+                    <th style="text-align: right;">${{ staff_member.total_cx_pay|floatformat:'2' }}</th>
                     <th style="text-align: right;">${{ staff_member.total_total_pay|floatformat:'2' }}</th>
                 </tr>
             </tfoot>

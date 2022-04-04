@@ -1,0 +1,5 @@
+{% if staff %} 
+    <span style='color:#ccc'>Removed admin pay for {{ staff.first_name }}</span>
+{% elif message %} 
+    <span style='color:#ccc'>{{ message }}</span>
+{% endif %}

@@ -1,0 +1,5 @@
+{% if customer %} 
+    <span style='color:#ccc'>{{ customer.quantity }} x {{ customer.get_type_display }} removed from activity</span>
+{% elif message %} 
+    <span style='color:#ccc'>{{ message }}</span>
+{% endif %}

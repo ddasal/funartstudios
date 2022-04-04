@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %} 
+{% if object.title %}
+    {{ object.title }}
+{% else %}
+    Create Event
+{% endif %} 
+{% endblock title %} 
+
+{% block content %}
+
+<style>
+    .staff-form {
+        border-bottom: 1px solid black;
+    }
+    .hidden {
+        display: none;
+    }
+</style>
+
+
+
+<div class="row">
+    <div class='col-md-6 mx-auto'>
+        {% if not object.slug %}
+            <h3>Create Activity</h3>
+        {% else %}
+            <h3>Event Details
+                <small>
+                    {% if perms.activities.change_activity %}
+                    <a class="btn btn-outline-secondary" href="{{ object.get_absolute_url }}">Return</a>
+                    {% endif %} 
+                </small>    
+            </h3>
+        {% endif %}
+
+    {% include 'activities/partials/forms.html' %}
+    </div>
+</div>
+
+
+{% endblock %} 

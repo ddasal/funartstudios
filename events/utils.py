@@ -10,7 +10,7 @@ def slugify_instance_title(instance, save=False, new_slug=None):
     Klass = instance.__class__
     qs = Klass.objects.filter(slug=slug).exclude(id=instance.id)
     if qs.exists():
-        random_int = random.randint(1_000,500_000)
+        random_int = random.randint(1_000,500_000_000)
         slug = f"{slug}-{random_int}"
         return slugify_instance_title(instance, save=save, new_slug=slug)
     instance.slug = slug

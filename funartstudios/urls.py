@@ -24,6 +24,7 @@ urlpatterns = [
     path('githubpull/', github_pull, name='github'),
     path('about/', about_view), 
     path('account/', include('accounts.urls')),
+    path('activities/', include('activities.urls')),
     path('articles/', include('articles.urls')),
     path('events/', include('events.urls')),
     path('payroll/', include('payroll.urls')),

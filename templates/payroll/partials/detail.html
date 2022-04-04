@@ -154,6 +154,54 @@
                         </tr>
                     {% endfor %} 
                 {% endfor %} 
+
+
+                {% for activity in activities %}
+                {% for staff in activity.get_activitiesstaff_children %} 
+                    <tr>
+                        <td><b><a href="{% url 'payroll:staff-mgmt-detail' id=object.id staff_id=staff.user.id %}">{{ staff.user.first_name }} {{ staff.user.last_name }}</a></b><br />as {{ staff.get_role_display }}</td>
+                        <td><a href="{% url 'activities:detail' slug=staff.activity.slug %}" target="_blank">{{ staff.activity.title }}</a><br />
+                             on {{ staff.activity.date }} at {{ staff.activity.time }}</td>
+                        <td>{{ staff.activity.hours }}</td>
+                        <td {% if staff.typical_hours < staff.hours %} class="table-warning"{% endif %}>
+                            {% if staff.rate %}
+                                {{ staff.hours|floatformat:'2' }}
+                            {% endif %}
+                        </td>
+                        <td style="text-align: right;">
+                            {% if staff.rate %}
+                                ${{ staff.rate|floatformat:'2' }}
+                            {% endif %} 
+                        </td>
+                        <td style="text-align: right;">{% if staff.hourly_pay %} 
+                            <i>${{ staff.hourly_pay|floatformat:'2' }}</i>
+                            {% endif %} 
+                        </td>
+                        <td style="text-align: right;">
+                            {% if staff.prepaint_pay %}
+                                ${{ staff.prepaint_pay|floatformat:'2' }}
+                            {% endif %}
+                        </td>
+                        <td style="text-align: right;">
+                            {% if staff.tip_pay %}
+                                ${{ staff.tip_pay|floatformat:'2' }}
+                            {% endif %}
+                        </td>
+                        <td style="text-align: right;">
+                            {% if staff.commission_pay %}
+                                ${{ staff.commission_pay|floatformat:'2' }}
+                            {% endif %}
+                        </td>
+                        <td class="table-success" style="text-align: right;">
+                            {% if staff.total_pay %} 
+                                <b>${{ staff.total_pay|floatformat:'2' }}</b>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %} 
+                {% endfor %} 
+
+
                 </tbody>
             </table>
         </div>
@@ -165,6 +213,7 @@
                     <th style="text-align: right;">Stage</th>
                     <th style="text-align: right;">Floor</th>
                     <th style="text-align: right;">Team</th>
+                    <th style="text-align: right;">CX</th>
                     <th style="text-align: right;">Totals</th>
                 </thead>
                 <tbody>
@@ -173,6 +222,7 @@
                         <td style="text-align: right;"><i>{{ total_stage_hours|floatformat:'2' }}</i></td>
                         <td style="text-align: right;"><i>{{ total_floor_hours|floatformat:'2' }}</i></td>
                         <td style="text-align: right;"><i>{{ total_team_hours|floatformat:'2' }}</i></td>
+                        <td style="text-align: right;"><i>{{ total_cx_hours|floatformat:'2' }}</i></td>
                         <th style="text-align: right;"><i>{{ total_total_hours|floatformat:'2' }}</i></th>
                     </tr>
                     <tr>
@@ -180,6 +230,7 @@
                         <td style="text-align: right;">${{ total_stage_hourly_pay|floatformat:'2' }}</td>
                         <td style="text-align: right;">${{ total_floor_hourly_pay|floatformat:'2' }}</td>
                         <td style="text-align: right;">${{ total_team_hourly_pay|floatformat:'2' }}</td>
+                        <td style="text-align: right;">${{ total_cx_hourly_pay|floatformat:'2' }}</td>
                         <th style="text-align: right;">${{ total_total_hourly_pay|floatformat:'2' }}</th>
                     </tr>
                     <tr>
@@ -187,6 +238,7 @@
                         <td style="text-align: right;">${{ total_stage_tip_pay|floatformat:'2' }}</td>
                         <td style="text-align: right;">${{ total_floor_tip_pay|floatformat:'2' }}</td>
                         <td style="text-align: right;">${{ total_team_tip_pay|floatformat:'2' }}</td>
+                        <td style="text-align: right;">${{ total_cx_tip_pay|floatformat:'2' }}</td>
                         <th style="text-align: right;">${{ total_total_tip_pay }}</th>
                     </tr>
                     <tr>
@@ -194,10 +246,12 @@
                         <td style="text-align: right;">${{ total_stage_commission_pay|floatformat:'2' }}</td>
                         <td style="text-align: right;">${{ total_floor_commission_pay|floatformat:'2' }}</td>
                         <td style="text-align: right;">${{ total_team_commission_pay|floatformat:'2' }}</td>
+                        <td style="text-align: right;">${{ total_cx_commission_pay|floatformat:'2' }}</td>
                         <th style="text-align: right;">${{ total_total_commission_pay|floatformat:'2' }}</th>
                     </tr>      
                     <tr>
                         <th>Management Adjustments</th>
+                        <td style="text-align: right;"> - </td>
                         <td style="text-align: right;"> - </td>
                         <td style="text-align: right;"> - </td>
                         <td style="text-align: right;"> - </td>
@@ -210,6 +264,7 @@
                         <th style="text-align: right;">${{ total_stage_pay|floatformat:'2' }}</th>
                         <th style="text-align: right;">${{ total_floor_pay|floatformat:'2' }}</th>
                         <th style="text-align: right;">${{ total_team_pay|floatformat:'2' }}</th>
+                        <th style="text-align: right;">${{ total_cx_pay|floatformat:'2' }}</th>
                         <th style="text-align: right;">${{ total_total_pay|floatformat:'2' }}</th>
                     </tr>
                 </tfoot>

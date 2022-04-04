@@ -1,0 +1,5 @@
+<form method="POST" action="." hx-post='{% if url %}{{ url }}{% else %}.{% endif %}' hx-swap='outerHTML' enctype="multipart/form-data" hx-post="{{ request.path }}" hx-encoding="multipart/form-data" data-ajax="false">
+    {% csrf_token %}
+    {{ form.as_p }}
+        <button class="btn btn-outline-primary" style='margin-top:10px;' type="submit">Save</button>
+    </form>

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %} 
+    Activities List
+{% endblock title %} 
+
+{% block content %}
+<div class="row">
+    <div class='col-12 col-md-4'>
+        <h3>Activities List</h3>
+    </div>
+    <div class="col-12 col-md-8" style="text-align: right;">    
+        {% if perms.activities.add_activity %} 
+        <a class="btn btn-outline-success" href="{% url 'activities:create' %}">Create activity</a>  
+        {% endif %} 
+    </form>
+    </div>
+</div>
+<div class="row">
+    <div class='col-12'>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Date / Time</th>
+                    <th>Activity</th>
+                    <th>Walk-In / Pop-In Customers</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for x in activities %}
+            <tr>
+                {% if x.title %}
+                    <td><small><a href="{% url 'activities:detail' slug=x.slug %}">{{ x.date | date:"D, n/j/y" }} {{ x.time | date:"g:i a" }}</a></small>
+                    <!-- <td><small><b><a href="{% url 'activities:detail' slug=x.slug %}">{{ x.title }}</a></b></small></td> -->
+                        </td><td>{% for staff in x.get_activitiesstaff_children %}
+                            <small><b>{{ staff.user.first_name }} - {{ x.get_type_display }} ({{ staff.hours }}hrs)</b>
+                                {% if staff.prepaint_qty > 0 %} <br />&ThickSpace;-Pre-painted: {{ staff.prepaint_qty }} x {{ staff.prepaint_product }} {% endif %}
+                                {% if staff.activity_qty > 0 %} <br />&ThickSpace;-Activity painted: {{ staff.activity_qty }} x {{ staff.activity_product }} {% endif %}
+                            </small><br />
+                        {% endfor %}
+                            {% if x.get_activitiestip_children.count == 1 %}
+                            <small><i>Recevied {{ x.get_activitytip_children.count }} tip</i></small>
+                            {% endif %}
+                            {% if x.get_activitiestip_children.count > 1 %}
+                            <small><i>Recevied {{ x.get_activitytip_children.count }} tips</i></small>
+                            {% endif %}                    
+                    </td>
+                    <td>
+                        {% for customer in x.get_activitiescustomer_children %}
+                            <small><b>{{ customer.quantity }} x {{ customer.get_type_display }} (${{ customer.price }}/ea)</b><br />
+                                &ThickSpace; of {{ customer.per_customer_qty }} x {{ customer.product }} each</small><br />
+                        {% endfor %}  
+                    </td>    
+                    <td>{{ x.notes|truncatechars:50 }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="margin-top: 15px;">
+        {% if activities.has_other_pages %}
+        <ul class="pagination pagination ">
+            {% if activities.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ activities.previous_page_number }}">Previous</a></li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link">Previous</a></li>
+            {% endif %}
+
+            {% if activities.number|add:'-4' > 1 %}
+                <li class="page-item"><a class="page-link" href="?page={{ activities.number|add:'-5' }}">&hellip;</a></li>
+            {% endif %}
+
+            {% for i in activities.paginator.page_range %}
+                {% if activities.number == i %}
+                    <li class="page-item active"><a class="page-link">{{ i }}</a></li>
+                {% elif i > activities.number|add:'-5' and i < activities.number|add:'5' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if activities.paginator.num_pages > activities.number|add:'4' %}
+                <li class="page-item"><a class="page-link" href="?page={{ activities.number|add:'5' }}">&hellip;</a></li>
+            {% endif %}
+
+            {% if activities.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ activities.next_page_number }}">Next</a></li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link">Next</a></li>
+            {% endif %}
+        </ul>
+        {% endif %}
+        Total Activity Count: {{ activity_count }}
+        </div>
+    </div>
+</div>
+{% endblock content %} 

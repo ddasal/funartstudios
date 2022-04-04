@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django_htmx',
     'storages',
     'accounts',
+    'activities',
     'articles',
     'events',
     'payroll',

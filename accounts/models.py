@@ -44,6 +44,7 @@ class UserPay(models.Model):
     stage = models.DecimalField(decimal_places=2, max_digits=4, default=0.00, null=False, blank=False)
     floor = models.DecimalField(decimal_places=2, max_digits=4, default=0.00, null=False, blank=False)
     team = models.DecimalField(decimal_places=2, max_digits=4, default=0.00, null=False, blank=False)
+    customer_experience = models.DecimalField(decimal_places=2, max_digits=4, default=0.00, null=False, blank=False)
     prepaint_single = models.DecimalField(decimal_places=2, max_digits=4, default=13.00, null=False, blank=False)
     prepaint_double = models.DecimalField(decimal_places=2, max_digits=4, default=19.50, null=False, blank=False)
     timestamp = models.DateTimeField(auto_now_add=True)

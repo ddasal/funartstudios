@@ -6,6 +6,7 @@ from django.http.response import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from events.models import Event, EventCustomer, EventStaff
+from activities.models import Activity, ActivityCustomer, ActivityStaff
 from products.models import Product, PurchaseItem, PurchaseOrder
 from royaltyreports.forms import ReportForm
 from django.db.models import Q, Sum
@@ -60,7 +61,11 @@ def report_delete_view(request, id=None):
         if obj.status == 'p':
             parent_obj = obj
             events = Event.objects.filter(royalty_report=parent_obj)
+            activities = Activity.objects.filter(royalty_report=parent_obj)
             for each in events:
+                each.royalty_report = None
+                each.save()
+            for each in activities:
                 each.royalty_report = None
                 each.save()
             obj.delete()
@@ -94,6 +99,7 @@ def report_detail_hx_view(request, id=None):
         obj = RoyaltyReport.objects.get(id=id)
         events = Event.objects.filter(Q(type='s') | Q(type='p') | Q(type='w') | Q(type='t'), date__range=(obj.start_date, obj.end_date)).order_by('date', 'time').prefetch_related()
         kits = Event.objects.filter(Q(type='s') | Q(type='p') | Q(type='w') | Q(type='t') | Q(type='r'), date__range=(obj.start_date, obj.end_date)).order_by('date', 'time').prefetch_related()
+        activity_kits = Activity.objects.filter(Q(type='f') | Q(type='o') | Q(type='c'), date__range=(obj.start_date, obj.end_date)).order_by('date', 'time').prefetch_related()
         sqaure_info = Square.objects.filter(date__range=(obj.start_date, obj.end_date)).exclude(Q(description__icontains='Twist at Home Kit') | Q(description__icontains='Event'))
         square_last_entry_date = Square.objects.latest('date', 'time')
         report_adjusted_gross_revenue = Decimal(0.0)
@@ -148,6 +154,25 @@ def report_detail_hx_view(request, id=None):
             temp_cost_factors = [Decimal(each.cost_factor) for each in EventCustomer.objects.filter(event=each.id, type='h')]
             each.temp_cost_factors = sum(temp_cost_factors)
 
+        for each in activity_kits:
+            each.temp_customer_seats = 0
+            temp_customer_seats = [int(each.quantity) for each in ActivityCustomer.objects.filter(activity=each.id, type='h')]
+            each.temp_customer_seats = sum(temp_customer_seats)
+            report_kits = report_kits + each.temp_customer_seats
+
+            each.temp_gross_revenue = Decimal(0.0)
+            temp_gross_revenue = [Decimal(each.total_price) for each in ActivityCustomer.objects.filter(activity=each.id, type='h')]
+            each.temp_gross_revenue = sum(temp_gross_revenue)
+            kit_gross_revenue = kit_gross_revenue + each.temp_gross_revenue
+
+            each.temp_adjustments = Decimal(0.0)
+            temp_adjustments = [Decimal(each.taxes) for each in ActivityCustomer.objects.filter(activity=each.id, type='h')]
+            each.temp_adjustments = sum(temp_adjustments)
+            kit_adjustments = kit_adjustments + each.temp_adjustments
+
+            each.temp_cost_factors = Decimal(0.0)
+            temp_cost_factors = [Decimal(each.cost_factor) for each in ActivityCustomer.objects.filter(activity=each.id, type='h')]
+            each.temp_cost_factors = sum(temp_cost_factors)
 
         pi_qs = PurchaseItem.objects.filter(date__lte=obj.end_date).exclude(product__type='r')
         inventory_total = 0
@@ -161,7 +186,7 @@ def report_detail_hx_view(request, id=None):
         for item in event_qs:
             item.temp_customer_used = 0
             temp_customer_each = [int(item.total_customer_qty) for item in EventCustomer.objects.filter(event=item.id).exclude(product__type='r')]
-            item.temp_customer_used = sum(temp_customer_each)
+            item.temp_customer_used = sum(temp_customer_each) 
 
             item.temp_prepaint_used = 0
             temp_prepaint_each = [int(item.prepaint_qty) for item in EventStaff.objects.filter(event=item.id)]
@@ -170,9 +195,24 @@ def report_detail_hx_view(request, id=None):
             item.temp_event_used = 0
             temp_event_each = [int(item.event_qty) for item in EventStaff.objects.filter(event=item.id)]
             item.temp_event_used = sum(temp_event_each)
-
-
             inventory_total = inventory_total - item.temp_customer_used - item.temp_prepaint_used - item.temp_event_used
+
+        activity_qs = Activity.objects.filter(date__lte=obj.end_date)
+        
+        for item in activity_qs:
+            item.temp_customer_used = 0
+            temp_customer_each = [int(item.total_customer_qty) for item in ActivityCustomer.objects.filter(activity=item.id).exclude(product__type='r')]
+            item.temp_customer_used = sum(temp_customer_each) 
+
+            item.temp_prepaint_used = 0
+            temp_prepaint_each = [int(item.prepaint_qty) for item in ActivityStaff.objects.filter(activity=item.id)]
+            item.temp_prepaint_used = sum(temp_prepaint_each)
+
+            item.temp_event_used = 0
+            temp_activity_each = [int(item.activity_qty) for item in ActivityStaff.objects.filter(activity=item.id)]
+            item.temp_activity_used = sum(temp_activity_each)
+
+            inventory_total = inventory_total - item.temp_customer_used - item.temp_prepaint_used - item.temp_activity_used
 
         customer_surfaces_used_qs = EventCustomer.objects.filter(event__date__range=(obj.start_date, obj.end_date)).exclude(product__type='r').aggregate(Sum('total_customer_qty'))
         staff_event_surfaces_used_qs = EventStaff.objects.filter(event__date__range=(obj.start_date, obj.end_date)).aggregate(Sum('event_qty'))
@@ -275,6 +315,7 @@ def report_hx_mark_complete(request, id=None):
     else:
         parent_obj.status = 'c'
         parent_obj.save()
+
         children = Event.objects.filter(date__range=(parent_obj.start_date, parent_obj.end_date))
         for event in children:
             event.status = 'c'
@@ -284,6 +325,16 @@ def report_hx_mark_complete(request, id=None):
             for each in customers:
                 each.status = 'c'
                 each.save()
+        children_activity = Activity.objects.filter(date__range=(parent_obj.start_date, parent_obj.end_date))
+        for activity in children_activity:
+            activity.status = 'c'
+            activity.royalty_report = parent_obj
+            activity.save()
+            customers = ActivityCustomer.objects.filter(activity=activity.id)
+            for each in customers:
+                each.status = 'c'
+                each.save()
+                
         success_url = reverse('royalty:list')
         # if request.htmx:
         #     headers = {
@@ -307,6 +358,7 @@ def report_hx_mark_pending(request, id=None):
     else:
         parent_obj.status = 'p'
         parent_obj.save()
+
         children = Event.objects.filter(date__range=(parent_obj.start_date, parent_obj.end_date))
         for event in children:
             event.status = 'p'
@@ -315,6 +367,16 @@ def report_hx_mark_pending(request, id=None):
             for each in customers:
                 each.status = 'p'
                 each.save()
+
+        children_activity = Activity.objects.filter(date__range=(parent_obj.start_date, parent_obj.end_date))
+        for activity in children_activity:
+            activity.status = 'p'
+            activity.save()
+            customers = ActivityCustomer.objects.filter(activity=activity.id)
+            for each in customers:
+                each.status = 'p'
+                each.save()
+
         success_url = reverse('royalty:list')
         # if request.htmx:
         #     headers = {

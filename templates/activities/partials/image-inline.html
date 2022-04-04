@@ -1,0 +1,21 @@
+<div id="image-{{object.id}}">
+    <table class="table table-sm table-striped">
+        <thead>
+            <tr>
+                <td><b>{{ object.title }} - <a download="{{ object.title }}" href="{{object.upload.url }}">Download</a></b></td>
+                <td style="text-align: right;">
+                    {% if perms.activities.delete_activityimage %}
+                            <a class="btn btn-sm btn-outline-danger" hx-confirm='Remove {{object.title }} image from activity?' hx-post='{{ object.get_delete_url }}' hx-trigger='click' href="{{ object.get_delete_url }}" hx-target='#image-{{object.id}}' hx-swap='outerHTML'>Remove</a>
+                    {% endif %} 
+                </td>
+            </tr>
+        </thead>
+        <tbody class="table-striped">
+            <tr>
+                <td colspan="2">
+                    <img src="{{ object.upload.url }}" alt="{{ object.title }}" width="200"><br />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,129 @@
+<div class="row">
+    <div class="col-12 col-md-10">
+        <h2>{{ object.get_type_display }}
+            {% if object.get_edit_url %}
+            <small>
+                {% if perms.payroll.view_report %} 
+                <a class="btn btn-outline-secondary" href="{% url 'activities:list' %}">Back</a>
+                {% else %}
+                <a class="btn btn-outline-secondary" href="{% url 'activities:staff-list' %}">Back</a>
+                {% endif %} 
+                {% if perms.activities.change_activity %}
+                    {% if object.status == 'c' %}
+                        <a class="btn btn-outline-secondary" hx-trigger='click'>Royalty Sent</a>
+                    {% elif object.status == 'p' %}
+                        <a class="btn btn-outline-primary" href="{{ object.get_edit_url }}">Edit</a>
+                    {% endif %} 
+                {% endif %} 
+            </small>
+            {% endif %}
+        </h2> 
+        <p><span class="lead"><b>{{ object.date }}</b> at {{ object.time }} </span><br />
+            {% if object.created_by %}Created by: {{ object.created_by.first_name }} {{ object.created_by.last_name }}<br />{% endif %}
+            Last updated on : {{ object.updated }}{% if object.updated_by %} by {{ object.updated_by.first_name }} {{ object.updated_by.last_name }} {% endif %} <br />
+            Activity Notes: <b>{{ object.notes }}</b><br /></p>
+        
+        <p>Effective Sales Tax Rate: {{ object.tax_rate_percentage }}%<br />
+        Royalty Report ID: {{ object.royalty_report.id }}<br />
+        Activity ID: {{ object.id }}<br />
+        {% if perms.payroll.view_report %}
+                {% if gp < 0 %}
+                    <mark>Activity GP: ${{ gp }}</mark>
+                {% else %}
+                    Activity GP: ${{ gp }}
+                {% endif %} 
+                <a class="btn btn-sm btn-outline-primary" href="{{ object.get_absolute_url }}">Refresh</a>
+        {% endif %}</p>
+    </div>
+
+
+</div>
+
+<div class="row">
+    <div class="col-12 col-md-6">
+        <h3>Walk-In/Pop-In Customer(s)</h3>
+            <div id="customer-list">
+                {% for customer in object.get_activitiescustomer_children %}
+                    {% include 'activities/partials/customer-inline.html' with object=customer %}
+                {% endfor %} 
+            </div>
+            {% if object.status == 'p' %}
+                {% if perms.activities.add_activitycustomer %}
+                    {% if new_customer_url %}
+                        <button class="btn btn-outline-success" hx-get="{{ new_customer_url }}" hx-trigger="click" hx-target="#customer-list" hx-swap="beforeend">Add Customer(s)</button>
+                    {% endif %} 
+                {% endif %} 
+            {% endif %}
+            <p></p>
+            <h3>Images</h3>
+            <div id="image-list">
+                {% for image in object.get_activitiesimage_children %}
+                    {% include 'activities/partials/image-inline.html' with object=image %}
+                {% endfor %} 
+            </div>
+            {% if object.status == 'p' %}
+                {% if perms.activities.add_activityimages %}
+                    {% if new_image_url %}
+                        <button class="btn btn-outline-success" hx-get="{{ new_image_url }}" hx-trigger="click" hx-target="#image-list" hx-swap="beforeend">Add Image</button>
+                    {% endif %} 
+                {% endif %} 
+            {% endif %} 
+
+    </div>
+    <div class='col-6 col-md-6'>
+        <h3>Time Entry</h3>
+            <div id="staff-list">
+                {% for staff in object.get_activitiesstaff_children %} 
+                    {% include 'activities/partials/staff-inline.html' with object=staff %}
+                {% endfor %} 
+            </div>
+            {% if object.payroll_status == 'p' %}
+                {% if perms.activities.add_activitystaff %}
+                    {% if new_staff_url %}
+                        <!-- <button class="btn btn-outline-success" hx-get="{{ new_staff_url }}" hx-trigger="click" hx-target="#staff-list" hx-swap="beforeend">Add Entry</button> -->
+                    {% endif %} 
+                {% endif %} 
+            {% endif %} 
+            <p></p>
+            <h3>Tips</h3>
+            <div id="tip-list">
+                {% for tip in object.get_activitiestip_children %}
+                    {% include 'activities/partials/tip-inline.html' with object=tip %}
+                {% endfor %} 
+            </div>
+            {% if object.payroll_status == 'p' %}
+                {% if perms.activities.add_activitytip %}
+                    {% if new_tip_url %}
+                        <button class="btn btn-outline-success" hx-get="{{ new_tip_url }}" hx-trigger="click" hx-target="#tip-list" hx-swap="beforeend">Add Tip</button>
+                    {% endif %} 
+                {% endif %} 
+                <p></p>
+            {% endif %} 
+            {% if perms.payroll.view_report %}
+                <h3>Management Adjustments</h3>
+                <div id="activityadminpay-list">
+                    {% for staff in object.get_activitiesadminpay_children %}
+                        {% include 'activities/partials/activityadminpay-inline.html' with object=staff %}
+                    {% endfor %} 
+                </div>
+                {% if object.payroll_status == 'p' %}
+                    {% if perms.activities.add_activityadminpay %}
+                        {% if new_activityadminpay_url %}
+                            <button class="btn btn-outline-success" hx-get="{{ new_activityadminpay_url }}" hx-trigger="click" hx-target="#activityadminpay-list" hx-swap="beforeend">Add Admin Pay Adjustment</button>
+                        {% endif %} 
+                    {% endif %} 
+                {% endif %} 
+                <p></p>
+            {% endif %} 
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 col-md-4" style="margin-top: 20px;">
+        {% if perms.activities.delete_activity %}
+            {% if object.status == 'p' %}
+                <p><a class="btn btn-outline-danger" href="{{ object.get_delete_url }}" hx-post="{{ object.get_delete_url }}" hx-confirm='THIS CANNOT BE UNDONE: Are you sure you want to delete {{ object.name }}?' hx-trigger="click">Delete Activity</a></p> 
+           {% endif %}
+        {% endif %}
+    </div>
+</div>
