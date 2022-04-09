@@ -25,9 +25,21 @@
           </li>
           {% endif %} 
           {% if perms.accounts.view_userprofile %}
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a class="nav-link" href="{% url 'account:staff' %}">Staff</a>
-          </li>
+          </li> -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Staff 
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li>
+                <a class="dropdown-item" href="{% url 'account:staff' %}">Directory</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="{% url 'account:files' %}">Documents</a>
+              </li>
+            </ul>
           {% endif %} 
           {% if perms.royaltyreports.view_royaltyreport %}
           <li class="nav-item dropdown">

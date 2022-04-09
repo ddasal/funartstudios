@@ -3,6 +3,7 @@ from django.http import request
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm, AuthenticationForm
+from accounts.models import FileUpload
 
 from events.models import User
 from .forms import UserProfile, UserForm, UserProfileForm, RegisterForm
@@ -117,3 +118,22 @@ def account_list_view(request):
         "account_count": account_count
     }
     return render(request, "accounts/list.html", context)
+
+@permission_required('accounts.view_fileupload')
+def staff_file_list_view(request):
+    qs = FileUpload.objects.filter(active=True).order_by('category__title', 'title')
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(qs, 10)
+    fileuploads_count = paginator.count
+    try:
+        fileuploads = paginator.page(page)
+    except PageNotAnInteger:
+        fileuploads = paginator.page(1)
+    except EmptyPage:
+        accofileuploadsunts = paginator.page(paginator.num_pages)
+    context = {
+        "fileuploads": fileuploads,
+        "fileuploads_count": fileuploads_count
+    }
+    return render(request, "accounts/files.html", context)

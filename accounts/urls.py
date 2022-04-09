@@ -7,7 +7,8 @@ from .views import (
     change_password_view,
     register_view,
     account_list_view,
-    profile_admin_update_view
+    profile_admin_update_view,
+    staff_file_list_view
 )
 app_name = 'account'
 
@@ -19,4 +20,5 @@ urlpatterns = [
     path('profile/', profile_update_view, name="profile"),
     path('profile/<int:id>/', profile_admin_update_view, name="profile-admin-edit"),
     path('staff/', account_list_view, name="staff"),
+    path('staff/files', staff_file_list_view, name="files"),
 ]

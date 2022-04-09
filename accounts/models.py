@@ -3,8 +3,10 @@ from django.contrib.auth.models import User
 from django.db.models.deletion import CASCADE, SET_NULL
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.urls import reverse
 from django.utils import timezone
-
+import uuid
+import pathlib
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -49,3 +51,42 @@ class UserPay(models.Model):
     prepaint_double = models.DecimalField(decimal_places=2, max_digits=4, default=19.50, null=False, blank=False)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+
+
+def staff_file_upload_handler(instance, filename):
+    fpath = pathlib.Path(filename)
+    new_fname = str(uuid.uuid1())
+    return f"account/{new_fname}{fpath.suffix}"
+
+class FileCategory(models.Model):
+    title = models.CharField(max_length=50, null=False, blank=False)
+    slug = models.SlugField(null=True, blank=True, unique=True)
+
+    @property
+    def name(self):
+        return self.title
+
+class FileUpload(models.Model):
+    category = models.ForeignKey(FileCategory, on_delete=CASCADE)
+    title = models.CharField(max_length=50, null=False, blank=False)
+    upload = models.FileField(upload_to=staff_file_upload_handler, max_length=100)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    uploaded_by = models.ForeignKey(User, on_delete=SET_NULL, null=True, blank=True)
+    updated_by = models.ForeignKey(User, on_delete=SET_NULL, null=True, blank=True, related_name='updated_by')
+    updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+
+    def get_delete_url(self):
+        kwargs = {
+            "parent_slug": self.category.slug,
+            "id": self.id
+        }
+        return reverse("account:fileupload-delete", kwargs=kwargs)
+
+    def get_htmx_edit_url(self):
+        kwargs = {
+            "parent_slug": self.category.slug,
+            "id": self.id
+        }
+        return reverse("account:hx-fileupload-update", kwargs=kwargs)

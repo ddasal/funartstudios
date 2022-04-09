@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %} 
+    Documents & Files
+{% endblock title %} 
+
+{% block content %}
+<div class="row">
+    <div class='col-12'>
+        <h3>Documents & Files</h3>
+        {% if perms.accounts.view_userprofile %} 
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for x in fileuploads %}
+            <tr>
+                    <td>
+                            {{ x.title }} - <small> <a download="{{ x.title }}" href="{{ x.upload.url }}" target="_blank">Download</a></small>
+                    </td>
+                    <td>
+                        {{ x.category.title }}
+                    </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="margin-top: 15px;">
+        {% if fileuploads.has_other_pages %}
+        <ul class="pagination pagination ">
+            {% if fileuploads.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ fileuploads.previous_page_number }}">Previous</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link">Previous</a></li>
+            {% endif %}
+            {% for i in fileuploads.paginator.page_range %}
+            {% if fileuploads.number == i %}
+                <li class="page-item active"><a class="page-link">{{ i }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if fileuploads.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ fileuploads.next_page_number }}">Next</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link">Next</a></li>
+            {% endif %}
+        </ul>
+        {% endif %}
+        Total File Count: {{ fileuploads_count }}
+        </div>
+    </div>
+    {% endif %} 
+</div>
+{% endblock content %} 
