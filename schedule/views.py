@@ -104,4 +104,4 @@ def schedule_create_view(request):
         "howmany": howmany,
         "schedule_count": schedule_count,
     }
-    return render(request, "schedule/list.html", context)
+    return render(request, "schedule/staff-list.html", context)
