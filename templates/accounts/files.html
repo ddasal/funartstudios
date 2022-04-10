@@ -20,7 +20,7 @@
             {% for x in fileuploads %}
             <tr>
                     <td>
-                            {{ x.title }} - <small> <a download="{{ x.title }}" href="{{ x.upload.url }}" target="_blank">Download</a></small>
+                            {{ x.title }} - <small><a download="{{ x.title }}" href="{{ x.upload.url }}">Download</a></small>
                     </td>
                     <td>
                         {{ x.category.title }}

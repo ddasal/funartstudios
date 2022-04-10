@@ -8,6 +8,8 @@ from django.utils import timezone
 import uuid
 import pathlib
 
+from schedule.models import Typical
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone_home = models.CharField(max_length=10, blank=True) #  change the field to watever works for you
@@ -38,6 +40,7 @@ class UserProfile(models.Model):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
+        Typical.objects.create(user=instance)
 
 class UserPay(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=CASCADE)

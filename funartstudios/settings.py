@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'payroll',
     'products',
     'royaltyreports',
+    'schedule',
     'search',
     'square',
     'taxreports'
