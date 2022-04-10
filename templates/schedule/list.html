@@ -70,135 +70,135 @@
                     </td>
                     <td style="width: 12%; text-align: center;" {% if x.monday >= 15 %} class="table-success" {% elif x.monday < 15 and x.monday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} >
                         <small>
-                            {% if x.monday_8am %} 8am-9am {% endif %} <br/>
-                            {% if x.monday_9am %} 9am-10am {% endif %} <br/>
-                            {% if x.monday_10am %} 10am-11am {% endif %} <br/>
-                            {% if x.monday_11am %} 11am-12pm  {% endif %} <br/>
-                            {% if x.monday_12pm %} 12pm-1pm  {% endif %} <br/>
-                            {% if x.monday_1pm %} 1pm-2pm {% endif %} <br/>
-                            {% if x.monday_2pm %} 2pm-3pm {% endif %} <br/>
-                            {% if x.monday_3pm %} 3pm-4pm {% endif %} <br/>
-                            {% if x.monday_4pm %} 4pm-5pm {% endif %} <br/>
-                            {% if x.monday_5pm %} 5pm-6pm {% endif %} <br/>
-                            {% if x.monday_6pm %} 6pm-7pm {% endif %} <br/>
-                            {% if x.monday_7pm %} 7pm-8pm {% endif %} <br/>
-                            {% if x.monday_8pm %} 8pm-9pm {% endif %} <br/>
-                            {% if x.monday_9pm %} 9pm-10pm {% endif %} <br/>
-                            {% if x.monday_10pm %} 10pm-11pm {% endif %} <br/>
+                            {% if x.monday_8am %} <b class="text-success">8am-9am</b> {% else %} <s class="text-danger">8am-9am</s>{% endif %} <br/>
+                            {% if x.monday_9am %} <b class="text-success">9am-10am</b> {% else %} <s class="text-danger">9am-10am</s>{% endif %} <br/>
+                            {% if x.monday_10am %} <b class="text-success">10am-11am</b> {% else %} <s class="text-danger">10am-11am</s>{% endif %} <br/>
+                            {% if x.monday_11am %} <b class="text-success">11am-12pm</b>  {% else %} <s class="text-danger">11am-12pm</s>{% endif %} <br/>
+                            {% if x.monday_12pm %} <b class="text-success">12pm-1pm</b> {% else %} <s class="text-danger">12pm-1pm</s> {% endif %} <br/>
+                            {% if x.monday_1pm %} <b class="text-success">1pm-2pm</b>{% else %} <s class="text-danger">1pm-2pm</s> {% endif %} <br/>
+                            {% if x.monday_2pm %} <b class="text-success">2pm-3pm</b> {% else %} <s class="text-danger">2pm-3pm</s>{% endif %} <br/>
+                            {% if x.monday_3pm %} <b class="text-success">3pm-4pm</b> {% else %} <s class="text-danger">3pm-4pm</s>{% endif %} <br/>
+                            {% if x.monday_4pm %} <b class="text-success">4pm-5pm</b> {% else %} <s class="text-danger">4pm-5pm</s>{% endif %} <br/>
+                            {% if x.monday_5pm %} <b class="text-success">5pm-6pm</b> {% else %} <s class="text-danger">5pm-6pm</s>{% endif %} <br/>
+                            {% if x.monday_6pm %} <b class="text-success">6pm-7pm</b> {% else %} <s class="text-danger">6pm-7pm</s>{% endif %} <br/>
+                            {% if x.monday_7pm %} <b class="text-success">7pm-8pm</b> {% else %} <s class="text-danger">7pm-8pm</s>{% endif %} <br/>
+                            {% if x.monday_8pm %} <b class="text-success">8pm-9pm</b> {% else %} <s class="text-danger">8pm-9pm</s>{% endif %} <br/>
+                            {% if x.monday_9pm %} <b class="text-success">9pm-10pm</b> {% else %} <s class="text-danger">9pm-10pm</s>{% endif %} <br/>
+                            {% if x.monday_10pm %} <b class="text-success">10pm-11pm</b> {% else %} <s class="text-danger">10pm-11pm</s>{% endif %} <br/>
                         </small>
                     </td>
                     <td style="width: 12%; text-align: center;" {% if x.tuesday >= 15 %} class="table-success" {% elif x.tuesday < 15 and x.tuesday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
                         <small>
-                            {% if x.tuesday_8am %} 8am-9am {% endif %} <br/>
-                            {% if x.tuesday_9am %} 9am-10am {% endif %} <br/>
-                            {% if x.tuesday_10am %} 10am-11am {% endif %} <br/>
-                            {% if x.tuesday_11am %} 11am-12pm {% endif %} <br/>
-                            {% if x.tuesday_12pm %} 12pm-1pm {% endif %} <br/>
-                            {% if x.tuesday_1pm %} 1pm-2pm {% endif %} <br/>
-                            {% if x.tuesday_2pm %} 2pm-3pm {% endif %} <br/>
-                            {% if x.tuesday_3pm %} 3pm-4pm {% endif %} <br/>
-                            {% if x.tuesday_4pm %} 4pm-5pm {% endif %} <br/>
-                            {% if x.tuesday_5pm %} 5pm-6pm {% endif %} <br/>
-                            {% if x.tuesday_6pm %} 6pm-7pm {% endif %} <br/>
-                            {% if x.tuesday_7pm %} 7pm-8pm {% endif %} <br/>
-                            {% if x.tuesday_8pm %} 8pm-9pm {% endif %} <br/>
-                            {% if x.tuesday_9pm %} 9pm-10pm {% endif %} <br/>
-                            {% if x.tuesday_10pm %} 10pm-11pm {% endif %} <br/>
+                            {% if x.tuesday_8am %} <b class="text-success">8am-9am</b> {% else %} <s class="text-danger">8am-9am</s>{% endif %} <br/>
+                            {% if x.tuesday_9am %} <b class="text-success">9am-10am</b> {% else %} <s class="text-danger">9am-10am</s>{% endif %} <br/>
+                            {% if x.tuesday_10am %} <b class="text-success">10am-11am</b> {% else %} <s class="text-danger">10am-11am</s>{% endif %} <br/>
+                            {% if x.tuesday_11am %} <b class="text-success">11am-12pm</b>  {% else %} <s class="text-danger">11am-12pm</s>{% endif %} <br/>
+                            {% if x.tuesday_12pm %} <b class="text-success">12pm-1pm</b> {% else %} <s class="text-danger">12pm-1pm</s> {% endif %} <br/>
+                            {% if x.tuesday_1pm %} <b class="text-success">1pm-2pm</b>{% else %} <s class="text-danger">1pm-2pm</s> {% endif %} <br/>
+                            {% if x.tuesday_2pm %} <b class="text-success">2pm-3pm</b> {% else %} <s class="text-danger">2pm-3pm</s>{% endif %} <br/>
+                            {% if x.tuesday_3pm %} <b class="text-success">3pm-4pm</b> {% else %} <s class="text-danger">3pm-4pm</s>{% endif %} <br/>
+                            {% if x.tuesday_4pm %} <b class="text-success">4pm-5pm</b> {% else %} <s class="text-danger">4pm-5pm</s>{% endif %} <br/>
+                            {% if x.tuesday_5pm %} <b class="text-success">5pm-6pm</b> {% else %} <s class="text-danger">5pm-6pm</s>{% endif %} <br/>
+                            {% if x.tuesday_6pm %} <b class="text-success">6pm-7pm</b> {% else %} <s class="text-danger">6pm-7pm</s>{% endif %} <br/>
+                            {% if x.tuesday_7pm %} <b class="text-success">7pm-8pm</b> {% else %} <s class="text-danger">7pm-8pm</s>{% endif %} <br/>
+                            {% if x.tuesday_8pm %} <b class="text-success">8pm-9pm</b> {% else %} <s class="text-danger">8pm-9pm</s>{% endif %} <br/>
+                            {% if x.tuesday_9pm %} <b class="text-success">9pm-10pm</b> {% else %} <s class="text-danger">9pm-10pm</s>{% endif %} <br/>
+                            {% if x.tuesday_10pm %} <b class="text-success">10pm-11pm</b> {% else %} <s class="text-danger">10pm-11pm</s>{% endif %} <br/>
                         </small>
                     </td>
                     <td style="width: 12%; text-align: center;" {% if x.wednesday >= 15 %} class="table-success" {% elif x.wednesday < 15 and x.wednesday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
                         <small>
-                            {% if x.wednesday_8am %} 8am-9am {% endif %} <br/>
-                            {% if x.wednesday_9am %} 9am-10am {% endif %} <br/>
-                            {% if x.wednesday_10am %} 10am-11am {% endif %} <br/>
-                            {% if x.wednesday_11am %} 11am-12pm {% endif %} <br/>
-                            {% if x.wednesday_12pm %} 12pm-1pm {% endif %} <br/>
-                            {% if x.wednesday_1pm %} 1pm-2pm {% endif %} <br/>
-                            {% if x.wednesday_2pm %} 2pm-3pm {% endif %} <br/>
-                            {% if x.wednesday_3pm %} 3pm-4pm {% endif %} <br/>
-                            {% if x.wednesday_4pm %} 4pm-5pm {% endif %} <br/>
-                            {% if x.wednesday_5pm %} 5pm-6pm {% endif %} <br/>
-                            {% if x.wednesday_6pm %} 6pm-7pm {% endif %} <br/>
-                            {% if x.wednesday_7pm %} 7pm-8pm {% endif %} <br/>
-                            {% if x.wednesday_8pm %} 8pm-9pm {% endif %} <br/>
-                            {% if x.wednesday_9pm %} 9pm-10pm {% endif %} <br/>
-                            {% if x.wednesday_10pm %} 10pm-11pm {% endif %} <br/>
+                            {% if x.wednesday_8am %} <b class="text-success">8am-9am</b> {% else %} <s class="text-danger">8am-9am</s>{% endif %} <br/>
+                            {% if x.wednesday_9am %} <b class="text-success">9am-10am</b> {% else %} <s class="text-danger">9am-10am</s>{% endif %} <br/>
+                            {% if x.wednesday_10am %} <b class="text-success">10am-11am</b> {% else %} <s class="text-danger">10am-11am</s>{% endif %} <br/>
+                            {% if x.wednesday_11am %} <b class="text-success">11am-12pm</b>  {% else %} <s class="text-danger">11am-12pm</s>{% endif %} <br/>
+                            {% if x.wednesday_12pm %} <b class="text-success">12pm-1pm</b> {% else %} <s class="text-danger">12pm-1pm</s> {% endif %} <br/>
+                            {% if x.wednesday_1pm %} <b class="text-success">1pm-2pm</b>{% else %} <s class="text-danger">1pm-2pm</s> {% endif %} <br/>
+                            {% if x.wednesday_2pm %} <b class="text-success">2pm-3pm</b> {% else %} <s class="text-danger">2pm-3pm</s>{% endif %} <br/>
+                            {% if x.wednesday_3pm %} <b class="text-success">3pm-4pm</b> {% else %} <s class="text-danger">3pm-4pm</s>{% endif %} <br/>
+                            {% if x.wednesday_4pm %} <b class="text-success">4pm-5pm</b> {% else %} <s class="text-danger">4pm-5pm</s>{% endif %} <br/>
+                            {% if x.wednesday_5pm %} <b class="text-success">5pm-6pm</b> {% else %} <s class="text-danger">5pm-6pm</s>{% endif %} <br/>
+                            {% if x.wednesday_6pm %} <b class="text-success">6pm-7pm</b> {% else %} <s class="text-danger">6pm-7pm</s>{% endif %} <br/>
+                            {% if x.wednesday_7pm %} <b class="text-success">7pm-8pm</b> {% else %} <s class="text-danger">7pm-8pm</s>{% endif %} <br/>
+                            {% if x.wednesday_8pm %} <b class="text-success">8pm-9pm</b> {% else %} <s class="text-danger">8pm-9pm</s>{% endif %} <br/>
+                            {% if x.wednesday_9pm %} <b class="text-success">9pm-10pm</b> {% else %} <s class="text-danger">9pm-10pm</s>{% endif %} <br/>
+                            {% if x.wednesday_10pm %} <b class="text-success">10pm-11pm</b> {% else %} <s class="text-danger">10pm-11pm</s>{% endif %} <br/>
                         </small>
                     </td>                    
                     <td style="width: 12%; text-align: center;" {% if x.thursday >= 15 %} class="table-success" {% elif x.thursday < 15 and x.thursday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
                         <small>
-                            {% if x.thursday_8am %} 8am-9am {% endif %} <br/>
-                            {% if x.thursday_9am %} 9am-10am {% endif %} <br/>
-                            {% if x.thursday_10am %} 10am-11am {% endif %} <br/>
-                            {% if x.thursday_11am %} 11am-12pm {% endif %} <br/>
-                            {% if x.thursday_12pm %} 12pm-1pm {% endif %} <br/>
-                            {% if x.thursday_1pm %} 1pm-2pm {% endif %} <br/>
-                            {% if x.thursday_2pm %} 2pm-3pm {% endif %} <br/>
-                            {% if x.thursday_3pm %} 3pm-4pm {% endif %} <br/>
-                            {% if x.thursday_4pm %} 4pm-5pm {% endif %} <br/>
-                            {% if x.thursday_5pm %} 5pm-6pm {% endif %} <br/>
-                            {% if x.thursday_6pm %} 6pm-7pm {% endif %} <br/>
-                            {% if x.thursday_7pm %} 7pm-8pm {% endif %} <br/>
-                            {% if x.thursday_8pm %} 8pm-9pm {% endif %} <br/>
-                            {% if x.thursday_9pm %} 9pm-10pm {% endif %} <br/>
-                            {% if x.thursday_10pm %} 10pm-11pm {% endif %} <br/>
+                            {% if x.thursday_8am %} <b class="text-success">8am-9am</b> {% else %} <s class="text-danger">8am-9am</s>{% endif %} <br/>
+                            {% if x.thursday_9am %} <b class="text-success">9am-10am</b> {% else %} <s class="text-danger">9am-10am</s>{% endif %} <br/>
+                            {% if x.thursday_10am %} <b class="text-success">10am-11am</b> {% else %} <s class="text-danger">10am-11am</s>{% endif %} <br/>
+                            {% if x.thursday_11am %} <b class="text-success">11am-12pm</b>  {% else %} <s class="text-danger">11am-12pm</s>{% endif %} <br/>
+                            {% if x.thursday_12pm %} <b class="text-success">12pm-1pm</b> {% else %} <s class="text-danger">12pm-1pm</s> {% endif %} <br/>
+                            {% if x.thursday_1pm %} <b class="text-success">1pm-2pm</b>{% else %} <s class="text-danger">1pm-2pm</s> {% endif %} <br/>
+                            {% if x.thursday_2pm %} <b class="text-success">2pm-3pm</b> {% else %} <s class="text-danger">2pm-3pm</s>{% endif %} <br/>
+                            {% if x.thursday_3pm %} <b class="text-success">3pm-4pm</b> {% else %} <s class="text-danger">3pm-4pm</s>{% endif %} <br/>
+                            {% if x.thursday_4pm %} <b class="text-success">4pm-5pm</b> {% else %} <s class="text-danger">4pm-5pm</s>{% endif %} <br/>
+                            {% if x.thursday_5pm %} <b class="text-success">5pm-6pm</b> {% else %} <s class="text-danger">5pm-6pm</s>{% endif %} <br/>
+                            {% if x.thursday_6pm %} <b class="text-success">6pm-7pm</b> {% else %} <s class="text-danger">6pm-7pm</s>{% endif %} <br/>
+                            {% if x.thursday_7pm %} <b class="text-success">7pm-8pm</b> {% else %} <s class="text-danger">7pm-8pm</s>{% endif %} <br/>
+                            {% if x.thursday_8pm %} <b class="text-success">8pm-9pm</b> {% else %} <s class="text-danger">8pm-9pm</s>{% endif %} <br/>
+                            {% if x.thursday_9pm %} <b class="text-success">9pm-10pm</b> {% else %} <s class="text-danger">9pm-10pm</s>{% endif %} <br/>
+                            {% if x.thursday_10pm %} <b class="text-success">10pm-11pm</b> {% else %} <s class="text-danger">10pm-11pm</s>{% endif %} <br/>
                         </small>
                     </td>            
                     <td style="width: 12%; text-align: center;" {% if x.friday >= 15 %} class="table-success" {% elif x.friday < 15 and x.friday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
                         <small>
-                            {% if x.friday_8am %} 8am-9am {% endif %} <br/>
-                            {% if x.friday_9am %} 9am-10am {% endif %} <br/>
-                            {% if x.friday_10am %} 10am-11am {% endif %} <br/>
-                            {% if x.friday_11am %} 11am-12pm {% endif %} <br/>
-                            {% if x.friday_12pm %} 12pm-1pm {% endif %} <br/>
-                            {% if x.friday_1pm %} 1pm-2pm {% endif %} <br/>
-                            {% if x.friday_2pm %} 2pm-3pm {% endif %} <br/>
-                            {% if x.friday_3pm %} 3pm-4pm {% endif %} <br/>
-                            {% if x.friday_4pm %} 4pm-5pm {% endif %} <br/>
-                            {% if x.friday_5pm %} 5pm-6pm {% endif %} <br/>
-                            {% if x.friday_6pm %} 6pm-7pm {% endif %} <br/>
-                            {% if x.friday_7pm %} 7pm-8pm {% endif %} <br/>
-                            {% if x.friday_8pm %} 8pm-9pm {% endif %} <br/>
-                            {% if x.friday_9pm %} 9pm-10pm {% endif %} <br/>
-                            {% if x.friday_10pm %} 10pm-11pm {% endif %} <br/>
+                            {% if x.friday_8am %} <b class="text-success">8am-9am</b> {% else %} <s class="text-danger">8am-9am</s>{% endif %} <br/>
+                            {% if x.friday_9am %} <b class="text-success">9am-10am</b> {% else %} <s class="text-danger">9am-10am</s>{% endif %} <br/>
+                            {% if x.friday_10am %} <b class="text-success">10am-11am</b> {% else %} <s class="text-danger">10am-11am</s>{% endif %} <br/>
+                            {% if x.friday_11am %} <b class="text-success">11am-12pm</b>  {% else %} <s class="text-danger">11am-12pm</s>{% endif %} <br/>
+                            {% if x.friday_12pm %} <b class="text-success">12pm-1pm</b> {% else %} <s class="text-danger">12pm-1pm</s> {% endif %} <br/>
+                            {% if x.friday_1pm %} <b class="text-success">1pm-2pm</b>{% else %} <s class="text-danger">1pm-2pm</s> {% endif %} <br/>
+                            {% if x.friday_2pm %} <b class="text-success">2pm-3pm</b> {% else %} <s class="text-danger">2pm-3pm</s>{% endif %} <br/>
+                            {% if x.friday_3pm %} <b class="text-success">3pm-4pm</b> {% else %} <s class="text-danger">3pm-4pm</s>{% endif %} <br/>
+                            {% if x.friday_4pm %} <b class="text-success">4pm-5pm</b> {% else %} <s class="text-danger">4pm-5pm</s>{% endif %} <br/>
+                            {% if x.friday_5pm %} <b class="text-success">5pm-6pm</b> {% else %} <s class="text-danger">5pm-6pm</s>{% endif %} <br/>
+                            {% if x.friday_6pm %} <b class="text-success">6pm-7pm</b> {% else %} <s class="text-danger">6pm-7pm</s>{% endif %} <br/>
+                            {% if x.friday_7pm %} <b class="text-success">7pm-8pm</b> {% else %} <s class="text-danger">7pm-8pm</s>{% endif %} <br/>
+                            {% if x.friday_8pm %} <b class="text-success">8pm-9pm</b> {% else %} <s class="text-danger">8pm-9pm</s>{% endif %} <br/>
+                            {% if x.friday_9pm %} <b class="text-success">9pm-10pm</b> {% else %} <s class="text-danger">9pm-10pm</s>{% endif %} <br/>
+                            {% if x.friday_10pm %} <b class="text-success">10pm-11pm</b> {% else %} <s class="text-danger">10pm-11pm</s>{% endif %} <br/>
                         </small>
                     </td>    
                     <td style="width: 12%; text-align: center;" {% if x.saturday >= 15 %} class="table-success" {% elif x.saturday < 15 and x.saturday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
                         <small>
-                            {% if x.saturday_8am %} 8am-9am {% endif %} <br/>
-                            {% if x.saturday_9am %} 9am-10am {% endif %} <br/>
-                            {% if x.saturday_10am %} 10am-11am {% endif %} <br/>
-                            {% if x.saturday_11am %} 11am-12pm {% endif %} <br/>
-                            {% if x.saturday_12pm %} 12pm-1pm {% endif %} <br/>
-                            {% if x.saturday_1pm %} 1pm-2pm {% endif %} <br/>
-                            {% if x.saturday_2pm %} 2pm-3pm {% endif %} <br/>
-                            {% if x.saturday_3pm %} 3pm-4pm {% endif %} <br/>
-                            {% if x.saturday_4pm %} 4pm-5pm {% endif %} <br/>
-                            {% if x.saturday_5pm %} 5pm-6pm {% endif %} <br/>
-                            {% if x.saturday_6pm %} 6pm-7pm {% endif %} <br/>
-                            {% if x.saturday_7pm %} 7pm-8pm {% endif %} <br/>
-                            {% if x.saturday_8pm %} 8pm-9pm {% endif %} <br/>
-                            {% if x.saturday_9pm %} 9pm-10pm {% endif %} <br/>
-                            {% if x.saturday_10pm %} 10pm-11pm {% endif %} <br/>
+                            {% if x.saturday_8am %} <b class="text-success">8am-9am</b> {% else %} <s class="text-danger">8am-9am</s>{% endif %} <br/>
+                            {% if x.saturday_9am %} <b class="text-success">9am-10am</b> {% else %} <s class="text-danger">9am-10am</s>{% endif %} <br/>
+                            {% if x.saturday_10am %} <b class="text-success">10am-11am</b> {% else %} <s class="text-danger">10am-11am</s>{% endif %} <br/>
+                            {% if x.saturday_11am %} <b class="text-success">11am-12pm</b>  {% else %} <s class="text-danger">11am-12pm</s>{% endif %} <br/>
+                            {% if x.saturday_12pm %} <b class="text-success">12pm-1pm</b> {% else %} <s class="text-danger">12pm-1pm</s> {% endif %} <br/>
+                            {% if x.saturday_1pm %} <b class="text-success">1pm-2pm</b>{% else %} <s class="text-danger">1pm-2pm</s> {% endif %} <br/>
+                            {% if x.saturday_2pm %} <b class="text-success">2pm-3pm</b> {% else %} <s class="text-danger">2pm-3pm</s>{% endif %} <br/>
+                            {% if x.saturday_3pm %} <b class="text-success">3pm-4pm</b> {% else %} <s class="text-danger">3pm-4pm</s>{% endif %} <br/>
+                            {% if x.saturday_4pm %} <b class="text-success">4pm-5pm</b> {% else %} <s class="text-danger">4pm-5pm</s>{% endif %} <br/>
+                            {% if x.saturday_5pm %} <b class="text-success">5pm-6pm</b> {% else %} <s class="text-danger">5pm-6pm</s>{% endif %} <br/>
+                            {% if x.saturday_6pm %} <b class="text-success">6pm-7pm</b> {% else %} <s class="text-danger">6pm-7pm</s>{% endif %} <br/>
+                            {% if x.saturday_7pm %} <b class="text-success">7pm-8pm</b> {% else %} <s class="text-danger">7pm-8pm</s>{% endif %} <br/>
+                            {% if x.saturday_8pm %} <b class="text-success">8pm-9pm</b> {% else %} <s class="text-danger">8pm-9pm</s>{% endif %} <br/>
+                            {% if x.saturday_9pm %} <b class="text-success">9pm-10pm</b> {% else %} <s class="text-danger">9pm-10pm</s>{% endif %} <br/>
+                            {% if x.saturday_10pm %} <b class="text-success">10pm-11pm</b> {% else %} <s class="text-danger">10pm-11pm</s>{% endif %} <br/>
                         </small>
                     </td>
                     <td style="width: 12%; text-align: center;" {% if x.sunday >= 15 %} class="table-success" {% elif x.sunday < 15 and x.sunday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
                         <small>
-                            {% if x.sunday_8am %} 8am-9am {% endif %} <br/>
-                            {% if x.sunday_9am %} 9am-10am {% endif %} <br/>
-                            {% if x.sunday_10am %} 10am-11am {% endif %} <br/>
-                            {% if x.sunday_11am %} 11am-12pm {% endif %} <br/>
-                            {% if x.sunday_12pm %} 12pm-1pm {% endif %} <br/>
-                            {% if x.sunday_1pm %} 1pm-2pm {% endif %} <br/>
-                            {% if x.sunday_2pm %} 2pm-3pm {% endif %} <br/>
-                            {% if x.sunday_3pm %} 3pm-4pm {% endif %} <br/>
-                            {% if x.sunday_4pm %} 4pm-5pm {% endif %} <br/>
-                            {% if x.sunday_5pm %} 5pm-6pm {% endif %} <br/>
-                            {% if x.sunday_6pm %} 6pm-7pm {% endif %} <br/>
-                            {% if x.sunday_7pm %} 7pm-8pm {% endif %} <br/>
-                            {% if x.sunday_8pm %} 8pm-9pm {% endif %} <br/>
-                            {% if x.sunday_9pm %} 9pm-10pm {% endif %} <br/>
-                            {% if x.sunday_10pm %} 10pm-11pm {% endif %} <br/>
+                            {% if x.sunday_8am %} <b class="text-success">8am-9am</b> {% else %} <s class="text-danger">8am-9am</s>{% endif %} <br/>
+                            {% if x.sunday_9am %} <b class="text-success">9am-10am</b> {% else %} <s class="text-danger">9am-10am</s>{% endif %} <br/>
+                            {% if x.sunday_10am %} <b class="text-success">10am-11am</b> {% else %} <s class="text-danger">10am-11am</s>{% endif %} <br/>
+                            {% if x.sunday_11am %} <b class="text-success">11am-12pm</b>  {% else %} <s class="text-danger">11am-12pm</s>{% endif %} <br/>
+                            {% if x.sunday_12pm %} <b class="text-success">12pm-1pm</b> {% else %} <s class="text-danger">12pm-1pm</s> {% endif %} <br/>
+                            {% if x.sunday_1pm %} <b class="text-success">1pm-2pm</b>{% else %} <s class="text-danger">1pm-2pm</s> {% endif %} <br/>
+                            {% if x.sunday_2pm %} <b class="text-success">2pm-3pm</b> {% else %} <s class="text-danger">2pm-3pm</s>{% endif %} <br/>
+                            {% if x.sunday_3pm %} <b class="text-success">3pm-4pm</b> {% else %} <s class="text-danger">3pm-4pm</s>{% endif %} <br/>
+                            {% if x.sunday_4pm %} <b class="text-success">4pm-5pm</b> {% else %} <s class="text-danger">4pm-5pm</s>{% endif %} <br/>
+                            {% if x.sunday_5pm %} <b class="text-success">5pm-6pm</b> {% else %} <s class="text-danger">5pm-6pm</s>{% endif %} <br/>
+                            {% if x.sunday_6pm %} <b class="text-success">6pm-7pm</b> {% else %} <s class="text-danger">6pm-7pm</s>{% endif %} <br/>
+                            {% if x.sunday_7pm %} <b class="text-success">7pm-8pm</b> {% else %} <s class="text-danger">7pm-8pm</s>{% endif %} <br/>
+                            {% if x.sunday_8pm %} <b class="text-success">8pm-9pm</b> {% else %} <s class="text-danger">8pm-9pm</s>{% endif %} <br/>
+                            {% if x.sunday_9pm %} <b class="text-success">9pm-10pm</b> {% else %} <s class="text-danger">9pm-10pm</s>{% endif %} <br/>
+                            {% if x.sunday_10pm %} <b class="text-success">10pm-11pm</b> {% else %} <s class="text-danger">10pm-11pm</s>{% endif %} <br/>
                         </small>
                     </td>
             {% endif %}
