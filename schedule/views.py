@@ -28,6 +28,16 @@ def schedule_list_view(request):
             print('Identified Missing Users')
             add_missing_schedules = True
 
+    for each in qs:
+        try:
+            qs3 = ScheduleChange.objects.get(user=each.user)
+            each.pending = 'y'
+            each.pending_id = qs3.id
+            print('pending')
+        except:
+            pass
+
+
     page = request.GET.get('page', 1)
 
     paginator = Paginator(qs, 20)

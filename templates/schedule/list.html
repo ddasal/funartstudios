@@ -45,7 +45,7 @@
             <tr>
                 {% if x.user %}
                     <td><small>
-                        {% if howmany %}<a href="#" class="toggle" data-target="details-{{x.user}}">{{ x.user.first_name }} {{ x.user.last_name }}</a>{% else %}{{ x.user.first_name }} {{ x.user.last_name }}{% endif %}
+                        {% if howmany %}<a href="#" class="toggle" data-target="details-{{x.user}}">{{ x.user.first_name }} {{ x.user.last_name }} {% else %}{{ x.user.first_name }} {{ x.user.last_name }}{% endif %}  {% if x.pending %} - <a href="{% url 'schedule:review' id=x.pending_id %}" class="text-danger">***</a>{% endif %}
                     </small></td>
                     <td style="width: 12%; text-align: center;" {% if x.monday >= 15 %} class="table-success" {% elif x.monday < 15 and x.monday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} >
                         <small>{{ x.monday }} hrs/{{ x.get_monday_recurrence_display }} </small>
