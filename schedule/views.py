@@ -591,6 +591,16 @@ def schedule_staff_edit_view(request):
             obj.notes = request.POST.get('notes')
 
             obj.save()
+
+            email_to_list = ['studio239@paintingwithatwist.com']
+            string = 'https://admin.funartstudios.com/schedule/staff/review/' + str(obj.id)
+            send_mail(
+                'FAS Schedule Availability Change Request: ' + obj.user.first_name + ' ' + obj.user.last_name,
+                string,
+                'studio239@paintingwithatwist.com',
+                email_to_list,
+                fail_silently=False,
+            )
             
         else:
             print('existing request')
