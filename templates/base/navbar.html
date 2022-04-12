@@ -39,7 +39,7 @@
               <li>
                 <a class="dropdown-item" href="{% url 'account:files' %}">Documents</a>
               </li>
-              {% if perms.schedule.add_typical %}
+              {% if perms.schedule.change_typical %}
               <li>
                 <a class="dropdown-item" href="{% url 'schedule:list' %}">Schedules</a>
               </li>
