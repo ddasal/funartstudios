@@ -10,13 +10,8 @@ from django.core.mail import send_mail
 
 @permission_required('schedule.change_typical')
 def schedule_list_view(request):
-    requesting_user = request.user
-    if requesting_user.has_perms('schedule.change_typical'):
-        qs = Typical.objects.filter(active=True).order_by('user')
-        howmany = 2
-    else:
-        qs = Typical.objects.filter(active=True, user=requesting_user)
-        howmany = None
+    qs = Typical.objects.filter(active=True).order_by('user')
+    howmany = 2
 
     add_missing_schedules = None
 
