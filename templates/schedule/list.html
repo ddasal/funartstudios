@@ -15,6 +15,14 @@
                 <a class="btn btn-outline-success" href="{% url 'schedule:create' %}">Create Missing Schedules</a>  
             {% endif %}
         {% endif %} 
+        {% if message %} <a class="text-danger">{{ message }}</a> {% endif %} 
+        {% if not howmany %}
+            {% if status %} 
+                <a class="btn btn-outline-primary" href="{% url 'schedule:edit' %}">Edit: {{ status }}</a>
+            {% else %} 
+                <a class="btn btn-outline-primary" href="{% url 'schedule:edit' %}">Request Change</a>
+            {% endif %}
+        {% endif %}
     </div>
 </div>
 <div class="row">
@@ -64,7 +72,8 @@
                 <tr class="details-{{x.user}}" {% if howmany %}style="display: none"{% endif %}>
                     <td style="text-align: left;">
                         <small>
-                            <b>Notes:</b>
+                            <b>As of {{ x.start_date }}</b>
+                            <br /><br /><b>Notes:</b>
                             <br />{{ x.notes }}
                         </small>
                     </td>

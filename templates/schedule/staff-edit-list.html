@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %} 
+{% if howmany %}Typical Availability Schedules{% else %}My Typical Availability{% endif %}
+{% endblock title %} 
+
+{% block content %}
+<div class="row">
+    <div class='col-12 col-md-4'>
+        <h3>{% if howmany %}Typical Availability Schedules{% else %}Change My Typical Availability{% endif %}</h3>
+    </div>
+    <div class="col-12 col-md-8" style="text-align: right;">
+        {% if not howmany %}
+            <a class="btn btn-outline-secondary" href="{% url 'schedule:staff' %}">Go Back</a>
+        {% endif %}
+        {% if status %} 
+            <a class="btn btn-outline-danger">Status: {{ x.get_status_display }}</a>
+        {% else %} 
+            <a class="btn btn-outline-primary">Status: New</a>
+        {% endif %} 
+    </div>
+</div>
+<div class="row">
+    <div class='col-12'>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Team Member</th>
+                    <th style="width: 12%; text-align: center;">Monday</th>
+                    <th style="width: 12%; text-align: center;">Tuesday</th>
+                    <th style="width: 12%; text-align: center;">Wednesday</th>
+                    <th style="width: 12%; text-align: center;">Thursday</th>
+                    <th style="width: 12%; text-align: center;">Friday</th>
+                    <th style="width: 12%; text-align: center;">Saturday</th>
+                    <th style="width: 12%; text-align: center;">Sunday</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                {% if x.user %}
+                    <td><small>
+                        {% if howmany %}<a href="#" class="toggle" data-target="details-{{x.user}}">{{ x.user.first_name }} {{ x.user.last_name }}</a>{% else %}{{ x.user.first_name }} {{ x.user.last_name }}{% endif %}
+                    </small></td>
+                    <td style="width: 12%; text-align: center;" {% if x.monday >= 15 %} class="table-success" {% elif x.monday < 15 and x.monday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} >
+                        <small>
+                            <select name="monday_recurrence" id="monday_recurrence">
+                                <option value="w" {% if x.monday_recurrence == 'w' %} selected {% endif %}>Weekly</option>
+                                <option value="b" {% if x.monday_recurrence == 'b' %} selected {% endif %}>Bi-Weekly</option>
+                                <option value="m" {% if x.monday_recurrence == 'm' %} selected {% endif %}>Once a Month</option>
+                                <option value="a" {% if x.monday_recurrence == 'a' %} selected {% endif %}>Maybe, Ask Me</option>
+                            </select>
+                        </small>
+                    </td>
+                    <td style="width: 12%; text-align: center;" {% if x.tuesday >= 15 %} class="table-success" {% elif x.tuesday < 15 and x.tuesday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
+                        <small>
+                            <select name="tuesday_recurrence" id="tuesday_recurrence">
+                                <option value="w" {% if x.tuesday_recurrence == 'w' %} selected {% endif %}>Weekly</option>
+                                <option value="b" {% if x.tuesday_recurrence == 'b' %} selected {% endif %}>Bi-Weekly</option>
+                                <option value="m" {% if x.tuesday_recurrence == 'm' %} selected {% endif %}>Once a Month</option>
+                                <option value="a" {% if x.tuesday_recurrence == 'a' %} selected {% endif %}>Maybe, Ask Me</option>
+                            </select>
+                        </small>
+                    </td>
+                    <td style="width: 12%; text-align: center;" {% if x.wednesday >= 15 %} class="table-success" {% elif x.wednesday < 15 and x.wednesday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
+                        <small>
+                            <select name="wednesday_recurrence" id="wednesday_recurrence">
+                                <option value="w" {% if x.wednesday_recurrence == 'w' %} selected {% endif %}>Weekly</option>
+                                <option value="b" {% if x.wednesday_recurrence == 'b' %} selected {% endif %}>Bi-Weekly</option>
+                                <option value="m" {% if x.wednesday_recurrence == 'm' %} selected {% endif %}>Once a Month</option>
+                                <option value="a" {% if x.wednesday_recurrence == 'a' %} selected {% endif %}>Maybe, Ask Me</option>
+                            </select>
+                        </small>
+                    </td>
+                    <td style="width: 12%; text-align: center;" {% if x.thursday >= 15 %} class="table-success" {% elif x.thursday < 15 and x.thursday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
+                        <small>
+                            <select name="thursday_recurrence" id="thursday_recurrence">
+                                <option value="w" {% if x.thursday_recurrence == 'w' %} selected {% endif %}>Weekly</option>
+                                <option value="b" {% if x.thursday_recurrence == 'b' %} selected {% endif %}>Bi-Weekly</option>
+                                <option value="m" {% if x.thursday_recurrence == 'm' %} selected {% endif %}>Once a Month</option>
+                                <option value="a" {% if x.thursday_recurrence == 'a' %} selected {% endif %}>Maybe, Ask Me</option>
+                            </select>
+                        </small>
+                    </td>
+                    <td style="width: 12%; text-align: center;" {% if x.friday >= 15 %} class="table-success" {% elif x.friday < 15 and x.friday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
+                        <small>
+                            <select name="friday_recurrence" id="friday_recurrence">
+                                <option value="w" {% if x.friday_recurrence == 'w' %} selected {% endif %}>Weekly</option>
+                                <option value="b" {% if x.friday_recurrence == 'b' %} selected {% endif %}>Bi-Weekly</option>
+                                <option value="m" {% if x.friday_recurrence == 'm' %} selected {% endif %}>Once a Month</option>
+                                <option value="a" {% if x.friday_recurrence == 'a' %} selected {% endif %}>Maybe, Ask Me</option>
+                            </select>
+                        </small>
+                    </td>
+                    <td style="width: 12%; text-align: center;" {% if x.saturday >= 15 %} class="table-success" {% elif x.saturday < 15 and x.saturday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
+                        <small>
+                            <select name="saturday_recurrence" id="saturday_recurrence">
+                                <option value="w" {% if x.saturday_recurrence == 'w' %} selected {% endif %}>Weekly</option>
+                                <option value="b" {% if x.saturday_recurrence == 'b' %} selected {% endif %}>Bi-Weekly</option>
+                                <option value="m" {% if x.saturday_recurrence == 'm' %} selected {% endif %}>Once a Month</option>
+                                <option value="a" {% if x.saturday_recurrence == 'a' %} selected {% endif %}>Maybe, Ask Me</option>
+                            </select>
+                        </small>
+                    </td>
+                    <td style="width: 12%; text-align: center;" {% if x.sunday >= 15 %} class="table-success" {% elif x.sunday < 15 and x.sunday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
+                        <small>
+                            <select name="sunday_recurrence" id="sunday_recurrence">
+                                <option value="w" {% if x.sunday_recurrence == 'w' %} selected {% endif %}>Weekly</option>
+                                <option value="b" {% if x.sunday_recurrence == 'b' %} selected {% endif %}>Bi-Weekly</option>
+                                <option value="m" {% if x.sunday_recurrence == 'm' %} selected {% endif %}>Once a Month</option>
+                                <option value="a" {% if x.sunday_recurrence == 'a' %} selected {% endif %}>Maybe, Ask Me</option>
+                            </select>
+                        </small>
+                    </td>
+                </tr>
+                <tr class="details-{{x.user}}" {% if howmany %}style="display: none"{% endif %}>
+                    <td style="text-align: left;">
+                        <small>
+                            <b>Notes:</b>
+                            <br /><textarea name="notes" id="notes" rows="13">{{x.notes }}</textarea> 
+                            <b>Select the Requested Effective Date of Change:</b>
+                            <br /><input type="date" name="start_date" id="start_date" value="{{ x.start_date }}" required>
+                        </small>
+                    </td>
+                    <td style="width: 12%; text-align: center;" {% if x.monday >= 15 %} class="table-success" {% elif x.monday < 15 and x.monday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} >
+                        <small>
+                            {% if x.monday_8am %} <b class="text-success">8am-9am</b> {% else %} <s class="text-danger">8am-9am</s>{% endif %} <input type="checkbox" name="monday_8am" id="monday_8am" {% if x.monday_8am %}checked {% endif %}> <br/>
+                            {% if x.monday_9am %} <b class="text-success">9am-10am</b> {% else %} <s class="text-danger">9am-10am</s>{% endif %} <input type="checkbox" name="monday_9am" id="monday_9am" {% if x.monday_9am %}checked {% endif %}> <br/>
+                            {% if x.monday_10am %} <b class="text-success">10am-11am</b> {% else %} <s class="text-danger">10am-11am</s>{% endif %} <input type="checkbox" name="monday_10am" id="monday_10am" {% if x.monday_10am %}checked {% endif %}> <br/>
+                            {% if x.monday_11am %} <b class="text-success">11am-12pm</b>  {% else %} <s class="text-danger">11am-12pm</s>{% endif %} <input type="checkbox" name="monday_11am" id="monday_11am" {% if x.monday_11am %}checked {% endif %}> <br/>
+                            {% if x.monday_12pm %} <b class="text-success">12pm-1pm</b> {% else %} <s class="text-danger">12pm-1pm</s> {% endif %} <input type="checkbox" name="monday_12pm" id="monday_12pm" {% if x.monday_12pm %}checked {% endif %}> <br/>
+                            {% if x.monday_1pm %} <b class="text-success">1pm-2pm</b>{% else %} <s class="text-danger">1pm-2pm</s> {% endif %} <input type="checkbox" name="monday_1pm" id="monday_1pm" {% if x.monday_1pm %}checked {% endif %}> <br/>
+                            {% if x.monday_2pm %} <b class="text-success">2pm-3pm</b> {% else %} <s class="text-danger">2pm-3pm</s>{% endif %} <input type="checkbox" name="monday_2pm" id="monday_2pm" {% if x.monday_2pm %}checked {% endif %}> <br/>
+                            {% if x.monday_3pm %} <b class="text-success">3pm-4pm</b> {% else %} <s class="text-danger">3pm-4pm</s>{% endif %} <input type="checkbox" name="monday_3pm" id="monday_3pm" {% if x.monday_3pm %}checked {% endif %}> <br/>
+                            {% if x.monday_4pm %} <b class="text-success">4pm-5pm</b> {% else %} <s class="text-danger">4pm-5pm</s>{% endif %} <input type="checkbox" name="monday_4pm" id="monday_4pm" {% if x.monday_4pm %}checked {% endif %}> <br/>
+                            {% if x.monday_5pm %} <b class="text-success">5pm-6pm</b> {% else %} <s class="text-danger">5pm-6pm</s>{% endif %} <input type="checkbox" name="monday_5pm" id="monday_5pm" {% if x.monday_5pm %}checked {% endif %}> <br/>
+                            {% if x.monday_6pm %} <b class="text-success">6pm-7pm</b> {% else %} <s class="text-danger">6pm-7pm</s>{% endif %} <input type="checkbox" name="monday_6pm" id="monday_6pm" {% if x.monday_6pm %}checked {% endif %}> <br/>
+                            {% if x.monday_7pm %} <b class="text-success">7pm-8pm</b> {% else %} <s class="text-danger">7pm-8pm</s>{% endif %} <input type="checkbox" name="monday_7pm" id="monday_7pm" {% if x.monday_7pm %}checked {% endif %}> <br/>
+                            {% if x.monday_8pm %} <b class="text-success">8pm-9pm</b> {% else %} <s class="text-danger">8pm-9pm</s>{% endif %} <input type="checkbox" name="monday_8pm" id="monday_8pm" {% if x.monday_8pm %}checked {% endif %}> <br/>
+                            {% if x.monday_9pm %} <b class="text-success">9pm-10pm</b> {% else %} <s class="text-danger">9pm-10pm</s>{% endif %} <input type="checkbox" name="monday_9pm" id="monday_9pm" {% if x.monday_9pm %}checked {% endif %}> <br/>
+                            {% if x.monday_10pm %} <b class="text-success">10pm-11pm</b> {% else %} <s class="text-danger">10pm-11pm</s>{% endif %} <input type="checkbox" name="monday_10pm" id="monday_10pm" {% if x.monday_10pm %}checked {% endif %}> <br/>
+                        </small>
+                    </td>
+                    <td style="width: 12%; text-align: center;" {% if x.tuesday >= 15 %} class="table-success" {% elif x.tuesday < 15 and x.tuesday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
+                        <small>
+                            {% if x.tuesday_8am %} <b class="text-success">8am-9am</b> {% else %} <s class="text-danger">8am-9am</s>{% endif %} <input type="checkbox" name="tuesday_8am" id="tuesday_8am" {% if x.tuesday_8am %}checked {% endif %}> <br/>
+                            {% if x.tuesday_9am %} <b class="text-success">9am-10am</b> {% else %} <s class="text-danger">9am-10am</s>{% endif %} <input type="checkbox" name="tuesday_9am" id="tuesday_9am" {% if x.tuesday_9am %}checked {% endif %}> <br/>
+                            {% if x.tuesday_10am %} <b class="text-success">10am-11am</b> {% else %} <s class="text-danger">10am-11am</s>{% endif %} <input type="checkbox" name="tuesday_10am" id="tuesday_10am" {% if x.tuesday_10am %}checked {% endif %}> <br/>
+                            {% if x.tuesday_11am %} <b class="text-success">11am-12pm</b>  {% else %} <s class="text-danger">11am-12pm</s>{% endif %} <input type="checkbox" name="tuesday_11am" id="tuesday_11am" {% if x.tuesday_11am %}checked {% endif %}> <br/>
+                            {% if x.tuesday_12pm %} <b class="text-success">12pm-1pm</b> {% else %} <s class="text-danger">12pm-1pm</s> {% endif %} <input type="checkbox" name="tuesday_12pm" id="tuesday_12pm" {% if x.tuesday_12pm %}checked {% endif %}> <br/>
+                            {% if x.tuesday_1pm %} <b class="text-success">1pm-2pm</b>{% else %} <s class="text-danger">1pm-2pm</s> {% endif %} <input type="checkbox" name="tuesday_1pm" id="tuesday_1pm" {% if x.tuesday_1pm %}checked {% endif %}> <br/>
+                            {% if x.tuesday_2pm %} <b class="text-success">2pm-3pm</b> {% else %} <s class="text-danger">2pm-3pm</s>{% endif %} <input type="checkbox" name="tuesday_2pm" id="tuesday_2pm" {% if x.tuesday_2pm %}checked {% endif %}> <br/>
+                            {% if x.tuesday_3pm %} <b class="text-success">3pm-4pm</b> {% else %} <s class="text-danger">3pm-4pm</s>{% endif %} <input type="checkbox" name="tuesday_3pm" id="tuesday_3pm" {% if x.tuesday_3pm %}checked {% endif %}> <br/>
+                            {% if x.tuesday_4pm %} <b class="text-success">4pm-5pm</b> {% else %} <s class="text-danger">4pm-5pm</s>{% endif %} <input type="checkbox" name="tuesday_4pm" id="tuesday_4pm" {% if x.tuesday_4pm %}checked {% endif %}> <br/>
+                            {% if x.tuesday_5pm %} <b class="text-success">5pm-6pm</b> {% else %} <s class="text-danger">5pm-6pm</s>{% endif %} <input type="checkbox" name="tuesday_5pm" id="tuesday_5pm" {% if x.tuesday_5pm %}checked {% endif %}> <br/>
+                            {% if x.tuesday_6pm %} <b class="text-success">6pm-7pm</b> {% else %} <s class="text-danger">6pm-7pm</s>{% endif %} <input type="checkbox" name="tuesday_6pm" id="tuesday_6pm" {% if x.tuesday_6pm %}checked {% endif %}> <br/>
+                            {% if x.tuesday_7pm %} <b class="text-success">7pm-8pm</b> {% else %} <s class="text-danger">7pm-8pm</s>{% endif %} <input type="checkbox" name="tuesday_7pm" id="tuesday_7pm" {% if x.tuesday_7pm %}checked {% endif %}> <br/>
+                            {% if x.tuesday_8pm %} <b class="text-success">8pm-9pm</b> {% else %} <s class="text-danger">8pm-9pm</s>{% endif %} <input type="checkbox" name="tuesday_8pm" id="tuesday_8pm" {% if x.tuesday_8pm %}checked {% endif %}> <br/>
+                            {% if x.tuesday_9pm %} <b class="text-success">9pm-10pm</b> {% else %} <s class="text-danger">9pm-10pm</s>{% endif %} <input type="checkbox" name="tuesday_9pm" id="tuesday_9pm" {% if x.tuesday_9pm %}checked {% endif %}> <br/>
+                            {% if x.tuesday_10pm %} <b class="text-success">10pm-11pm</b> {% else %} <s class="text-danger">10pm-11pm</s>{% endif %} <input type="checkbox" name="tuesday_10pm" id="tuesday_10pm" {% if x.tuesday_10pm %}checked {% endif %}> <br/>
+                        </small>
+                    </td>
+                    <td style="width: 12%; text-align: center;" {% if x.wednesday >= 15 %} class="table-success" {% elif x.wednesday < 15 and x.wednesday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
+                        <small>
+                            {% if x.wednesday_8am %} <b class="text-success">8am-9am</b> {% else %} <s class="text-danger">8am-9am</s>{% endif %} <input type="checkbox" name="wednesday_8am" id="wednesday_8am" {% if x.wednesday_8am %}checked {% endif %}> <br/>
+                            {% if x.wednesday_9am %} <b class="text-success">9am-10am</b> {% else %} <s class="text-danger">9am-10am</s>{% endif %} <input type="checkbox" name="wednesday_9am" id="wednesday_9am" {% if x.wednesday_9am %}checked {% endif %}> <br/>
+                            {% if x.wednesday_10am %} <b class="text-success">10am-11am</b> {% else %} <s class="text-danger">10am-11am</s>{% endif %} <input type="checkbox" name="wednesday_10am" id="wednesday_10am" {% if x.wednesday_10am %}checked {% endif %}> <br/>
+                            {% if x.wednesday_11am %} <b class="text-success">11am-12pm</b>  {% else %} <s class="text-danger">11am-12pm</s>{% endif %} <input type="checkbox" name="wednesday_11am" id="wednesday_11am" {% if x.wednesday_11am %}checked {% endif %}> <br/>
+                            {% if x.wednesday_12pm %} <b class="text-success">12pm-1pm</b> {% else %} <s class="text-danger">12pm-1pm</s> {% endif %} <input type="checkbox" name="wednesday_12pm" id="wednesday_12pm" {% if x.wednesday_12pm %}checked {% endif %}> <br/>
+                            {% if x.wednesday_1pm %} <b class="text-success">1pm-2pm</b>{% else %} <s class="text-danger">1pm-2pm</s> {% endif %} <input type="checkbox" name="wednesday_1pm" id="wednesday_1pm" {% if x.wednesday_1pm %}checked {% endif %}> <br/>
+                            {% if x.wednesday_2pm %} <b class="text-success">2pm-3pm</b> {% else %} <s class="text-danger">2pm-3pm</s>{% endif %} <input type="checkbox" name="wednesday_2pm" id="wednesday_2pm" {% if x.wednesday_2pm %}checked {% endif %}> <br/>
+                            {% if x.wednesday_3pm %} <b class="text-success">3pm-4pm</b> {% else %} <s class="text-danger">3pm-4pm</s>{% endif %} <input type="checkbox" name="wednesday_3pm" id="wednesday_3pm" {% if x.wednesday_3pm %}checked {% endif %}> <br/>
+                            {% if x.wednesday_4pm %} <b class="text-success">4pm-5pm</b> {% else %} <s class="text-danger">4pm-5pm</s>{% endif %} <input type="checkbox" name="wednesday_4pm" id="wednesday_4pm" {% if x.wednesday_4pm %}checked {% endif %}> <br/>
+                            {% if x.wednesday_5pm %} <b class="text-success">5pm-6pm</b> {% else %} <s class="text-danger">5pm-6pm</s>{% endif %} <input type="checkbox" name="wednesday_5pm" id="wednesday_5pm" {% if x.wednesday_5pm %}checked {% endif %}> <br/>
+                            {% if x.wednesday_6pm %} <b class="text-success">6pm-7pm</b> {% else %} <s class="text-danger">6pm-7pm</s>{% endif %} <input type="checkbox" name="wednesday_6pm" id="wednesday_6pm" {% if x.wednesday_6pm %}checked {% endif %}> <br/>
+                            {% if x.wednesday_7pm %} <b class="text-success">7pm-8pm</b> {% else %} <s class="text-danger">7pm-8pm</s>{% endif %} <input type="checkbox" name="wednesday_7pm" id="wednesday_7pm" {% if x.wednesday_7pm %}checked {% endif %}> <br/>
+                            {% if x.wednesday_8pm %} <b class="text-success">8pm-9pm</b> {% else %} <s class="text-danger">8pm-9pm</s>{% endif %} <input type="checkbox" name="wednesday_8pm" id="wednesday_8pm" {% if x.wednesday_8pm %}checked {% endif %}> <br/>
+                            {% if x.wednesday_9pm %} <b class="text-success">9pm-10pm</b> {% else %} <s class="text-danger">9pm-10pm</s>{% endif %} <input type="checkbox" name="wednesday_9pm" id="wednesday_9pm" {% if x.wednesday_9pm %}checked {% endif %}> <br/>
+                            {% if x.wednesday_10pm %} <b class="text-success">10pm-11pm</b> {% else %} <s class="text-danger">10pm-11pm</s>{% endif %} <input type="checkbox" name="wednesday_10pm" id="wednesday_10pm" {% if x.wednesday_10pm %}checked {% endif %}> <br/>
+                        </small>
+                    </td>                    
+                    <td style="width: 12%; text-align: center;" {% if x.thursday >= 15 %} class="table-success" {% elif x.thursday < 15 and x.thursday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
+                        <small>
+                            {% if x.thursday_8am %} <b class="text-success">8am-9am</b> {% else %} <s class="text-danger">8am-9am</s>{% endif %} <input type="checkbox" name="thursday_8am" id="thursday_8am" {% if x.thursday_8am %}checked {% endif %}> <br/>
+                            {% if x.thursday_9am %} <b class="text-success">9am-10am</b> {% else %} <s class="text-danger">9am-10am</s>{% endif %} <input type="checkbox" name="thursday_9am" id="thursday_9am" {% if x.thursday_9am %}checked {% endif %}> <br/>
+                            {% if x.thursday_10am %} <b class="text-success">10am-11am</b> {% else %} <s class="text-danger">10am-11am</s>{% endif %} <input type="checkbox" name="thursday_10am" id="thursday_10am" {% if x.thursday_10am %}checked {% endif %}> <br/>
+                            {% if x.thursday_11am %} <b class="text-success">11am-12pm</b>  {% else %} <s class="text-danger">11am-12pm</s>{% endif %} <input type="checkbox" name="thursday_11am" id="thursday_11am" {% if x.thursday_11am %}checked {% endif %}> <br/>
+                            {% if x.thursday_12pm %} <b class="text-success">12pm-1pm</b> {% else %} <s class="text-danger">12pm-1pm</s> {% endif %} <input type="checkbox" name="thursday_12pm" id="thursday_12pm" {% if x.thursday_12pm %}checked {% endif %}> <br/>
+                            {% if x.thursday_1pm %} <b class="text-success">1pm-2pm</b>{% else %} <s class="text-danger">1pm-2pm</s> {% endif %} <input type="checkbox" name="thursday_1pm" id="thursday_1pm" {% if x.thursday_1pm %}checked {% endif %}> <br/>
+                            {% if x.thursday_2pm %} <b class="text-success">2pm-3pm</b> {% else %} <s class="text-danger">2pm-3pm</s>{% endif %} <input type="checkbox" name="thursday_2pm" id="thursday_2pm" {% if x.thursday_2pm %}checked {% endif %}> <br/>
+                            {% if x.thursday_3pm %} <b class="text-success">3pm-4pm</b> {% else %} <s class="text-danger">3pm-4pm</s>{% endif %} <input type="checkbox" name="thursday_3pm" id="thursday_3pm" {% if x.thursday_3pm %}checked {% endif %}> <br/>
+                            {% if x.thursday_4pm %} <b class="text-success">4pm-5pm</b> {% else %} <s class="text-danger">4pm-5pm</s>{% endif %} <input type="checkbox" name="thursday_4pm" id="thursday_4pm" {% if x.thursday_4pm %}checked {% endif %}> <br/>
+                            {% if x.thursday_5pm %} <b class="text-success">5pm-6pm</b> {% else %} <s class="text-danger">5pm-6pm</s>{% endif %} <input type="checkbox" name="thursday_5pm" id="thursday_5pm" {% if x.thursday_5pm %}checked {% endif %}> <br/>
+                            {% if x.thursday_6pm %} <b class="text-success">6pm-7pm</b> {% else %} <s class="text-danger">6pm-7pm</s>{% endif %} <input type="checkbox" name="thursday_6pm" id="thursday_6pm" {% if x.thursday_6pm %}checked {% endif %}> <br/>
+                            {% if x.thursday_7pm %} <b class="text-success">7pm-8pm</b> {% else %} <s class="text-danger">7pm-8pm</s>{% endif %} <input type="checkbox" name="thursday_7pm" id="thursday_7pm" {% if x.thursday_7pm %}checked {% endif %}> <br/>
+                            {% if x.thursday_8pm %} <b class="text-success">8pm-9pm</b> {% else %} <s class="text-danger">8pm-9pm</s>{% endif %} <input type="checkbox" name="thursday_8pm" id="thursday_8pm" {% if x.thursday_8pm %}checked {% endif %}> <br/>
+                            {% if x.thursday_9pm %} <b class="text-success">9pm-10pm</b> {% else %} <s class="text-danger">9pm-10pm</s>{% endif %} <input type="checkbox" name="thursday_9pm" id="thursday_9pm" {% if x.thursday_9pm %}checked {% endif %}> <br/>
+                            {% if x.thursday_10pm %} <b class="text-success">10pm-11pm</b> {% else %} <s class="text-danger">10pm-11pm</s>{% endif %} <input type="checkbox" name="thursday_10pm" id="thursday_10pm" {% if x.thursday_10pm %}checked {% endif %}> <br/>
+                        </small>
+                    </td>            
+                    <td style="width: 12%; text-align: center;" {% if x.friday >= 15 %} class="table-success" {% elif x.friday < 15 and x.friday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
+                        <small>
+                            {% if x.friday_8am %} <b class="text-success">8am-9am</b> {% else %} <s class="text-danger">8am-9am</s>{% endif %} <input type="checkbox" name="friday_8am" id="friday_8am" {% if x.friday_8am %}checked {% endif %}> <br/>
+                            {% if x.friday_9am %} <b class="text-success">9am-10am</b> {% else %} <s class="text-danger">9am-10am</s>{% endif %} <input type="checkbox" name="friday_9am" id="friday_9am" {% if x.friday_9am %}checked {% endif %}> <br/>
+                            {% if x.friday_10am %} <b class="text-success">10am-11am</b> {% else %} <s class="text-danger">10am-11am</s>{% endif %} <input type="checkbox" name="friday_10am" id="friday_10am" {% if x.friday_10am %}checked {% endif %}> <br/>
+                            {% if x.friday_11am %} <b class="text-success">11am-12pm</b>  {% else %} <s class="text-danger">11am-12pm</s>{% endif %} <input type="checkbox" name="friday_11am" id="friday_11am" {% if x.friday_11am %}checked {% endif %}> <br/>
+                            {% if x.friday_12pm %} <b class="text-success">12pm-1pm</b> {% else %} <s class="text-danger">12pm-1pm</s> {% endif %} <input type="checkbox" name="friday_12pm" id="friday_12pm" {% if x.friday_12pm %}checked {% endif %}> <br/>
+                            {% if x.friday_1pm %} <b class="text-success">1pm-2pm</b>{% else %} <s class="text-danger">1pm-2pm</s> {% endif %} <input type="checkbox" name="friday_1pm" id="friday_1pm" {% if x.friday_1pm %}checked {% endif %}> <br/>
+                            {% if x.friday_2pm %} <b class="text-success">2pm-3pm</b> {% else %} <s class="text-danger">2pm-3pm</s>{% endif %} <input type="checkbox" name="friday_2pm" id="friday_2pm" {% if x.friday_2pm %}checked {% endif %}> <br/>
+                            {% if x.friday_3pm %} <b class="text-success">3pm-4pm</b> {% else %} <s class="text-danger">3pm-4pm</s>{% endif %} <input type="checkbox" name="friday_3pm" id="friday_3pm" {% if x.friday_3pm %}checked {% endif %}> <br/>
+                            {% if x.friday_4pm %} <b class="text-success">4pm-5pm</b> {% else %} <s class="text-danger">4pm-5pm</s>{% endif %} <input type="checkbox" name="friday_4pm" id="friday_4pm" {% if x.friday_4pm %}checked {% endif %}> <br/>
+                            {% if x.friday_5pm %} <b class="text-success">5pm-6pm</b> {% else %} <s class="text-danger">5pm-6pm</s>{% endif %} <input type="checkbox" name="friday_5pm" id="friday_5pm" {% if x.friday_5pm %}checked {% endif %}> <br/>
+                            {% if x.friday_6pm %} <b class="text-success">6pm-7pm</b> {% else %} <s class="text-danger">6pm-7pm</s>{% endif %} <input type="checkbox" name="friday_6pm" id="friday_6pm" {% if x.friday_6pm %}checked {% endif %}> <br/>
+                            {% if x.friday_7pm %} <b class="text-success">7pm-8pm</b> {% else %} <s class="text-danger">7pm-8pm</s>{% endif %} <input type="checkbox" name="friday_7pm" id="friday_7pm" {% if x.friday_7pm %}checked {% endif %}> <br/>
+                            {% if x.friday_8pm %} <b class="text-success">8pm-9pm</b> {% else %} <s class="text-danger">8pm-9pm</s>{% endif %} <input type="checkbox" name="friday_8pm" id="friday_8pm" {% if x.friday_8pm %}checked {% endif %}> <br/>
+                            {% if x.friday_9pm %} <b class="text-success">9pm-10pm</b> {% else %} <s class="text-danger">9pm-10pm</s>{% endif %} <input type="checkbox" name="friday_9pm" id="friday_9pm" {% if x.friday_9pm %}checked {% endif %}> <br/>
+                            {% if x.friday_10pm %} <b class="text-success">10pm-11pm</b> {% else %} <s class="text-danger">10pm-11pm</s>{% endif %} <input type="checkbox" name="friday_10pm" id="friday_10pm" {% if x.friday_10pm %}checked {% endif %}> <br/>
+                        </small>
+                    </td>    
+                    <td style="width: 12%; text-align: center;" {% if x.saturday >= 15 %} class="table-success" {% elif x.saturday < 15 and x.saturday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
+                        <small>
+                            {% if x.saturday_8am %} <b class="text-success">8am-9am</b> {% else %} <s class="text-danger">8am-9am</s>{% endif %} <input type="checkbox" name="saturday_8am" id="saturday_8am" {% if x.saturday_8am %}checked {% endif %}> <br/>
+                            {% if x.saturday_9am %} <b class="text-success">9am-10am</b> {% else %} <s class="text-danger">9am-10am</s>{% endif %} <input type="checkbox" name="saturday_9am" id="saturday_9am" {% if x.saturday_9am %}checked {% endif %}> <br/>
+                            {% if x.saturday_10am %} <b class="text-success">10am-11am</b> {% else %} <s class="text-danger">10am-11am</s>{% endif %} <input type="checkbox" name="saturday_10am" id="saturday_10am" {% if x.saturday_10am %}checked {% endif %}> <br/>
+                            {% if x.saturday_11am %} <b class="text-success">11am-12pm</b>  {% else %} <s class="text-danger">11am-12pm</s>{% endif %} <input type="checkbox" name="saturday_11am" id="saturday_11am" {% if x.saturday_11am %}checked {% endif %}> <br/>
+                            {% if x.saturday_12pm %} <b class="text-success">12pm-1pm</b> {% else %} <s class="text-danger">12pm-1pm</s> {% endif %} <input type="checkbox" name="saturday_12pm" id="saturday_12pm" {% if x.saturday_12pm %}checked {% endif %}> <br/>
+                            {% if x.saturday_1pm %} <b class="text-success">1pm-2pm</b>{% else %} <s class="text-danger">1pm-2pm</s> {% endif %} <input type="checkbox" name="saturday_1pm" id="saturday_1pm" {% if x.saturday_1pm %}checked {% endif %}> <br/>
+                            {% if x.saturday_2pm %} <b class="text-success">2pm-3pm</b> {% else %} <s class="text-danger">2pm-3pm</s>{% endif %} <input type="checkbox" name="saturday_2pm" id="saturday_2pm" {% if x.saturday_2pm %}checked {% endif %}> <br/>
+                            {% if x.saturday_3pm %} <b class="text-success">3pm-4pm</b> {% else %} <s class="text-danger">3pm-4pm</s>{% endif %} <input type="checkbox" name="saturday_3pm" id="saturday_3pm" {% if x.saturday_3pm %}checked {% endif %}> <br/>
+                            {% if x.saturday_4pm %} <b class="text-success">4pm-5pm</b> {% else %} <s class="text-danger">4pm-5pm</s>{% endif %} <input type="checkbox" name="saturday_4pm" id="saturday_4pm" {% if x.saturday_4pm %}checked {% endif %}> <br/>
+                            {% if x.saturday_5pm %} <b class="text-success">5pm-6pm</b> {% else %} <s class="text-danger">5pm-6pm</s>{% endif %} <input type="checkbox" name="saturday_5pm" id="saturday_5pm" {% if x.saturday_5pm %}checked {% endif %}> <br/>
+                            {% if x.saturday_6pm %} <b class="text-success">6pm-7pm</b> {% else %} <s class="text-danger">6pm-7pm</s>{% endif %} <input type="checkbox" name="saturday_6pm" id="saturday_6pm" {% if x.saturday_6pm %}checked {% endif %}> <br/>
+                            {% if x.saturday_7pm %} <b class="text-success">7pm-8pm</b> {% else %} <s class="text-danger">7pm-8pm</s>{% endif %} <input type="checkbox" name="saturday_7pm" id="saturday_7pm" {% if x.saturday_7pm %}checked {% endif %}> <br/>
+                            {% if x.saturday_8pm %} <b class="text-success">8pm-9pm</b> {% else %} <s class="text-danger">8pm-9pm</s>{% endif %} <input type="checkbox" name="saturday_8pm" id="saturday_8pm" {% if x.saturday_8pm %}checked {% endif %}> <br/>
+                            {% if x.saturday_9pm %} <b class="text-success">9pm-10pm</b> {% else %} <s class="text-danger">9pm-10pm</s>{% endif %} <input type="checkbox" name="saturday_9pm" id="saturday_9pm" {% if x.saturday_9pm %}checked {% endif %}> <br/>
+                            {% if x.saturday_10pm %} <b class="text-success">10pm-11pm</b> {% else %} <s class="text-danger">10pm-11pm</s>{% endif %} <input type="checkbox" name="saturday_10pm" id="saturday_10pm" {% if x.saturday_10pm %}checked {% endif %}> <br/>
+                        </small>
+                    </td>
+                    <td style="width: 12%; text-align: center;" {% if x.sunday >= 15 %} class="table-success" {% elif x.sunday < 15 and x.sunday > 0 %} class="table-warning" {% else %} class="table-danger" {% endif %} > 
+                        <small>
+                            {% if x.sunday_8am %} <b class="text-success">8am-9am</b> {% else %} <s class="text-danger">8am-9am</s>{% endif %} <input type="checkbox" name="sunday_8am" id="sunday_8am" {% if x.sunday_8am %}checked {% endif %}> <br/>
+                            {% if x.sunday_9am %} <b class="text-success">9am-10am</b> {% else %} <s class="text-danger">9am-10am</s>{% endif %} <input type="checkbox" name="sunday_9am" id="sunday_9am" {% if x.sunday_9am %}checked {% endif %}> <br/>
+                            {% if x.sunday_10am %} <b class="text-success">10am-11am</b> {% else %} <s class="text-danger">10am-11am</s>{% endif %} <input type="checkbox" name="sunday_10am" id="sunday_10am" {% if x.sunday_10am %}checked {% endif %}> <br/>
+                            {% if x.sunday_11am %} <b class="text-success">11am-12pm</b>  {% else %} <s class="text-danger">11am-12pm</s>{% endif %} <input type="checkbox" name="sunday_11am" id="sunday_11am" {% if x.sunday_11am %}checked {% endif %}> <br/>
+                            {% if x.sunday_12pm %} <b class="text-success">12pm-1pm</b> {% else %} <s class="text-danger">12pm-1pm</s> {% endif %} <input type="checkbox" name="sunday_12pm" id="sunday_12pm" {% if x.sunday_12pm %}checked {% endif %}> <br/>
+                            {% if x.sunday_1pm %} <b class="text-success">1pm-2pm</b>{% else %} <s class="text-danger">1pm-2pm</s> {% endif %} <input type="checkbox" name="sunday_1pm" id="sunday_1pm" {% if x.sunday_1pm %}checked {% endif %}> <br/>
+                            {% if x.sunday_2pm %} <b class="text-success">2pm-3pm</b> {% else %} <s class="text-danger">2pm-3pm</s>{% endif %} <input type="checkbox" name="sunday_2pm" id="sunday_2pm" {% if x.sunday_2pm %}checked {% endif %}> <br/>
+                            {% if x.sunday_3pm %} <b class="text-success">3pm-4pm</b> {% else %} <s class="text-danger">3pm-4pm</s>{% endif %} <input type="checkbox" name="sunday_3pm" id="sunday_3pm" {% if x.sunday_3pm %}checked {% endif %}> <br/>
+                            {% if x.sunday_4pm %} <b class="text-success">4pm-5pm</b> {% else %} <s class="text-danger">4pm-5pm</s>{% endif %} <input type="checkbox" name="sunday_4pm" id="sunday_4pm" {% if x.sunday_4pm %}checked {% endif %}> <br/>
+                            {% if x.sunday_5pm %} <b class="text-success">5pm-6pm</b> {% else %} <s class="text-danger">5pm-6pm</s>{% endif %} <input type="checkbox" name="sunday_5pm" id="sunday_5pm" {% if x.sunday_5pm %}checked {% endif %}> <br/>
+                            {% if x.sunday_6pm %} <b class="text-success">6pm-7pm</b> {% else %} <s class="text-danger">6pm-7pm</s>{% endif %} <input type="checkbox" name="sunday_6pm" id="sunday_6pm" {% if x.sunday_6pm %}checked {% endif %}> <br/>
+                            {% if x.sunday_7pm %} <b class="text-success">7pm-8pm</b> {% else %} <s class="text-danger">7pm-8pm</s>{% endif %} <input type="checkbox" name="sunday_7pm" id="sunday_7pm" {% if x.sunday_7pm %}checked {% endif %}> <br/>
+                            {% if x.sunday_8pm %} <b class="text-success">8pm-9pm</b> {% else %} <s class="text-danger">8pm-9pm</s>{% endif %} <input type="checkbox" name="sunday_8pm" id="sunday_8pm" {% if x.sunday_8pm %}checked {% endif %}> <br/>
+                            {% if x.sunday_9pm %} <b class="text-success">9pm-10pm</b> {% else %} <s class="text-danger">9pm-10pm</s>{% endif %} <input type="checkbox" name="sunday_9pm" id="sunday_9pm" {% if x.sunday_9pm %}checked {% endif %}> <br/>
+                            {% if x.sunday_10pm %} <b class="text-success">10pm-11pm</b> {% else %} <s class="text-danger">10pm-11pm</s>{% endif %} <input type="checkbox" name="sunday_10pm" id="sunday_10pm" {% if x.sunday_10pm %}checked {% endif %}> <br/>
+                        </small>
+                    </td>
+            {% endif %}
+            </tr>
+        <tr>
+            <td colspan="8" style="text-align: left;">
+                {% if status %} <input type="hidden" name="status" id="status" value="{{ x.status}}"> {% else %} <input type="hidden" name="status" id="status" value="new"> {% endif %}
+                <button class="btn btn-outline-primary" style='margin-top:10px;' type="submit">Request Change</button>
+            </td>
+        </tr>
+        </tbody>
+        </table>
+        </form>        
+        </div>
+    </div>
+</div>
+{% endblock content %} 
