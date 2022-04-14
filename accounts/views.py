@@ -18,7 +18,8 @@ def login_view(request):
             user = form.get_user()
             login(request, user)
             try:
-                valuenext = request.POST.get('next')
+                valuenext = request.GET['next']
+                # valuenext = request.path
                 return redirect(valuenext)
             except:
                 return redirect('/')
