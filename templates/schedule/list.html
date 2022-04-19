@@ -20,7 +20,12 @@
             {% if status %} 
                 <a class="btn btn-outline-primary" href="{% url 'schedule:edit' %}">Edit: {{ status }}</a>
             {% else %} 
-                <a class="btn btn-outline-primary" href="{% url 'schedule:edit' %}">Request Change</a>
+                <a class="btn btn-outline-primary" href="{% url 'schedule:edit' %}">Request Availability Change</a>
+            {% endif %}
+            {% if timestatus %} 
+                <a class="btn btn-outline-primary" href="{% url 'schedule:edit' %}">Edit: {{ timestatus }}</a>
+            {% else %} 
+                <a class="btn btn-outline-primary" href="{% url 'schedule:timeoff' %}">Request Time Off</a>
             {% endif %}
         {% endif %}
     </div>
@@ -248,9 +253,72 @@
             {% endif %}
         </ul>
         {% endif %}
-        {% if howmany %}Total Schedule Count: {{ schedules_count }}{% endif %}
+        <!-- {% if howmany %}Total Schedule Count: {{ schedules_count }}{% endif %} -->
         
         </div>
     </div>
+
+    <div class='col-md-12'>
+        <p><hr /></p>
+        {% if not howmany %}
+            {% if existing %}
+                <h4>My Time Off Request(s):</h3>
+                <table style="width: 100%;">
+                    <thead>
+                        <th>Start Date / Time</th>
+                        <th>End Date / Time</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                    </thead>
+                    <tbody>
+                    {% for x in existing %} 
+                    <tr>
+                        <td>{{ x.start_date | date:"D, F d" }} at {{ x.start_time }}</td>
+                        <td>{{ x.end_date | date:"D, F d" }} at {{ x.end_time }}</td>
+                        <td><a href="{{ x.get_absolute_url }}">{{ x.get_status_display }}</a></td>
+                        <td>{{ x.notes }}</td>
+                    </tr>
+                    {% endfor %} 
+                </tbody>
+            </table>
+
+            {% else %}
+                <h4>No Existing Time Off Requests</h3>
+            {% endif %} 
+        {% else %} 
+
+        {% if existing %}
+        <h4>Upcoming Time Off Request(s):</h3>
+        <table style="width: 100%;">
+            <thead>
+                <th>Team Member</th>
+                <th>Start Date / Time</th>
+                <th>End Date / Time</th>
+                <th>Status</th>
+                <th>Notes</th>
+            </thead>
+            <tbody>
+            {% for x in existing %} 
+            <tr {% if x.status != 'c' %} style="color: red;"{% endif %}>
+                <td>{{ x.user.first_name }} {{ x.user.last_name }}</td>
+                <td>{{ x.start_date | date:"D, F d" }} at {{ x.start_time }}</td>
+                <td>{{ x.end_date | date:"D, F d" }} at {{ x.end_time }}</td>
+                <td><a href="{{ x.get_absolute_mgmt_url }}">{{ x.get_status_display }}</a></td>
+                <td>{{ x.notes }}</td>
+            </tr>
+            {% endfor %} 
+        </tbody>
+    </table>
+
+    {% else %}
+        <h4>No Time Off Requests</h3>
+    {% endif %} 
+
+
+
+
+        {% endif %}
+    </div>
+
 </div>
 {% endblock content %} 

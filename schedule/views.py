@@ -1,16 +1,24 @@
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render
-from django.contrib.auth.decorators import login_required, permission_required
-from .models import ScheduleChange, Typical
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import permission_required
+from .models import ScheduleChange, Typical, TimeOffRequest
+from .forms import TimeOffForm
 from django.core.paginator import Paginator, EmptyPage,PageNotAnInteger
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.http import HttpResponse
+from django.urls import reverse
+from django.http.response import Http404
+import datetime
+from django.db import IntegrityError
+
 
 # Create your views here.
 
 @permission_required('schedule.change_typical')
 def schedule_list_view(request):
     qs = Typical.objects.filter(active=True).order_by('user')
+    today = datetime.date.today()
+    existing = TimeOffRequest.objects.filter(active=True, end_date__gte=today).order_by('start_date')
     howmany = 2
 
     add_missing_schedules = None
@@ -50,6 +58,7 @@ def schedule_list_view(request):
         "add_missing_schedules": add_missing_schedules,
         "howmany": howmany,
         "schedule_count": schedule_count,
+        "existing": existing
     }
     return render(request, "schedule/list.html", context)
 
@@ -58,6 +67,8 @@ def schedule_list_view(request):
 def schedule_staff_view(request):
     requesting_user = request.user
     qs = Typical.objects.filter(active=True, user=requesting_user).order_by('user')
+    existing = TimeOffRequest.objects.filter(active=True, user=request.user).order_by('start_date')
+
     try:
         qs2 = ScheduleChange.objects.get(active=True, user=requesting_user)
         if qs2:
@@ -83,6 +94,7 @@ def schedule_staff_view(request):
         "howmany": howmany,
         "status": status,
         "schedule_count": schedule_count,
+        "existing": existing
     }
     return render(request, "schedule/list.html", context)
 
@@ -1274,3 +1286,164 @@ def schedule_mgmt_approve_view(request, id=None):
     qs_new.delete()
 
     return redirect('schedule:list')
+
+
+@permission_required('schedule.view_timeoffrequest')
+def schedule_staff_timeoff_detail_view(request, id=None):
+    hx_url = reverse("schedule:hx-timeoffdetail", kwargs={"id": id})
+    timeoff_obj = TimeOffRequest.objects.get(id=id)
+    context = {
+        "hx_url": hx_url,
+        "event_obj": timeoff_obj
+    }
+    return render(request, "schedule/timeoffrequest.html", context)
+
+
+@permission_required('schedule.view_timeoffrequest')
+def hx_schedule_staff_timeoff_detail_view(request, id=None):
+    if not request.htmx:
+        raise Http404
+    try:
+        obj = TimeOffRequest.objects.get(id=id, user=request.user)
+    except:
+        obj = None
+    if obj is None:
+        return HttpResponse("Not found.")
+    context = {
+        "object": obj,
+    }
+    return render(request, "schedule/partials/timeoffdetail.html", context)
+
+
+@permission_required('schedule.change_typical')
+def schedule_mgmt_timeoff_detail_view(request, id=None):
+    hx_url = reverse("schedule:hx-mgmttimeoffdetail", kwargs={"id": id})
+    timeoff_obj = TimeOffRequest.objects.get(id=id)
+    context = {
+        "hx_url": hx_url,
+        "event_obj": timeoff_obj
+    }
+    return render(request, "schedule/timeoffrequest.html", context)
+
+@permission_required('schedule.change_typical')
+def hx_schedule_mgmt_timeoff_detail_view(request, id=None):
+    if not request.htmx:
+        raise Http404
+    try:
+        obj = TimeOffRequest.objects.get(id=id)
+    except:
+        obj = None
+    if obj is None:
+        return HttpResponse("Not found.")
+    context = {
+        "object": obj,
+    }
+    return render(request, "schedule/partials/timeoffdetail.html", context)
+
+ 
+@permission_required('schedule.add_timeoffrequest')
+def schedule_staff_create_timeoff_view(request):
+    form = TimeOffForm(request.POST or None)
+    today = datetime.date.today()
+    existing = TimeOffRequest.objects.filter(active=True, user=request.user, end_date__gte=today).order_by('start_date')
+    context = {
+        "form": form,
+        "existing": existing
+    }
+    if request.POST:
+        try: 
+            if form.is_valid():
+                print('valid form submitted')
+                obj = form.save(commit=False)
+                obj.user = request.user
+                obj.created_by = request.user
+                obj.save()
+
+                email_to_list = ['studio239@paintingwithatwist.com']
+                string = 'https://admin.funartstudios.com/schedule/mgmt/timeoff/' + str(obj.id) + '\n' + 'Starting on: ' + str(obj.start_date) + ' through ' + str(obj.end_date) +  '. \n' + 'Note: ' + obj.notes
+                send_mail(
+                    'FAS Schedule Time Off Request: ' + obj.user.first_name + ' ' + obj.user.last_name,
+                    string,
+                    'studio239@paintingwithatwist.com',
+                    email_to_list,
+                    fail_silently=False,
+                )
+                if request.htmx:
+                    headers = {
+                        "HX-Redirect": obj.get_absolute_url()
+                    }
+                    return HttpResponse('Created', headers=headers)
+                return redirect(obj.get_absolute_url())
+        except IntegrityError:
+            context['message'] = 'Failed to Save. Check fields and try again'
+            return render(request, "schedule/partials/forms.html", context)
+
+    else:
+        return render(request, "schedule/create-update-timeoff.html", context) 
+
+
+
+@permission_required('schedule.change_timeoffrequest')
+def schedule_staff_update_view(request, id=None):
+    obj = get_object_or_404(TimeOffRequest, id=id, user=request.user)
+    form = TimeOffForm(request.POST or None, instance=obj)
+    today = datetime.date.today()
+    existing = TimeOffRequest.objects.filter(active=True, user=request.user, end_date__gte=today).exclude(id=id).order_by('start_date')
+
+    context = {
+        "form": form,
+        "object": obj,
+        "existing": existing
+    }
+    if form.is_valid():
+        obj.updated_by = request.user
+        obj.save()
+        form.save()
+
+        email_to_list = ['studio239@paintingwithatwist.com']
+        string = 'https://admin.funartstudios.com/schedule/mgmt/timeoff/' + str(obj.id) + '\n' + 'Starting on: ' + str(obj.start_date) + ' through ' + str(obj.end_date) +  '. \n' + 'Note: ' + obj.notes
+        send_mail(
+            'Updated: FAS Schedule Time Off Request: ' + obj.user.first_name + ' ' + obj.user.last_name,
+            string,
+            'studio239@paintingwithatwist.com',
+            email_to_list,
+            fail_silently=False,
+        )
+
+
+        context['message'] = 'Time off request data saved.'
+    if request.htmx:
+        headers = {
+            "HX-Redirect": '/schedule/staff'
+        }
+        return HttpResponse('Created', headers=headers)
+        # return render(request, "schedule/partials/forms.html", context)
+    return render(request, "schedule/create-update-timeoff.html", context) 
+
+
+
+@permission_required('schedule.change_typical')
+def schedule_mgmt_approve_view(request, id=None):
+    obj = get_object_or_404(TimeOffRequest, id=id)
+    obj.status = 'c'
+    obj.updated_by = request.user
+    obj.save()
+
+    context = {
+        "object": obj,
+    }
+    email_to_list = [obj.user.email, 'studio239@paintingwithatwist.com']
+    string = 'https://admin.funartstudios.com/schedule/staff/timeoff/' + str(obj.id) + '\n' + 'Starting on: ' + str(obj.start_date) + ' through ' + str(obj.end_date) +  '. \n' + 'Note: ' + obj.notes
+    send_mail(
+        'Approved: FAS Schedule Time Off Request: ' + obj.user.first_name + ' ' + obj.user.last_name,
+        string,
+        'studio239@paintingwithatwist.com',
+        email_to_list,
+        fail_silently=False,
+    )
+
+    context['message'] = 'Time off request approved.'
+
+    return redirect('/schedule')
+
+

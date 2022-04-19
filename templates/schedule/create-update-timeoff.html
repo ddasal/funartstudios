@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %} 
+    Request Time Off
+{% endblock title %} 
+
+{% block content %}
+
+<style>
+    .staff-form {
+        border-bottom: 1px solid black;
+    }
+    .hidden {
+        display: none;
+    }
+</style>
+
+
+
+<div class="row">
+    <div class='col-md-5 mx-auto'>
+        {% if not object.id %}
+            <h3>Request Time Off</h3>
+        {% else %}
+            <h3>Edit Time Off Request
+                <small>
+                    {% if perms.schedule.change_timeoffrequest %}
+                        <a class="btn btn-outline-secondary" href="{{ object.get_absolute_url }}">Return</a>
+                    {% endif %} 
+                </small>    
+            </h3>
+        {% endif %}
+
+    {% include 'schedule/partials/forms.html' %}
+
+    </div>
+    <div class='col-md-7 mx-auto'>
+        {% if existing %}
+            <h4>Other Current Time Off Requests</h3>
+            <table style="width: 100%;">
+                <thead>
+                    <th>Start Date / Time</th>
+                    <th>End Date / Time</th>
+                    <th>Status</th>
+                </thead>
+                <tbody>
+                {% for x in existing %} 
+                <tr>
+                    <td>{{ x.start_date | date:"D, F d" }} at {{ x.start_time }}</td>
+                    <td>{{ x.end_date | date:"D, F d" }} at {{ x.end_time }}</td>
+                    <td><a href="{{ x.get_absolute_url }}">{{ x.get_status_display }}</a></td>
+                </tr>
+                {% endfor %} 
+            </tbody>
+        </table>
+
+        {% else %}
+            <h4>No Existing Requests</h3>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %} 

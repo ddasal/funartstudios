@@ -4,6 +4,9 @@ from django.utils import timezone
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
+from django.urls import reverse
+from django.db.models import F, Q
+from django.db.models.functions import Now
 
 # Create your models here.
 
@@ -744,3 +747,44 @@ class ScheduleChange(models.Model):
 
         super().save(*args, **kwargs)
 
+
+class TimeOffRequest(models.Model):
+    user = models.ForeignKey(User, on_delete=CASCADE)
+    start_date = models.DateField(null=False, blank=False, default=timezone.now)
+    start_time = models.TimeField(null=False, blank=False, default='08:00')
+    end_date = models.DateField(null=False, blank=False, default=timezone.now)
+    end_time = models.TimeField(null=False, blank=False, default='22:00')
+    status =  models.CharField(max_length=1, choices=RequestStatus.choices, default=RequestStatus.PENDING)
+    user = models.ForeignKey(User, on_delete=CASCADE, related_name='time_off_approver')
+    timestamp = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, on_delete=CASCADE, null=True, blank=True, related_name='timeoff_created_by')
+    updated_by = models.ForeignKey(User, on_delete=CASCADE, null=True, blank=True, related_name='timeoff_updated_by')
+    updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+    notes = models.TextField(null=False, blank=False)
+
+    def get_absolute_url(self):
+        return reverse("schedule:timeoffdetail", kwargs={"id" : self.id})
+
+    def get_absolute_mgmt_url(self):
+        return reverse("schedule:mgmttimeoffdetail", kwargs={"id" : self.id})
+
+    def get_hx_url(self):
+        return reverse("schedule:hx-timeoffdetail", kwargs={"id": self.id})
+
+    def get_edit_url(self):
+        return reverse("schedule:timeoffupdate", kwargs={"id": self.id})
+
+    def get_approve_url(self):
+        return reverse("schedule:timeoffapprove", kwargs={"id": self.id})
+
+    def get_delete_url(self):
+        return reverse("schedule:timeoffupdate", kwargs={"id": self.id})
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=Q(start_date__lte=F('end_date'), start_date__gte=Now()),
+                name='correct_datetime'
+            ),
+        ]

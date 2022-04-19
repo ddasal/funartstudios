@@ -1,0 +1,21 @@
+<div class="row">
+    <div class="col-12 col-md-10">
+        <h2>Time Off Request for {{ object.user.first_name }} {{ object.user.last_name}}
+            {% if object.get_edit_url %}
+            <small>
+                {% if object.user == request.user %} <a class="btn btn-outline-secondary" href="{% url 'schedule:staff' %}">Back</a>
+                <a class="btn btn-outline-primary" href="{{ object.get_edit_url }}">Edit</a> {% else %}
+                <a class="btn btn-outline-secondary" href="{% url 'schedule:list' %}">Back</a> 
+                {% endif %} 
+                {% if perms.schedule.change_typical %} 
+                <a class="btn btn-outline-success" href="{{ object.get_approve_url }}">Approve</a>
+            {% endif %} 
+            </small>
+            {% endif %}
+        </h2> 
+        <p><span class="lead">From  {{ object.start_time }} on {{ object.start_date }} through {{ object.end_time }} on {{ object.end_date }}</span><br />
+            {% if object.created_by %}Created by: {{ object.created_by.first_name }} {{ object.created_by.last_name }}<br />{% endif %}
+            Last updated on : {{ object.updated }}{% if object.updated_by %} by {{ object.updated_by.first_name }} {{ object.updated_by.last_name }} {% endif %} <br /></p>
+        <p><b>Notes:</b><br /> {{object.notes}}</p>
+    </div>
+</div>
