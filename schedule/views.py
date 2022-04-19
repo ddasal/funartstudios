@@ -1447,3 +1447,21 @@ def schedule_mgmt_approve_view(request, id=None):
     return redirect('/schedule')
 
 
+
+@permission_required('schedule.delete_timeoffrequest')
+def schedule_staff_timeoff_delete_view(request, id=None):
+    try:
+        obj = TimeOffRequest.objects.get(id=id, user=request.user)
+        obj.delete()
+    except:
+        obj = None
+    if obj is None:
+        if request.htmx:
+            return HttpResponse('Not found')
+        raise Http404
+    success_url = reverse('schedule:staff')
+    return redirect('/schedule/staff')
+    # context = {
+    #     "object": obj
+    # }
+    # return render(request, "schedule/list.html", context)

@@ -779,7 +779,7 @@ class TimeOffRequest(models.Model):
         return reverse("schedule:timeoffapprove", kwargs={"id": self.id})
 
     def get_delete_url(self):
-        return reverse("schedule:timeoffupdate", kwargs={"id": self.id})
+        return reverse("schedule:timeoffdelete", kwargs={"id": self.id})
 
     class Meta:
         constraints = [
