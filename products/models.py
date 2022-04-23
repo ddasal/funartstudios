@@ -13,6 +13,7 @@ User = settings.AUTH_USER_MODEL
 
 class ProductType(models.TextChoices):
     CANVAS = 'c', 'Canvas'
+    CERAMIC = 'm', 'Ceramic'
     GLASSWARE = 'g', 'Glassware'
     SCREEN = 's', 'Screen'
     WOODBOARD = 'm', 'Wood Board (MDF)'
