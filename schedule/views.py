@@ -1156,7 +1156,6 @@ def schedule_mgmt_approve_view(request, id=None):
     status = qs_new.get_status_display
     howmany = None
     print(qs_new)
-    print(onj)
     obj.start_date = qs_new.start_date
 
     obj.monday_8am = qs_new.monday_8am
