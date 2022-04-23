@@ -109,6 +109,7 @@ class Suppliers(models.TextChoices):
     ARTBOARDSDIRECT = 'b', 'Art Boards Direct'
     ARTDISTRIBUTORS = 'a', 'Art Supply Distributors'
     DIVERSEWOOD = 'd', 'Diverse Woodworking'
+    CHESAPEAKE = 'c', 'Chesapeake Ceramics'
     HOBBYLOBBY = 'h', 'Hobby Lobby'
     INVENTORYADJUSTMENT = 'i', 'Inventory Adjustment'
     PGDUNN = 'p', 'P. Graham Dunn'
