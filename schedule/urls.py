@@ -13,7 +13,8 @@ from .views import (
     schedule_mgmt_timeoff_detail_view,
     schedule_staff_update_view,
     schedule_mgmt_approve_view,
-    schedule_staff_timeoff_delete_view
+    schedule_staff_timeoff_delete_view,
+    schedule_mgmt_timeoff_approve_view
 )
 
 app_name='schedule'  # events:list
@@ -32,7 +33,7 @@ urlpatterns = [
     path("mgmt/timeoff/hx/<int:id>", hx_schedule_mgmt_timeoff_detail_view, name='hx-mgmttimeoffdetail'),
 
     path("staff/timeoff/<int:id>/update", schedule_staff_update_view, name='timeoffupdate'),
-    path("mgmt/timeoff/<int:id>/approve", schedule_mgmt_approve_view, name='timeoffapprove'),
+    path("mgmt/timeoff/<int:id>/approve", schedule_mgmt_timeoff_approve_view, name='timeoffapprove'),
     path("staff/timeoff/<int:id>/delete", schedule_staff_timeoff_delete_view, name='timeoffdelete'),
 
 ]

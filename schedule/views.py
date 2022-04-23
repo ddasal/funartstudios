@@ -1423,7 +1423,7 @@ def schedule_staff_update_view(request, id=None):
 
 
 @permission_required('schedule.change_typical')
-def schedule_mgmt_approve_view(request, id=None):
+def schedule_mgmt_timeoff_approve_view(request, id=None):
     obj = get_object_or_404(TimeOffRequest, id=id)
     obj.status = 'c'
     obj.updated_by = request.user
