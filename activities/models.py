@@ -55,7 +55,7 @@ class Activity(models.Model):
     hours = models.DecimalField(decimal_places=2, max_digits=4, null=False, blank=False, default=0.00)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=SET_NULL)
     time = models.TimeField(auto_now=False, auto_now_add=False, null=False, blank=False)
-    type = models.CharField(max_length=1, choices=WorkType.choices, default=WorkType.CUSTOMER)
+    type = models.CharField(max_length=1, choices=WorkType.choices, default=WorkType.ARTIST)
     slug = models.SlugField(null=True, blank=True, unique=True)
     tax_rate = models.DecimalField(decimal_places=3, max_digits=4, null=False, blank=False, default=0.000)
     timestamp = models.DateTimeField(auto_now_add=True)

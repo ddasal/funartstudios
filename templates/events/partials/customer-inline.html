@@ -2,7 +2,7 @@
     <table class="table table-sm table-striped">
         <thead>
             <tr>
-                <td><b>{{ object.quantity }} x {{ object.get_type_display }} at ${{ object.price }} each</b></td>
+                <td><b>{{ object.quantity }} x {{ object.get_type_display }} {% if perms.events.delete_event %} at ${{ object.price }} each {% endif %}</b></td>
                 <td style="text-align: right;">
                     {% if perms.events.change_eventcustomer %} 
                         {% if object.status == 'p' %}
