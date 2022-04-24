@@ -34,5 +34,6 @@ urlpatterns = [
     path('search/', search_view, name='search'),
     path('square/', include('square.urls')),
     path('taxes/', include('taxreports.urls')),
+    path('util/', include('util.urls')),
     path('admin/', admin.site.urls),
 ]
