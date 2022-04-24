@@ -35,7 +35,7 @@ def square_list_view(request):
 
 from datetime import datetime
 
-# @permission_required('square.add_square')
+@permission_required('square.add_square')
 class SquareUpload(LoginRequiredMixin, View):
     login_url = '/account/login/'
 
