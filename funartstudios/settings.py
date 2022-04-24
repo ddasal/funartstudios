@@ -55,7 +55,8 @@ INSTALLED_APPS = [
     'schedule',
     'search',
     'square',
-    'taxreports'
+    'taxreports',
+    'util'
 ]
 
 MIDDLEWARE = [
