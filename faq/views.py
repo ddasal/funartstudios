@@ -108,13 +108,6 @@ def faq_detail_hx_view(request, slug=None):
     try:
         obj = Faq.objects.get(slug=slug)
         view_count = obj.page_views + int(1)
-        requester = request.user.first_name + ' ' + request.user.last_name
-        if obj.seen_by is None:
-            obj.seen_by = requester
-        elif requester not in obj.seen_by:
-            add_requester = obj.seen_by + ', ' + requester
-            obj.seen_by = add_requester
-
         obj.page_views = view_count
         obj.save()
     except:
