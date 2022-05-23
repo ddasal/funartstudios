@@ -12,7 +12,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RemoveField(
             model_name='faq',
-            name='seen_by',
         ),
         migrations.AlterField(
             model_name='faq',
