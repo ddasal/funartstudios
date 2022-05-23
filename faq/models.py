@@ -46,10 +46,11 @@ class Faq(models.Model):
     objects = FaqManager()
 
     @property
-    def title(self):
-        return self.question
-        
     def name(self):
+        return self.question
+
+    @property
+    def title(self):
         return self.question
         
     def get_absolute_url(self):
