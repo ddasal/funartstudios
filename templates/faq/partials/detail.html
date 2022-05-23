@@ -1,0 +1,28 @@
+<div class="row">
+    <div class="col-12 col-md-12">
+        <h3>{{object.question}}
+            {% if object.get_edit_url %}
+            <small>
+                {% if perms.faq.change_faq %}
+                <a class="btn btn-outline-primary" href="{{ object.get_edit_url }}">Edit</a> 
+                {% endif %} 
+            </small>
+            {% endif %}
+        </h3> 
+        <p><small>By: {{ object.user.first_name }} {{ object.user.last_name }} views: {{ object.page_views }}</small></p>
+        
+        <p>{{ object.answer|safe|linebreaks }}</p>
+        {% if perms.faq.add_faq %} 
+        <small>Seen by: {{ object.seen_by }}</small>
+        {% endif %}
+    </div>
+</div>
+ 
+<div class="row">
+    <div class="col-12 col-md-4" style="margin-top: 20px;">
+        <a class="btn btn-outline-secondary" href="{% url 'faq:list' %}">Back</a>
+        {% if perms.faq.delete_faq %}
+           <a class="btn btn-outline-danger" href="{{ object.get_delete_url }}" hx-post="{{ object.get_delete_url }}" hx-confirm='THIS CANNOT BE UNDONE: Are you sure you want to delete {{ object.question }}?' hx-trigger="click">Delete FAQ</a>
+        {% endif %}
+    </div>
+</div>

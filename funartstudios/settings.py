@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'activities',
     'articles',
     'events',
+    'faq',
     'payroll',
     'products',
     'royaltyreports',

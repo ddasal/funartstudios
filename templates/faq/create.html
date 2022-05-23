@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %} 
+    {{ object.question }}
+{% endblock title %} 
+
+{% block content %}
+{% if not created %}
+
+
+    <div class="row">
+        <div class='col-md-8 mx-auto'>
+            <h3>Create FAQ</h3>
+            <form method="POST" action="">
+                {% csrf_token %}
+                {{ form.as_p }}
+                    <button class="btn btn-primary" type="submit">Create FAQ</button>
+            </form>
+        </div>
+    </div>
+{% else %}
+
+<p>Your FAQ was created</p>
+<li><a href="/articles/{{ object.id }}">{{ object.question }}</a></li>
+
+{% endif %} 
+
+{% endblock %} 

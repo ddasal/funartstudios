@@ -15,6 +15,11 @@
             <a class="nav-link" href="{% url 'events:list' %}">Events</a>
           </li>
           {% endif %} 
+          {% if perms.faq.view_faq %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'faq:list' %}">FAQs</a>
+          </li>
+          {% endif %} 
           {% if perms.payroll.view_report %} 
           <li class="nav-item">
             <a class="nav-link" href="{% url 'activities:list' %}">Activities</a>

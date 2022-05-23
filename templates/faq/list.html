@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %} 
+    FAQs
+{% endblock title %} 
+
+{% block content %}
+<div class="row">
+  <div class='col-12 col-md-4'>
+    <h3>FAQs</h3>
+  </div>
+  <div class="col-12 col-md-8" style="text-align: right;">
+    <form action='/faq/' method='POST'>
+        {% csrf_token %}
+        <input type="text" value="{{ q }}" name="q" placeholder="FAQ search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+        <a class="btn btn-outline-secondary" href="{% url 'faq:list' %}">Clear</a>  
+        {% if perms.faq.add_faq %} 
+       <a class="btn btn-outline-success" href="{% url 'faq:create' %}">Create FAQ</a>  
+      {% endif %} 
+    </form>
+  </div>
+</div> 
+<p></p>
+  {% if perms.faq.view_faq %} 
+    <div class="accordion" id="accordionFAQ">
+        {% for x in faq %}
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading{{ x.id }}">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ x.id }}" aria-expanded="false" aria-controls="collapse{{ x.id }}">
+            <b>{{ x.get_category_display }} :: {{ x.question }}</b>
+            </button>
+          </h2>
+          <div id="collapse{{ x.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ x.id }}" >
+            <div class="accordion-body">
+            <p>{{ x.answer|safe|linebreaksbr }}</p>
+            {% if perms.faq.edit_faq %}
+            <p><a class="btn btn-outline-danger" href="{{ x.get_edit_url }}">Edit</a></p>
+            {% endif %}
+            </div>
+          </div>
+        </div>
+    {% endfor %}
+</div>
+{% endif %} 
+{% endblock %}  

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %} 
+{% if object.question %}
+    {{ object.question }}
+{% else %}
+    Create FAQ
+{% endif %} 
+{% endblock title %} 
+
+{% block content %}
+
+<div class="row">
+    <div class='col-md-8 mx-auto'>
+        {% if not object.slug %}
+            <h2>Create FAQ Entry</h2>
+        {% else %}
+            <h2>FAQ Details
+                <small>
+                    {% if perms.faq.view_faq %}
+                    <a class="btn btn-outline-secondary" href="{% url 'faq:list' %}">Return</a>
+                    {% endif %} 
+                </small>    
+            </h2>
+        {% endif %}
+
+    {% include 'faq/partials/forms.html' %}
+    {% if perms.faq.delete_faq %}
+    <p>
+        <a class="btn btn-outline-danger" href="{{ object.get_delete_url }}" hx-post="{{ object.get_delete_url }}" hx-confirm='THIS CANNOT BE UNDONE: Are you sure you want to delete {{ object.question }}?' hx-trigger="click">Delete FAQ</a>
+    </p>
+    {% endif %}
+    
+    </div>
+</div>
+
+{% endblock content %} 
