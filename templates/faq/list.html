@@ -34,7 +34,7 @@
           <div id="collapse{{ x.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ x.id }}" >
             <div class="accordion-body">
             <p>{{ x.answer|safe|linebreaksbr }}</p>
-            {% if perms.faq.edit_faq %}
+            {% if perms.faq.change_faq %}
             <p><a class="btn btn-outline-danger" href="{{ x.get_edit_url }}">Edit</a></p>
             {% endif %}
             </div>
