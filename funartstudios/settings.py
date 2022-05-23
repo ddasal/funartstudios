@@ -223,6 +223,7 @@ MEDIA_ROOT = BASE_DIR / "staticfiles-cdn" / "uploads"
 
 from .cdn.conf import * # noqa
 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
