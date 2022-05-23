@@ -33,7 +33,6 @@ class Category(models.TextChoices):
     SQUAREUP = 's', 'Square'
     TWISTATHOME = 't', 'Twist at Home Kits'
 
-
 class Faq(models.Model):
     user = models.ForeignKey(User, blank=True, null=True, on_delete=SET_NULL)
     question = models.TextField(null=False, blank=False)
