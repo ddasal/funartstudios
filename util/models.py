@@ -9,3 +9,4 @@ class logs(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=SET_NULL, null=True, blank=True, related_name='log_created_by')
     log = models.TextField()
+
