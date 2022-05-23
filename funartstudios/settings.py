@@ -221,7 +221,6 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / "staticfiles-cdn"
 MEDIA_ROOT = BASE_DIR / "staticfiles-cdn" / "uploads"
 
-
 from .cdn.conf import * # noqa
 
 # Default primary key field type
