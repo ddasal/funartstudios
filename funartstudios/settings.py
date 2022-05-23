@@ -32,8 +32,6 @@ ALLOWED_HOSTS = []
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOST').split(' ')
 print(ALLOWED_HOSTS)
 
-
-
 # Application definition
 
 INSTALLED_APPS = [
