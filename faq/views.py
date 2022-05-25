@@ -68,9 +68,9 @@ def faq_create_view(request, id=None):
 
 
 @permission_required('faq.view_faq')
-def faq_detail_view(request, slug=None):
-    hx_url = reverse("faq:hx-detail", kwargs={"slug": slug})
-    faq_obj = Faq.objects.get(slug=slug)
+def faq_detail_view(request, id=None):
+    hx_url = reverse("faq:hx-detail", kwargs={"id": id})
+    faq_obj = Faq.objects.get(id=id)
     context = {
         "hx_url": hx_url,
         "faq_obj": faq_obj
@@ -78,9 +78,9 @@ def faq_detail_view(request, slug=None):
     return render(request, "faq/detail.html", context)
 
 @permission_required('faq.delete_faq')
-def faq_delete_view(request, slug=None):
+def faq_delete_view(request, id=None):
     try:
-        obj = Faq.objects.get(slug=slug)
+        obj = Faq.objects.get(id=id)
     except:
         obj = None
     if obj is None:
@@ -102,11 +102,11 @@ def faq_delete_view(request, slug=None):
     return render(request, "faq/delete.html", context)
 
 @permission_required('faq.view_faq')
-def faq_detail_hx_view(request, slug=None):
+def faq_detail_hx_view(request, id=None):
     if not request.htmx:
         raise Http404
     try:
-        obj = Faq.objects.get(slug=slug)
+        obj = Faq.objects.get(id=id)
         view_count = obj.page_views + int(1)
         obj.page_views = view_count
         obj.save()
@@ -121,8 +121,8 @@ def faq_detail_hx_view(request, slug=None):
 
 
 @permission_required('faq.change_faq')
-def faq_update_view(request, slug=None):
-    obj = get_object_or_404(Faq, slug=slug)
+def faq_update_view(request, id=None):
+    obj = get_object_or_404(Faq, id=id)
     form = FaqForm(request.POST or None, instance=obj)
     context = {
         "form": form,
