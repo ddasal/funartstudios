@@ -16,9 +16,9 @@ urlpatterns = [
     path('', faq_list_view, name='list'),
     path('search/', faq_search_view, name='search'),
     path('create/', faq_create_view, name='create'),
-    path('<slug:slug>/', faq_detail_view, name='detail'),
-    path("<slug:slug>/edit/", faq_update_view, name='update'),
-    path("<slug:slug>/delete/", faq_delete_view, name='delete'),
-    path("hx/<slug:slug>/", faq_detail_hx_view, name='hx-detail'),
+    path('<int:id>/', faq_detail_view, name='detail'),
+    path("<int:id>/edit/", faq_update_view, name='update'),
+    path("<int:id>/delete/", faq_delete_view, name='delete'),
+    path("hx/<int:id>/", faq_detail_hx_view, name='hx-detail'),
 
 ]
