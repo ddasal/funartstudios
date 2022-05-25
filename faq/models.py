@@ -38,7 +38,6 @@ class Faq(models.Model):
     question = models.TextField(null=False, blank=False)
     answer = models.TextField(null=False, blank=False)
     category = models.CharField(max_length=1, choices=Category.choices, default=Category.GENERAL)
-    slug = models.SlugField(null=True, blank=True, unique=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     page_views = models.IntegerField(default=0, null=False, blank=False)
@@ -54,33 +53,20 @@ class Faq(models.Model):
         return self.question
         
     def get_absolute_url(self):
-        return reverse("faq:detail", kwargs={"slug" : self.slug})
+        return reverse("faq:detail", kwargs={"id" : self.id})
 
     def get_hx_url(self):
-        return reverse("faq:hx-detail", kwargs={"slug": self.slug})
+        return reverse("faq:hx-detail", kwargs={"id": self.id})
 
     def get_edit_url(self):
-        return reverse("faq:update", kwargs={"slug": self.slug})
+        return reverse("faq:update", kwargs={"id": self.id})
 
     def get_delete_url(self):
-        return reverse("faq:delete", kwargs={"slug": self.slug})
+        return reverse("faq:delete", kwargs={"id": self.id})
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
     class Meta:
         ordering = [('category'), ]
-
-
-def faq_pre_save(sender, instance, *args, **kwargs):
-    if instance.slug is None:
-        slugify_instance_title(instance, save=False)
-
-pre_save.connect(faq_pre_save, sender=Faq)
-
-def faq_post_save(sender, instance, created, *args, **kwargs):
-    if created:
-        slugify_instance_title(instance, save=True)
-
-post_save.connect(faq_post_save, sender=Faq)
 
