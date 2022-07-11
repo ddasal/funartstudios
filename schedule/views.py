@@ -1360,7 +1360,7 @@ def schedule_staff_create_timeoff_view(request):
                 obj.save()
 
                 email_to_list = ['studio239@paintingwithatwist.com']
-                string = 'https://admin.funartstudios.com/schedule/mgmt/timeoff/' + str(obj.id) + '\n' + 'Starting on: ' + str(obj.start_date) + ' through ' + str(obj.end_date) +  '. \n' + 'Note: ' + obj.notes
+                string = 'https://admin.funartstudios.com/account/login/?next=/schedule/mgmt/timeoff/' + str(obj.id) + '\n' + 'Starting on: ' + str(obj.start_date) + ' through ' + str(obj.end_date) +  '. \n' + 'Note: ' + obj.notes
                 send_mail(
                     'FAS Schedule Time Off Request: ' + obj.user.first_name + ' ' + obj.user.last_name,
                     string,
@@ -1401,7 +1401,7 @@ def schedule_staff_update_view(request, id=None):
         form.save()
 
         email_to_list = ['studio239@paintingwithatwist.com']
-        string = 'https://admin.funartstudios.com/schedule/mgmt/timeoff/' + str(obj.id) + '\n' + 'Starting on: ' + str(obj.start_date) + ' through ' + str(obj.end_date) +  '. \n' + 'Note: ' + obj.notes
+        string = 'https://admin.funartstudios.com/account/login/?next=/schedule/mgmt/timeoff/' + str(obj.id) + '\n' + 'Starting on: ' + str(obj.start_date) + ' through ' + str(obj.end_date) +  '. \n' + 'Note: ' + obj.notes
         send_mail(
             'Updated: FAS Schedule Time Off Request: ' + obj.user.first_name + ' ' + obj.user.last_name,
             string,
@@ -1433,7 +1433,7 @@ def schedule_mgmt_timeoff_approve_view(request, id=None):
         "object": obj,
     }
     email_to_list = [obj.user.email, 'studio239@paintingwithatwist.com']
-    string = 'https://admin.funartstudios.com/schedule/staff/timeoff/' + str(obj.id) + '\n' + 'Starting on: ' + str(obj.start_date) + ' through ' + str(obj.end_date) +  '. \n' + 'Note: ' + obj.notes
+    string = 'https://admin.funartstudios.com/account/login/?next=/schedule/staff/timeoff/' + str(obj.id) + '\n' + 'Starting on: ' + str(obj.start_date) + ' through ' + str(obj.end_date) +  '. \n' + 'Note: ' + obj.notes
     send_mail(
         'Approved: FAS Schedule Time Off Request: ' + obj.user.first_name + ' ' + obj.user.last_name,
         string,
