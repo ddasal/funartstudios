@@ -12,6 +12,12 @@ from django.core.paginator import Paginator, EmptyPage,PageNotAnInteger
 # Create your views here.
 
 def login_view(request):
+    if request.user.is_authenticated:
+        print('User is authenticated')
+        valuenext = request.GET['next']
+        # valuenext = request.path
+        return redirect(valuenext)
+
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():

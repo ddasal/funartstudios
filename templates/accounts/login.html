@@ -17,10 +17,15 @@
  
         {% else %} 
             {% if perms.events.view_event %}
-            <h3>Access restricted</h3>
-                <p>You are logged in, but do not have permissions to access this page. Would you like to <a href="{% url 'account:logout' %}">logout</a>?</p>
+                {% if request.GET.next %}
+                <h3>You are logged in</h3>
+                    <p>Proceed to your <a href="{{request.GET.next }}">link</a></p>
+                {% else %}
+                <h3>Access restricted</h3>
+                    <p>You are logged in, but do not have permissions to access this page. Would you like to <a href="{% url 'account:logout' %}">logout</a>?</p>
+                {% endif %}     
             {% else %} 
-            <h3>Account Setup Not Complete</h3>
+                <h3>Account Setup Not Complete</h3>
                 <p>You are logged in, but you do not have permissiones to view this page.</p>
                 <p>If you believe this is an error, please contact management.</p>
                 <p>Would you like to <a href="{% url 'account:logout' %}">logout</a>?</p>
