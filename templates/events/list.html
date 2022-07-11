@@ -51,7 +51,7 @@
                         {% for staff in x.get_eventstaff_children %}
                             <small><b>{{ staff.user.first_name }} - {{ staff.get_role_display }} ({{ staff.hours }}hrs)</b>                                
                                 {% if staff.staff_notes %} - 
-                                    <b><a style="color: red" data-toggle="tooltip" data-placement="right" title="{{ staff.staff_notes }}" href="{% url 'events:detail' slug=x.slug %}">
+                                    <b><a style="color: red" data-toggle="tooltip" data-placement="bottom" title="{{ staff.staff_notes }}" href="{% url 'events:detail' slug=x.slug %}">
                                         NOTE
                                     </a></b>
                                 {% endif %}
