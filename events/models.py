@@ -187,6 +187,7 @@ class EventStaff(models.Model):
     date = models.DateField(null=True, blank=True, auto_now=False, auto_now_add=False)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    staff_notes = models.TextField(null=True, blank=True)
 
     def get_absolute_url(self):
         return self.event.get_absolute_url()

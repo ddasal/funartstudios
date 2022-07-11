@@ -22,7 +22,7 @@ class EventImageInline(admin.TabularInline):
 class EventStaffInline(admin.TabularInline):
     model = EventStaff
     extra = 0
-    readonly_fields = ['rate', 'prepaint_pay', 'hourly_pay', 'total_pay', 'timestamp', 'updated']
+    readonly_fields = ['rate', 'prepaint_pay', 'hourly_pay', 'total_pay', 'timestamp', 'updated', 'staff_notes']
 
 class AdminPayInline(admin.TabularInline):
     model = AdminPay

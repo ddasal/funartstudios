@@ -4,6 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.http.response import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
+from django.core.mail import send_mail
 from django.utils import timezone
 from django.db.models import Q, Sum
 from .forms import AdminPayForm, EventForm, EventImageForm, EventStaffForm, EventCustomerForm, EventTipForm
@@ -330,6 +331,20 @@ def event_staff_update_hx_view(request, parent_slug=None, id=None):
         if instance is None:
             new_obj.event = parent_obj
         new_obj.save()
+
+        email_to_list = ['studio239@paintingwithatwist.com']
+        string = 'https://admin.funartstudios.com/events/' + str(parent_obj.slug) + '\r\n' + new_obj.staff_notes
+        send_mail(
+            'FAS Event Note Added By: ' + new_obj.user.first_name + ' ' + new_obj.user.last_name,
+            string,
+            'studio239@paintingwithatwist.com',
+            email_to_list,
+            fail_silently=False,
+        )
+
+
+
+
         context['object'] = new_obj
         return render(request, "events/partials/staff-inline.html", context)
     

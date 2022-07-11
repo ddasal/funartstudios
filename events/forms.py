@@ -45,7 +45,7 @@ class EventStaffForm(forms.ModelForm):
 
     class Meta:
         model = EventStaff
-        fields = ['user', 'role', 'hours', 'prepaint_product', 'prepaint_qty', 'event_product', 'event_qty']
+        fields = ['user', 'staff_notes', 'role', 'hours', 'prepaint_product', 'prepaint_qty', 'event_product', 'event_qty']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -56,6 +56,8 @@ class EventStaffForm(forms.ModelForm):
             self.fields[str(field)].widget.attrs.update(
                 new_data
             )
+        self.fields['staff_notes'].widget.attrs.update({"placeholder": 'As needed, please enter any notes for management in this field'})
+        self.fields['staff_notes'].widget.attrs.update({"rows": '4'})
         self.fields['prepaint_product'].queryset = self.fields['prepaint_product'].queryset.exclude(active=False)
         self.fields['event_product'].queryset = self.fields['event_product'].queryset.exclude(active=False)
 
