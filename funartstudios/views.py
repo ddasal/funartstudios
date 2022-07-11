@@ -24,7 +24,7 @@ def home_view(request, *args, **kwargs):
     for each in qs:
         comments = Comment.objects.filter(article=each.id).count()
         each.comment = comments
-    paginator = Paginator(qs, 8)
+    paginator = Paginator(qs, 12)
     article_count = paginator.count
     try:
         articles = paginator.page(page)
