@@ -31,7 +31,7 @@ def event_list_view(request):
     qs = Event.objects.filter(active=True, date__range=[date_min, date_max]).order_by('-date', '-time')
     page = request.GET.get('page', 1)
 
-    paginator = Paginator(qs, 10)
+    paginator = Paginator(qs, 15)
 
     event_count = paginator.count
     try:
