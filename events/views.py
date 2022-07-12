@@ -332,15 +332,16 @@ def event_staff_update_hx_view(request, parent_slug=None, id=None):
             new_obj.event = parent_obj
         new_obj.save()
 
-        email_to_list = ['studio239@paintingwithatwist.com']
-        string = 'https://admin.funartstudios.com/account/login/?next=/events/' + str(parent_obj.slug) + '\r\n' + new_obj.staff_notes
-        send_mail(
-            'FAS Event Note Added By: ' + new_obj.user.first_name + ' ' + new_obj.user.last_name,
-            string,
-            'studio239@paintingwithatwist.com',
-            email_to_list,
-            fail_silently=False,
-        )
+        if new_obj.staff_notes:
+            email_to_list = ['studio239@paintingwithatwist.com']
+            string = 'https://admin.funartstudios.com/account/login/?next=/events/' + str(parent_obj.slug) + '\r\n' + new_obj.staff_notes
+            send_mail(
+                'FAS Event Note Added By: ' + new_obj.user.first_name + ' ' + new_obj.user.last_name,
+                string,
+                'studio239@paintingwithatwist.com',
+                email_to_list,
+                fail_silently=False,
+            )
 
 
 
