@@ -16,7 +16,7 @@ from django.db import IntegrityError
 
 @permission_required('schedule.change_typical')
 def schedule_list_view(request):
-    qs = Typical.objects.filter(active=True).order_by('user')
+    qs = Typical.objects.filter(active=True, user__is_active=True).order_by('user')
     today = datetime.date.today()
     existing = TimeOffRequest.objects.filter(active=True, end_date__gte=today).order_by('start_date')
     howmany = 2
